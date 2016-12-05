@@ -13,6 +13,7 @@ const AV = require('leanengine')
 const app = koa()
 // to generate session
 app.keys = ['secret-session', 'gas-delivery']
+
 app.use(logger())
 app.use(session(app))
 app.use(bodyParser())
@@ -25,13 +26,19 @@ app.use(serve(path.join(__dirname, '/static')))
 require('./cloud');
 // 加载云引擎中间件
 app.use(AV.koa())
+app.use(AV.Cloud.CookieSession({
+	framework: 'koa',
+	secret: 'my secret',
+	maxAge: 365*24*3600*1000,
+	fetchUser: true
+}))
 
 // error handle middleware
 app.use(function*(next) {
   try {
     yield next
-  } catch (e) {
-    this.body = e
+  } catch(error) {
+    this.body = error
   }
 })
 // 加载router
