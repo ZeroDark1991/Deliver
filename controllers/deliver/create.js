@@ -7,7 +7,7 @@ const Deliver = AV.Object.extend('Deliver')
 const create = function*() {
 	let data = this.request.body
 	if(!data.phoneNumber || !data.name){
-		throw new APIError('incomplete infomation','请完整填写信息')
+		throw new APIError('incomplete information','请完整填写信息')
 		return
 	}
 	

@@ -15,7 +15,15 @@ const app = koa()
 app.keys = ['secret-session', 'gas-delivery']
 
 app.use(logger())
-app.use(session(app))
+// session
+const CONFIG = {
+  key: 'koa:sess', /** (string) cookie key (default is koa:sess) */
+  maxAge: 7*24*3600*1000, /** (number) maxAge in ms (default is 1 days) */
+  overwrite: true, /** (boolean) can overwrite or not (default true) */
+  httpOnly: true, /** (boolean) httpOnly or not (default true) */
+  signed: true, /** (boolean) signed or not (default true) */
+};
+app.use(session(CONFIG, app))
 app.use(bodyParser())
 // 超时处理
 app.use(timeout)
@@ -35,6 +43,8 @@ app.use(AV.Cloud.CookieSession({
 
 // error handle middleware
 app.use(function*(next) {
+  if (this.path === '/favicon.ico') return
+
   try {
     yield next
   } catch(error) {

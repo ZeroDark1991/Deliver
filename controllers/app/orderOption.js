@@ -4,6 +4,7 @@ const timeSlot = require('../../config/timeSlot')
 
 const orderOption = function*() {
   this.body = {
+  	success: true,
   	district,
   	timeSlot
   }

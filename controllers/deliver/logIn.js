@@ -7,7 +7,7 @@ const Deliver = AV.Object.extend('Deliver')
 const login = function*() {
   let data = this.request.body
   if(!data.phoneNumber || !data.passWord) {
-  	throw new APIError('incomplete infomation', '请完整填写信息')
+  	throw new APIError('incomplete information', '请完整填写信息')
 		return
   }
 

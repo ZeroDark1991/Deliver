@@ -5,8 +5,14 @@ const APIError = require('./apiError')
 const App = require('../controllers/app/')
 const User = require('../controllers/user/')
 const Deliver = require('../controllers/deliver/')
+const Order = require('../controllers/order/')
 
+// global
 router.get('/app/orderOption', App.orderOption)
+
+// order
+router.post('/order/create', Order.create)
+router.get('/order/list', Order.list)
 
 // deliver
 router.post('/d/create', Deliver.create)
@@ -15,7 +21,7 @@ router.post('/d/signOut', Deliver.signOut)
 
 // user
 router.post('/u/logIn', User.logIn)
-router.get('/u/verifyCode', User.verifyCode)
+router.post('/u/verifyCode', User.verifyCode)
 
 // 404 not found
 router.all('*', function*() {
