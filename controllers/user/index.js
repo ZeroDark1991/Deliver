@@ -4,7 +4,7 @@ const APIError = require('../../config/apiError')
 
 exports.logIn = function*() {
   let req = this.request.body
-  if(!req.phoneNumber || !req.verifyCode){
+  if(!req.phoneNumber || !req.verifyCode) {
   	throw new APIError('login failed', '请完整填写登录信息')
   	return
   }

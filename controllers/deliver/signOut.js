@@ -1,4 +1,5 @@
 'use strict'
+const APIError = require('../../config/apiError')
 
 module.exports = function*() {
 	if(this.session.deliverId){
@@ -8,9 +9,7 @@ module.exports = function*() {
 			message: '成功退出登录'
 		}
 	}else {
-		this.body = {
-			success: false,
-			message: '当前已是未登录状态'
-		}
+		throw new APIError('session lost', '当前是未登录状态')
+		return
 	}
 }

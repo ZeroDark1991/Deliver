@@ -4,7 +4,7 @@ const AV = require('leanengine')
 const APIError = require('../../config/apiError')
 const Deliver = AV.Object.extend('Deliver')
 
-const login = function*() {
+const logIn = function*() {
   let data = this.request.body
   if(!data.phoneNumber || !data.passWord) {
   	throw new APIError('incomplete information', '请完整填写信息')
@@ -21,7 +21,7 @@ const login = function*() {
   	return
   }
 
-  if(result.get('passWord') === data.passWord) {
+  if(result && result.get('passWord') === data.passWord) {
   	this.session.deliverId = result.id
   	this.body = {
   		success: true,
@@ -35,4 +35,4 @@ const login = function*() {
   }
 }
 
-module.exports = login
+module.exports = logIn

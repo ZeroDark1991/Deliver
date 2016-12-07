@@ -2,3 +2,5 @@
 .avoscloud/
 .leancloud/
 node_modules/
+user_app/
+admin_app/
