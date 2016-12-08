@@ -6,14 +6,12 @@ const Order = AV.Object.extend('Order')
 
 const create = function*() {
 	let data = this.request.body
-	console.log(data)
   if(!data.address || !data.areaCode || !data.timeSlot){
   	throw new APIError('incomplete information', '请完整填写信息')
   	return
   }
   // 验证用户是否登录
   let currentUser = AV.User.current()
-  console.log(currentUser)
   if (!currentUser) {
   	throw new APIError('user unlogged in', '用户未登录')
   	return

@@ -30,7 +30,7 @@ const deliverList = function*() {
       throw new APIError('session lost', 'session 失效，重新登录')
       return
     }
-    console.log(this.session.deliverId)
+
     let query = new AV.Query('Order')
     switch(params.type) {
   	  case '1':
