@@ -21,7 +21,8 @@ export default {
       VerifyCode: '438811',
       Address: 'xx街道xx号',
       TimeSlot: '9:00',
-      AreaCode: '0'
+      AreaCode: '0',
+      test: 'test'
     }
   },
   methods: {
