@@ -25,7 +25,12 @@ const logIn = function*() {
   	this.session.deliverId = result.id
   	this.body = {
   		success: true,
-  		message: '登录成功'
+  		message: '登录成功',
+      deliver: {
+        id: result.id,
+        phoneNumber: result.get('phoneNumber'),
+        name: result.name
+      }
   	}
   } else {
   	this.body = {

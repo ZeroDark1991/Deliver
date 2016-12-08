@@ -18,7 +18,7 @@ app.use(logger())
 // session
 const CONFIG = {
   key: 'koa:sess', /** (string) cookie key (default is koa:sess) */
-  maxAge: 7*24*3600*1000, /** (number) maxAge in ms (default is 1 days) */
+  maxAge: 365*24*3600*1000, /** (number) maxAge in ms (default is 1 days) */
   overwrite: true, /** (boolean) can overwrite or not (default true) */
   httpOnly: true, /** (boolean) httpOnly or not (default true) */
   signed: true, /** (boolean) signed or not (default true) */

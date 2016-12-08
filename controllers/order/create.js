@@ -16,6 +16,7 @@ const create = function*() {
   	throw new APIError('user unlogged in', '用户未登录')
   	return
   }
+
   let order = new Order()
   order.set('address', data.address)
   order.set('timeSlot', data.timeSlot)
@@ -23,12 +24,13 @@ const create = function*() {
   order.set('status', 0)
 
   let user = AV.Object.createWithoutData('_User', currentUser.id)
+  // 订单关联用户
   order.set('user', user)
 
   try {
-    order.save()
+    yield order.save()
   } catch(e) {
-    throw new APIError('create order failed', '生成订单失败')
+    throw new APIError('create order failed', e.message)
     return
   }
 

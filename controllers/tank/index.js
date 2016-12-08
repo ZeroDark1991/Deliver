@@ -1,5 +1,7 @@
 'use strict'
 
-module.exports = {
+const create = require('./create')
 
+module.exports = {
+  create
 }
