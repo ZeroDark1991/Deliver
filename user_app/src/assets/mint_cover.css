@@ -1,0 +1,48 @@
+.mint-header{
+	background-color: #383a40;
+	color:#ffffff;
+	height: 3.2rem;
+	padding-top:1rem;
+}
+.mint-header .mint-button{
+	width: 100%;
+	text-align: left;
+}
+.mint-header-title{
+	font-size: .8rem;
+}
+
+
+.mint-tabbar .mint-tab-item{
+	height: 2.5rem;
+}
+.mint-tabbar .mint-tab-item .mint-tab-item-label{
+	line-height: 1.8rem;
+}
+.mint-tabbar .iconfont{
+	vertical-align: middle;
+}
+.mint-navbar .mint-tab-item.is-selected{
+	border-bottom: 3px solid #f56f1c;
+	color: #f56f1c;
+}
+.mint-tabbar>.mint-tab-item.is-selected{
+	color: #ff6632;
+	background-color: #fff; 
+}
+.mint-tab-item-label{
+	font-size: .7rem
+}
+a:active, a:hover{
+	text-decoration: none;
+}
+
+
+.mint-toast{
+	z-index: 3000;
+}
+.invoice-cell .mint-cell-wrapper .mint-cell-title{
+    -webkit-box-flex: 0;
+    flex: none;
+    width: 105px;
+}
