@@ -45,6 +45,7 @@ const deliverList = function*() {
     }
     let deliver = AV.Object.createWithoutData('Deliver', this.session.deliverId)
     query.equalTo('deliver', deliver)
+    query.ascending('timeSlot') // 按预约时间升序
     query.select(['address', 'status', 'timeSlot'])
 
     try {
@@ -60,8 +61,8 @@ const deliverList = function*() {
 
   } else if (params.type == '0') {
     // 查询未接订单 可传入areaCodes 指明筛选的区域
-    let areaCodes = params.areaCodes.split('-')
-    if( _.isArray(areaCodes) && areaCodes.length > 0 ){
+    let areaCodes = params.areaCodes && params.areaCodes.split('-')
+    if( areaCodes && areaCodes.length > 0 ){
       // 数组存在
       let options = areaCodes.map(item => {
         let query = new AV.Query('Order')
@@ -82,6 +83,7 @@ const deliverList = function*() {
       // 默认全选
       let query = new AV.Query('Order')
       query.lessThanOrEqualTo('status', 0)
+      query.select(['address', 'status', 'timeSlot'])
       try {
         result = yield query.find()
       } catch(e) {
@@ -96,10 +98,9 @@ const deliverList = function*() {
     }    
 
   } else {
-    throw new APIError('incomplete information', '请传入正确的参数')
+    throw new APIError('Incompelete Information', '请传入正确的参数')
     return
   }
-
 }
 
 module.exports = deliverList

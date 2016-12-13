@@ -1,8 +1,8 @@
 'use strict'
-const orderOption = require('./orderOption')
+const timeSlots = require('./timeSlots')
 const areaCodes = require('./areaCodes')
 
 module.exports = {
-  orderOption,
+  timeSlots,
   areaCodes
 }

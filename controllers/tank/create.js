@@ -8,7 +8,7 @@ const create = function*() {
   const tank = new Tank()
   const data = this.request.body
   if(!data.signId) {
-  	throw new APIError('incomplete information', '请传入合法ID')
+  	throw new APIError('Incompelete Information', '请传入合法ID')
   	return
   }
   let check = new AV.Query('Tank')

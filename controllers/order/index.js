@@ -1,16 +1,19 @@
 'use strict'
-const deliverList = require('./deliverList')
 const create = require('./create')
 const cancel = require('./cancel')
 const confirm = require('./confirm')
 const recieveTank = require('./recieveTank')
 const finish = require('./finish')
 
+const userList = require('./userList')
+const deliverList = require('./deliverList')
+
 module.exports = {
 	create,
 	cancel,
 	confirm,
-	deliverList,
 	recieveTank,
-	finish
+	finish,
+	userList,
+	deliverList
 }

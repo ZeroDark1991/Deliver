@@ -12,7 +12,7 @@ const confirm = function*() {
 
   // 校验
   if(!data.id) {
-  	throw new APIError('incomplete information', '请传入订单ID')
+  	throw new APIError('Incompelete Information', '请传入订单ID')
   	return
   }
 
