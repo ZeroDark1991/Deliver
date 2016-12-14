@@ -4,21 +4,21 @@
 			<mt-button icon="back" slot="left" @click="back('/center')"></mt-button>
 		</mt-header>
 		<div class="container-top">
-			<mt-cell v-for="(item, index) in addressList" class="address-list" >
+			<mt-cell class="address-list" v-if="addressInfo">
 				<div slot="title" class="address-wrap">
 					<div class="flex-middle">
-						<div style="padding-right: 1rem;">{{item.name}}</div>
-						<div>{{item.tel}}</div>
+						<div style="padding-right: 1rem;">{{addressInfo.username}}</div>
+						<div>{{addressInfo.mobilePhoneNumber}}</div>
 					</div>
 					<div class="flex-middle text-small" style="margin-top: .5rem;">
-						<div class="one-line">{{item.street}}{{item.detail_address}}</div>
+						<div class="one-line">{{addressInfo.address}}</div>
 					</div>
 				</div>
-				<div class="flex-middle flex-right text-large edit-btn" @click="editAddress(index)">
+				<div class="flex-middle flex-right text-large edit-btn" @click="editAddress()">
 					<i class="iconfont">&#xe63d;</i>
 				</div>
 			</mt-cell>
-			<div class="add-btn flex-middle flex-center" v-if="addressList.lenght==0">
+			<div class="add-btn flex-middle flex-center" v-if="!addressInfo">
 				<i class="unit-0 iconfont" @click="newAddress()">&#xe634;</i>
 			</div>
 		</div>
@@ -29,9 +29,8 @@
 				<mt-button icon="back" slot="left" @click="popupVisible = false"></mt-button>
 			</mt-header>
 			<div class="container-top">
-				<mt-field label="用户名" placeholder="请输入收货人姓名" v-model="editAddressData.name"></mt-field>
-				<mt-field label="手机号" placeholder="请输入手机号" type="tel" v-model="editAddressData.tel"></mt-field>
-				<mt-cell class="invoice-cell" title="街道" is-link @click.native="addressPicker=true" :value="editAddressData.street"></mt-cell>
+				<!-- <mt-field label="昵称" placeholder="（可选）" v-model="editAddressData.name"></mt-field> -->
+				<mt-cell class="invoice-cell" title="街道" is-link @click.native="addressPicker = true" :value="editAddressData.street"></mt-cell>
 				<mt-field label="详细地址" placeholder="请输入详细地址" type="textarea" rows="2" v-model="editAddressData.detail_address"></mt-field>
 			</div>
 			<mt-button size="large" class="bottom-btn" @click="saveAddress()">保存</mt-button>
@@ -47,24 +46,20 @@
 
 <script type="text/javascript">
 import agent from '../util/agent'
+import store from '../../vuex/store'
 export default {
 	data () {
 		return {
-			addressList:[
-				{name:'张三1',tel:'13511111111',street:'白杨街道1',detail_address:'皮市巷18弄'},
-				{name:'张三2',tel:'13522222222',street:'白杨街道2',detail_address:'皮市巷28弄'},
-				{name:'张三3',tel:'13533333333',street:'白杨街道3',detail_address:'皮市巷38弄'},
-				{name:'张三4',tel:'13544444444',street:'白杨街道4',detail_address:'皮市巷48弄'},
-				{name:'张三5',tel:'13555555555',street:'白杨街道5',detail_address:'皮市巷58弄'}
-			],
+			store,
+			areaCodeList: [],
 			popupVisible:false,
 			addressPicker:false,
 			editAddressData:{
-				name:'',
-				tel:'',
 				street:'',
+				areaCode:'',
 				detail_address:''
 			},
+			district:[],
 			slots: [
 				{
 					flex: 1,
@@ -77,6 +72,11 @@ export default {
 			
 		}
 	},
+	computed: {
+		addressInfo () {
+			return store.state.userInfo
+		}
+	},
   	methods:{
 		go(link, param)  {
 			this.$transfer.go(self, link)
@@ -85,46 +85,67 @@ export default {
 			this.$transfer.back(self, link)
 		},
 		newAddress() {
+			this.getAreaCodes()
 			this.popupVisible = true
-			this.editAddressData.name = ''
-			this.editAddressData.tel = ''
 			this.editAddressData.street = ''
 			this.editAddressData.detail_address = ''
 		},
-		editAddress(index) {
+		editAddress() {
+			this.getAreaCodes()
 			this.popupVisible = true
-			this.editAddressData.name = this.addressList[index].name
-			this.editAddressData.tel = this.addressList[index].tel
-			this.editAddressData.street = this.addressList[index].street
-			this.editAddressData.detail_address = this.addressList[index].detail_address
 		},
 		saveAddress() {
-			if(!/^(13[0-9]|14[0-9]|15[0-9]|18[0-9])\d{8}$/i.test(this.editAddressData.tel)){ 
-				this.$Toast('请正确输入手机号')
-			}else {
-				this.$messagebox('提示', '测试---保存成功');
+			let self = this
+			let s = {
+				'address': self.editAddressData.street+self.editAddressData.detail_address,
+				'areaCode': self.editAddressData.areaCode+''
 			}
+			console.log(s)
+			agent.post('/api/u/setAddress', s)
+			.then(res => {
+				console.log(res)
+				if (res.success==true) {
+					self.go('/center')
+				}
+			})
 		},
 		onValuesChange(picker, values) {
+			let index = this.slots[0].values.indexOf(values[0])
+			this.editAddressData.areaCode = this.areaCodeList[index]
 			this.editAddressData.street = values[0]
 		},
 		closePicker() {
 			this.addressPicker=false
 		},
-		getData() {
-			let self = this
-			agent.get('/api/u/info', '')
+		getAreaCodes() {
+			let self = this 
+			agent.get('/api/app/areaCodes', '')
 			.then(res => {
 				console.log(res)
-				if (res.success==true) {
-					
+				if (res.success == true) {
+					let areaCodeList = []
+					self.district = res.district
+					self.slots[0].values = self.district.map( item => {
+						areaCodeList.push(item.areaCode)
+						return item.name
+					})
+					self.areaCodeList =  areaCodeList
+					self.district.forEach( function(item, index) {
+						if (item.areaCode == self.addressInfo.areaCode) {
+							self.editAddressData.street = item.name
+							self.editAddressData.areaCode = item.areaCode
+							self.editAddressData.detail_address = 
+							self.addressInfo.address.split(item.name)[1]
+							return
+						}
+					});
 				}
 			})
-		}
+		},
 	},
 	beforeRouteEnter (to, from, next) {
 		next(vm => {
-			vm.getData()
+			
 		})
 	}
 }
@@ -171,6 +192,6 @@ export default {
 }
 .add-btn i{
 	font-size: 3rem;
-	color: #ff6632;
+	color: red;
 }
 </style>

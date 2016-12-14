@@ -59,12 +59,16 @@ const router = new VueRouter({
       component: require('./views/order_list.vue')
     },
     {
-      path: '/address_list',
-      component: require('./views/address_list.vue')
+      path: '/myAddress',
+      component: require('./views/myAddress.vue')
     },
     {
       path: '/commit_order',
       component: require('./views/commit_order.vue')
+    },
+    {
+      path: '/myTank',
+      component: require('./views/myTank.vue')
     }
   ]
 })

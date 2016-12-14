@@ -3,16 +3,17 @@
 	<!-- Header -->
 		<mt-header fixed title="首页"></mt-header>
 		<div class="container-top">
-			<mt-swipe :auto="4000" style="height: 200px;">
+<!-- 			<mt-swipe :auto="4000" style="height: 200px;">
 				<mt-swipe-item style="background-color: red;">1</mt-swipe-item>
 				<mt-swipe-item style="background-color: yellow;">2</mt-swipe-item>
 				<mt-swipe-item style="background-color: blue;">3</mt-swipe-item>
-			</mt-swipe>
+			</mt-swipe> -->
 			<mt-cell @click.native="go('/commit_order')">
 			<div slot="title">
 					<div class="flex-middle">
-						<div class="media">
-							<img :src="logo">
+						<div class="media flex-center">
+							<!-- <img :src="logo"> -->
+							<i class="iconfont">&#xe732;</i>
 						</div>
 						<div>预约上门充煤气</div>
 					</div>
@@ -21,8 +22,9 @@
 			<mt-cell @click.native="go('/order_list', '0')">
 				<div slot="title">
 					<div class="flex-middle">
-						<div class="media">
-							<img :src="logo">
+						<div class="media flex-center">
+							<!-- <img :src="logo"> -->
+							<i class="iconfont">&#xe603;</i>
 						</div>
 						<div>当前订单状态</div>
 					</div>
@@ -46,11 +48,16 @@
 <script type="text/javascript">
 import agent from '../util/agent'
 import logo from '../assets/logo.png'
+import store from '../../vuex/store'
 export default {
 	data () {
 		return {
 			logo:logo,
-			selected: 'home'
+			selected: 'home',
+			userInfo: {
+				address:'',
+				areaCode:'',
+			}
 		}
 	},
 	created() {
@@ -64,11 +71,25 @@ export default {
 		back (link, param) {
 			this.$transfer.back(self, link)
 		},
+		getData() {
+			let self = this
+			agent.get('/api/u/info', '')
+			.then(res => {
+				console.log(res)
+				if (res.success==true) {
+					self.userInfo.address = res.user.address
+					self.userInfo.areaCode = res.user.areaCode
+					self.userInfo.mobilePhoneNumber = res.user.mobilePhoneNumber
+					self.userInfo.username = res.user.username
+					store.commit('saveUserInfo',self.userInfo)
+				}
+			})
+		}
 		
 	},
 	beforeRouteEnter (to, from, next) {
 		next(vm => {
-			console.log('我进来了')
+			vm.getData()
 		})
 	}
 	
@@ -78,7 +99,7 @@ export default {
 <style scoped lang="less">
 .media{
 	width: 2.5rem;
-	margin: .5rem 1rem .5rem 0;
+	// margin-right: 1rem;
 	img{
 		width: 100%;
 	}

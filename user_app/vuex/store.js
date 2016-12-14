@@ -7,12 +7,16 @@ Vue.use(Vuex)
 const store = new Vuex.Store({
   state: {
     transitionName: 'fade',
-    isNotLogin: true
+    isNotLogin: true,
+    userInfo: null
   },
   mutations: {
     nextPage: state => state.transitionName = 'slide-left',
     backPage: state => state.transitionName = 'slide-right',
-    checkLogin: state => state.isNotLogin = false
+    checkLogin: state => state.isNotLogin = false,
+    saveUserInfo: (state, user) => (
+    	state.userInfo = user
+    ),
   }
 })
 

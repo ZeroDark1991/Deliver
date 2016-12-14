@@ -2,11 +2,10 @@
 	<div class="page">
 		<mt-header fixed title="个人中心"></mt-header>
 		<div class="container-top">
-			<mt-cell is-link title="我的订单" value="" @click.native="go('/order_list','1')"></mt-cell>
-			<mt-cell is-link title="收货地址" value="" @click.native="go('/address_list')"></mt-cell>
+			<mt-cell is-link title="我的订单" class="text-large" @click.native="go('/order_list','1')"></mt-cell>
+			<mt-cell is-link title="收货地址" class="text-large" @click.native="go('/myAddress')"></mt-cell>
+			<mt-cell is-link title="我的气罐" class="text-large" @click.native="go('/myTank')"></mt-cell>
 		</div>
-
-
 		<mt-tabbar v-model="selected">
 			<mt-tab-item id="home" @click.native="back('/home')">
 				<span class="iconfont">&#xe600;</span>
@@ -34,16 +33,6 @@ export default {
 		},
 		back(link, param)  {
 			this.$transfer.back(self, link)
-		},
-		getData() {
-			let self = this
-			agent.get('/api/u/info', '')
-			.then(res => {
-				console.log(res)
-				if (res.success==true) {
-					
-				}
-			})
 		}
 	}
 }

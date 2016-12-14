@@ -37,7 +37,6 @@ a:active, a:hover{
 	text-decoration: none;
 }
 
-
 .mint-toast{
 	z-index: 3000;
 }
@@ -45,4 +44,10 @@ a:active, a:hover{
     -webkit-box-flex: 0;
     flex: none;
     width: 105px;
+}
+.mint-cell:first-child .mint-cell-wrapper{
+	padding: .5rem;
+}
+.mint-cell:not(:first-child) .mint-cell-wrapper .mint-cell-title{
+	padding: .5rem 0;
 }
