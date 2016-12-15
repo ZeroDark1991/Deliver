@@ -24,7 +24,7 @@
 					</div>
 				</div>
 			</mt-cell>
-			<div class="tip" v-if="list.lenght==0">目前暂无订单</div>
+			<div class="tip" v-if="list.length==0">目前暂无订单</div>
 
 		</div>
 
@@ -33,15 +33,26 @@
 
 <script type="text/javascript">
 import agent from '../util/agent'
+import store from '../../vuex/store'
 export default {
 	data () {
 		return {
+			store,
 			list:[],
 			type:'',
 			backPath:'',
 			deliver: null,
-			loadOk:false
 		}
+	},
+	computed: {
+		loadOk () {
+			console.log(store.state.currentOrder.length==0)
+			if (this.type == 0) {
+				return store.state.currentOrder.length==0 ? false : true
+			}else{
+				return store.state.orderList.length==0 ? false : true
+			}
+		},
 	},
   	methods:{
 		go(link, param)  {
@@ -75,9 +86,11 @@ export default {
 			}
 			return state
 		},
-		getData () {
+		getCurrentOrder () {
 			let self = this
-			self.$Indicator.open();
+			if (store.state.currentOrder.length == 0) {
+				self.$Indicator.open();
+			}
 			agent.get('/api/order/userList', {
 				type: 0
 			})
@@ -85,63 +98,74 @@ export default {
 				self.$Indicator.close();
 				console.log(res)
 				let data = res
-				if (data.success==true) {
-					if (data.list) {
-						let buffer = {
-							address: data.list[0].address,
-							status: self.stringStatus(data.list[0].status),
-							timeSlot: data.list[0].timeSlot,
-							// objectId: item.objectId
-						}
-						if (data.list[0].deliver) {
-							self.getDeliver(data.list[0].objectId)
-						}else{
-							self.loadOk = true
-						}
-						self.list.push(buffer)
+				if (!res.success) {self.$Toast(res.message);return}
+				if (data.list) {
+					let arr = []
+					let buffer = {
+						address: data.list[0].address,
+						status: self.stringStatus(data.list[0].status),
+						timeSlot: data.list[0].timeSlot,
+						// objectId: item.objectId
 					}
+					if (data.list[0].deliver) {
+						self.getDeliver(data.list[0].objectId)
+					}else{
+						alert(123)
+						self.loadOk = true
+					}
+					arr.push(buffer)
+					self.list = arr 
+					console.log(self.list)
+					store.commit('saveCurrentOrder', self.list)
 				}
 			})
 		},
-		getData2 () {
+		getOrderList() {
 			let self = this
-			self.$Indicator.open();
+			if (store.state.orderList.length == 0) {
+				self.$Indicator.open();
+			}
 			agent.get('/api/order/userList', {
 				type: 1
 			})
 			.then(res => {
 				self.$Indicator.close();
 				console.log(res)
-				if (res.success==true) {
-					if (res.list) {
-						self.list = res.list.map(item => {
-							return {
-								address: item.address,
-								status: self.stringStatus(item.status),
-								timeSlot: item.timeSlot,
-								createAt: self.$Moment(res.list[0].createdAt).format("YYYY-MM-DD HH:mm:ss")
-								// objectId: item.objectId
-							}
-						})
-					}
-					self.loadOk = true
+				if (!res.success) {self.$Toast(res.message);return}
+				if (res.list) {
+					self.list = res.list.map(item => {
+						return {
+							address: item.address,
+							status: self.stringStatus(item.status),
+							timeSlot: item.timeSlot,
+							createAt: self.$Moment(res.list[0].createdAt).format("YYYY-MM-DD HH:mm:ss")
+							// objectId: item.objectId
+						}
+					})
+					store.commit('saveOrderList', self.list)
 				}
+				self.loadOk = true
 			})
 		},
 		getDeliver(id) {
 			console.log(id)
 			let self = this
+			console.log(self.loadOk)
+			if (store.state.currentOrder.length == 0) {
+				self.$Indicator.open();
+			}
 			agent.get('/api/d/info', {
 				id: '58451ae60ce46300577fb0d4'//id
 			})
 			.then(res => {
+				self.$Indicator.close();
 				console.log(res)
-				if (res.success==true) {
-					self.deliver  = {
-						name: res.info.name,
-						phoneNumber: res.info.phoneNumber
-					}
+				if (!res.success) {self.$Toast(res.message);return}
+				self.deliver  = {
+					name: res.info.name,
+					phoneNumber: res.info.phoneNumber
 				}
+				store.commit('saveDeliver', self.deliver)
 				self.loadOk = true
 			})
 		}
@@ -151,15 +175,24 @@ export default {
 			vm.type = to.params.type
 			if (vm.type == 1) {
 				vm.backPath = '/center'
-				vm.getData2()
+				console.log(store.state.orderList)
+				if (store.state.orderList) {
+					vm.list = store.state.orderList
+				}
+				vm.getOrderList()
 			}else if (vm.type == 0) {
 				vm.backPath = '/home'
-				vm.getData()
+				if (store.state.currentOrder.length != 0) {
+					vm.list = store.state.currentOrder
+				}
+				if (store.state.deliver) {
+					vm.deliver = store.state.deliver
+				}
+				vm.getCurrentOrder()
 			}
 		})
 	},
 	beforeRouteLeave (to, from, next) {
-		this.list = []
 		this.type = ''
 		this.deliver = null
 		this.loadOk = false

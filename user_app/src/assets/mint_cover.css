@@ -22,6 +22,10 @@
 .mint-tabbar .iconfont{
 	vertical-align: middle;
 }
+.mint-tabbar .mint-tab-item{
+	color: #000;
+}
+
 .mint-navbar .mint-tab-item.is-selected{
 	border-bottom: 3px solid #f56f1c;
 	color: #f56f1c;

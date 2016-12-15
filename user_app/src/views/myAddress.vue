@@ -66,10 +66,8 @@ export default {
 					values: ['白杨街道1','白杨街道2','白杨街道3','白杨街道4','白杨街道5'],
 					textAlign: 'center',
 					className: 'slot1'
-
 				}
 			]
-			
 		}
 	},
 	computed: {
@@ -104,9 +102,11 @@ export default {
 			agent.post('/api/u/setAddress', s)
 			.then(res => {
 				console.log(res)
-				if (res.success==true) {
-					self.go('/center')
-				}
+				if (!res.success) {self.$Toast(res.message);return}
+				self.addressInfo.address = self.editAddressData.street+self.editAddressData.detail_address
+				self.addressInfo.areaCode = self.editAddressData.areaCode+''
+				store.commit('saveUserInfo',self.addressInfo)
+				self.go('/center')
 			})
 		},
 		onValuesChange(picker, values) {
@@ -122,24 +122,23 @@ export default {
 			agent.get('/api/app/areaCodes', '')
 			.then(res => {
 				console.log(res)
-				if (res.success == true) {
-					let areaCodeList = []
-					self.district = res.district
-					self.slots[0].values = self.district.map( item => {
-						areaCodeList.push(item.areaCode)
-						return item.name
-					})
-					self.areaCodeList =  areaCodeList
-					self.district.forEach( function(item, index) {
-						if (item.areaCode == self.addressInfo.areaCode) {
-							self.editAddressData.street = item.name
-							self.editAddressData.areaCode = item.areaCode
-							self.editAddressData.detail_address = 
-							self.addressInfo.address.split(item.name)[1]
-							return
-						}
-					});
-				}
+				if (!res.success) {self.$Toast(res.message);return}
+				let areaCodeList = []
+				self.district = res.district
+				self.slots[0].values = self.district.map( item => {
+					areaCodeList.push(item.areaCode)
+					return item.name
+				})
+				self.areaCodeList =  areaCodeList
+				self.district.forEach( function(item, index) {
+					if (item.areaCode == self.addressInfo.areaCode) {
+						self.editAddressData.street = item.name
+						self.editAddressData.areaCode = item.areaCode
+						self.editAddressData.detail_address = 
+						self.addressInfo.address.split(item.name)[1]
+						return
+					}
+				});
 			})
 		},
 	},

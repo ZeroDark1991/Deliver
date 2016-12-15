@@ -1,6 +1,6 @@
 <template>
 	<div class="page">
-		<mt-header fixed title="个人中心">
+		<mt-header fixed title="当前煤气罐">
 			<mt-button icon="back" slot="left" @click="back('/center')"></mt-button>
 		</mt-header>
 		<div class="container-top">
@@ -31,7 +31,6 @@ export default {
 				console.log(res)
 				if (!res.success) {self.$Toast(res.message);return}
 				self.tank = res.tank
-
 			})
 		}
 	},

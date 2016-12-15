@@ -7,7 +7,7 @@
 			<mt-cell is-link title="我的气罐" class="text-large" @click.native="go('/myTank')"></mt-cell>
 		</div>
 		<mt-tabbar v-model="selected">
-			<mt-tab-item id="home" @click.native="back('/home')">
+			<mt-tab-item id="home" @click.native="$router.replace('/home')">
 				<span class="iconfont">&#xe600;</span>
 				<span>首页</span>
 			</mt-tab-item>

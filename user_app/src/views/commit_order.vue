@@ -75,23 +75,21 @@ export default {
 			.then(res => {
 				self.$Indicator.close();
 				console.log(res)
-				if (res.success == true) {
-					let date = self.$Moment(new Date()).format("HH")
-					let arr = []
-					res.timeSlots.forEach( function(item, index) {
-						let timeSlot = item.split(' - ')[1].split(':')[0]
-						if (timeSlot > date) {
-							arr.push(item)
-						}
-					})
-					self.slots[0].values = arr
-					if (arr.length==0) {
-						self.isLater = true
-						self.userInfo.timeSlot = '超过预约时间'
+				if (!res.success) {self.$Toast(res.message);return}
+				let date = self.$Moment(new Date()).format("HH")
+				let arr = []
+				res.timeSlots.forEach( function(item, index) {
+					let timeSlot = item.split(' - ')[1].split(':')[0]
+					if (timeSlot > date) {
+						arr.push(item)
 					}
-					self.loadOk = true
-
+				})
+				self.slots[0].values = arr
+				if (arr.length==0) {
+					self.isLater = true
+					self.userInfo.timeSlot = '超过预约时间'
 				}
+				self.loadOk = true
 			})
 		},
 		submitOrder() {
@@ -99,9 +97,8 @@ export default {
 			agent.post('/api/order/create', self.userInfo)
 			.then(res => {
 				console.log(res)
-				if (res.success==true) {
-					self.go('/order_list','0')
-				}
+				if (!res.success) {self.$Toast(res.message);return}
+				self.go('/order_list','0')
 			})
 		},
 			
