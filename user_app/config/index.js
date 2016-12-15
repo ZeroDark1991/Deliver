@@ -23,7 +23,8 @@ module.exports = {
     assetsPublicPath: '/',
     proxyTable: {
         '/api': {
-            target: 'http://127.0.0.1:3000',
+            // target: 'http://127.0.0.1:3000',
+            target: 'http://deliver.leanapp.cn',
             ignorePath: false, // true时删除代理时请求中的path
             secure: false,
             changeOrigin: true // 修改掉前端页面host 防止出现跨域现象
