@@ -1,15 +1,14 @@
 .mint-header{
 	background-color: #383a40;
 	color:#ffffff;
-	height: 3.2rem;
-	padding-top:1rem;
+	height: 2.2rem;
 }
 .mint-header .mint-button{
 	width: 100%;
 	text-align: left;
 }
 .mint-header-title{
-	font-size: .8rem;
+	font-size: 1rem;
 }
 
 
@@ -26,16 +25,19 @@
 	color: #000;
 }
 
-.mint-navbar .mint-tab-item.is-selected{
-	border-bottom: 3px solid #f56f1c;
-	color: #f56f1c;
+.mint-navbar .mint-tab-item{
+	color: #000;
 }
-.mint-tabbar>.mint-tab-item.is-selected{
-	color: #ff6632;
-	background-color: #fff; 
+.mint-navbar .mint-tab-item.is-selected{
+	border-bottom: 3px solid #009BF7;
+	color: #009BF7;
 }
 .mint-tab-item-label{
-	font-size: .7rem
+	font-size: .8rem;
+}
+.mint-tabbar>.mint-tab-item.is-selected{
+	color: #009BF7;
+	background-color: #fff; 
 }
 a:active, a:hover{
 	text-decoration: none;

@@ -40,7 +40,7 @@
 				<span class="iconfont">&#xe600;</span>
 				<span>首页</span>
 			</mt-tab-item>
-			<mt-tab-item id="center" @click.native="$router.replace('/center')">
+			<mt-tab-item id="center" @click.native="tabChange('/center')">
 				<span class="iconfont">&#xe606;</span>
 				<span>个人中心</span>
 			</mt-tab-item>
@@ -64,6 +64,9 @@ export default {
 		}
 	},
   	methods:{
+  		tabChange(link){
+  			this.$transfer.noTransfer(self, link)
+  		},
 		go (link, param) {
 			this.$transfer.go(self, link, param)
 			// this.$router.replace(link)
@@ -108,7 +111,7 @@ export default {
 .circle{
 	width: 3.5rem;
 	height: 3.5rem;
-	background-color: red;
+	background-color: #009BF7;
 	border-radius: 50%;
 	i{
 		font-size: 1.2rem;

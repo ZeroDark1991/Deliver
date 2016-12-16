@@ -6,11 +6,11 @@
 		<div class="container-top">
 			<mt-cell class="address-list" v-if="addressInfo">
 				<div slot="title" class="address-wrap">
-					<div class="flex-middle">
+					<div class="flex-middle text-extra">
 						<div style="padding-right: 1rem;">{{addressInfo.username}}</div>
 						<div>{{addressInfo.mobilePhoneNumber}}</div>
 					</div>
-					<div class="flex-middle text-small" style="margin-top: .5rem;">
+					<div class="flex-middle" style="margin-top: .5rem;">
 						<div class="one-line">{{addressInfo.address}}</div>
 					</div>
 				</div>
@@ -177,7 +177,7 @@ export default {
 	}
 }
 .address-list{
-	min-height: 3rem;
+	min-height: 4rem;
 	.address-wrap{
 		width: 85%;
 		max-width: 250px;

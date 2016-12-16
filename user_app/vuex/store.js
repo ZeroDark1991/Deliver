@@ -9,26 +9,24 @@ const store = new Vuex.Store({
     transitionName: 'fade',
     isNotLogin: true,
     userInfo: null,
-    currentOrder:[],
+    currentOrder:null,
     orderList:[],
-    deliver: null
   },
   mutations: {
     nextPage: state => state.transitionName = 'slide-left',
     backPage: state => state.transitionName = 'slide-right',
+    noTransfer: state => state.transitionName = '',
     loginSuccess: state => state.isNotLogin = false,
-    saveUserInfo: (state, user) => (
-    	state.userInfo = user
-    ),
-    saveCurrentOrder: (state, array) => (
-    	state.currentOrder = array
-    ),
-    saveOrderList: (state, array) => (
+    notLogin: state => state.isNotLogin = true,
+    saveUserInfo: (state, json) => {
+    	state.userInfo = json
+    },
+    saveCurrentOrder: (state, json) => {
+    	state.currentOrder = json
+    },
+    saveOrderList: (state, array) => {
     	state.orderList = array
-    ),
-    saveDeliver: (state, json) => (
-    	state.deliver = json
-    ),
+    },
   }
 })
 

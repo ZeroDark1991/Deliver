@@ -21,6 +21,12 @@ export default class Transfer{
 		self.$router.replace(path)
 	}
 
+	noTransfer(self, link){
+		store.commit('noTransfer')
+		this.closeToasts()
+		self.$router.replace(link)
+	}
+
 	closeToasts(){
 		let toasts = document.querySelectorAll('.mint-toast')
 		if (toasts.length >0) Array.from(toasts).forEach(item => item.parentNode.removeChild(item))

@@ -2,6 +2,8 @@
 
 import Promise from 'promise-polyfill'
 import setAsap from 'setasap'
+import store from '../../vuex/store'
+import { Toast } from 'mint-ui'
 Promise._immediateFn = setAsap
 
 import 'whatwg-fetch'
@@ -12,6 +14,8 @@ export default {
     return fetch(queryParser(url, query), config._get)
       .then(checkStatus)
       .then(jsonParser)
+      .then(checkSuccess)
+      .catch(errorHandler)
   },
   post (url, body) {
     return fetch(url, config._post(body))
@@ -53,6 +57,7 @@ const checkStatus = function (response) {
 
 const jsonParser = function (response) {
   return response.json()
+
 }
 
 const queryParser = function (url, query) {
@@ -60,4 +65,25 @@ const queryParser = function (url, query) {
 
   let parsedQuery = Object.keys(query).map(key => `${key}=${query[key]}`).join('&')
   return `${url}?${parsedQuery}`
+}
+const checkSuccess = function (parsed) {
+  if(!parsed.success) {
+    if(parsed.code == 'Unlogged'){
+      store.commit('notLogin')
+    }
+    let error = new Error(parsed.code)
+    error.message = parsed.message
+    throw error
+  } else {
+      return parsed
+  }
+}
+
+const errorHandler = function(err) {
+	console.log(err)
+  if(err.message){
+  	Toast('err.message')
+  }else{
+  	Toast('网络错误')
+  }
 }

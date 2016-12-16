@@ -65,18 +65,10 @@ export default {
   },
   created() {
 	let self = this
-	// self.login () 
-	console.log(store.state.isNotLogin)
 	if(store.state.isNotLogin){
-		console.log(1)
 		agent.get('/api/u/info', '')
 		.then(res => {
 			console.log(res)
-			if (!res.success) {
-				self.$Toast(res.message);
-				self.haveUser = false
-				return 
-			}
 			self.userInfo.address = res.user.address
 			self.userInfo.areaCode = res.user.areaCode
 			self.userInfo.mobilePhoneNumber = res.user.mobilePhoneNumber
@@ -95,10 +87,6 @@ export default {
 	})
   },
   methods:{
-  	getUserData() {
-		let self = this
-		
-	},
 	login () {
 		let self = this
 		let reg = /^(0|86|17951)?(13[0-9]|15[012356789]|17[01678]|18[0-9]|14[57])[0-9]{8}$/
@@ -118,7 +106,6 @@ export default {
 		})
 		.then(res => {
 			console.log(res)
-			if (!res.success) {self.$Toast(res.message);return}
 			store.commit('checkLogin')
 			$router.replace('/home')
 		})
