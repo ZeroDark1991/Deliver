@@ -21,6 +21,8 @@ export default {
     return fetch(url, config._post(body))
       .then(checkStatus)
       .then(jsonParser)
+      .then(checkSuccess)
+      .catch(errorHandler)
   }
 }
 
@@ -82,8 +84,10 @@ const checkSuccess = function (parsed) {
 const errorHandler = function(err) {
 	console.log(err)
   if(err.message){
-  	Toast('err.message')
+  	Toast(err.message)
+  	return false
   }else{
   	Toast('网络错误')
+  	return false
   }
 }

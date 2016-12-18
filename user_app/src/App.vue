@@ -8,10 +8,6 @@
 		</keep-alive>
 		<mt-popup v-model="isNotLogin" popup-transition="popup-fade">
 			<div class="page">
-<!-- 				<mt-field label="手机号码" placeholder="请输入手机号" v-model='PhoneNumber'></mt-field>
-				<mt-field label="短信验证码" placeholder="请输入短信验证码" v-model='VerifyCode'></mt-field>
-				<mt-button size='large' plain type='danger' @click="fetchVerifyCode()">Fetch VerifyCode</mt-button> 
-				<mt-button size='large' plain @click="login()">Log In</mt-button> -->
 				<div class="login-wrap bk-white">
 					<div class="flex-middle login-form">
 						<label class="text-large">手机号码</label>
@@ -22,12 +18,12 @@
 							<label class="text-large">验证码</label>
 							<input type="number" class="code-input" v-model='VerifyCode' placeholder="请输入短信验证码">
 						</div>
-						<div class="login-messageBtn">
+						<div class="login-messageBtn flex-center unit-0">
 							<button @click="fetchVerifyCode()" class="text-cyan" :disabled="isGetCheck">{{ hint }}</button>
 						</div>
 					</div>
 				</div>
-				<mt-button size='large' plain @click="login()">登录</mt-button>
+				<mt-button size='large' class="bk-cyan no-radius no-border text-white" @click="login()">登录</mt-button>
 			</div>
 		</mt-popup>
 	</div>
@@ -42,8 +38,8 @@ export default {
 	return {
 		mask:false,
 		show:false,
-		PhoneNumber: '13588277370',//13588277370
-		VerifyCode: '438811',//438811
+		PhoneNumber: '',//13588277370
+		VerifyCode: '',//438811
 		isGetCheck:false,
 		hint: '获取验证码',
 		timer: null,
@@ -65,10 +61,11 @@ export default {
   },
   created() {
 	let self = this
-	if(store.state.isNotLogin){
+	if(!store.state.isNotLogin){
 		agent.get('/api/u/info', '')
 		.then(res => {
 			console.log(res)
+			if (res == false) return
 			self.userInfo.address = res.user.address
 			self.userInfo.areaCode = res.user.areaCode
 			self.userInfo.mobilePhoneNumber = res.user.mobilePhoneNumber
@@ -106,7 +103,8 @@ export default {
 		})
 		.then(res => {
 			console.log(res)
-			store.commit('checkLogin')
+			if (res == false) return
+			store.commit('loginSuccess')
 			$router.replace('/home')
 		})
 	},
@@ -120,16 +118,29 @@ export default {
 			} else if (!reg.test(self.PhoneNumber)) {
 				self.$Toast("手机号码不正确");
 				return
-			}else if (self.canGet) {
+			}else {
+				self.canGet = true
+				agent.post('/api/u/verifyCode', {
+					phoneNumber: this.PhoneNumber
+				})
+				.then(res => {
+					console.log(res)
+					if (res == false) return
+					self.$Toast("发送成功");
+					var time=60;
+					var t=setInterval(function() {
+						time--;
+						self.hint = time+" s";
+						if (time<=0) {
+							clearInterval(t);
+							self.hint = "重新获取";
+					  	self.canGet = false;
+						}
+					},1000);
+				})
 
 			}
 		}
-		agent.post('/api/u/verifyCode', {
-			phoneNumber: this.PhoneNumber
-		})
-		.then(res => {
-			console.log(res)
-		})
 	},
 
   }

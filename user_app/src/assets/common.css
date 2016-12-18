@@ -165,7 +165,12 @@ table {
 	-webkit-box-orient: vertical;
 	text-overflow: ellipsis;
 }
-
+.no-border{
+	border:none; 
+}
+.no-radius{
+	border-radius: 0;
+}
 .bottom-btn{
 	height: 2.5rem;
 	background-color: #009BF7;

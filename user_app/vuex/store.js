@@ -10,7 +10,7 @@ const store = new Vuex.Store({
     isNotLogin: true,
     userInfo: null,
     currentOrder:null,
-    orderList:[],
+    orderList:null,
   },
   mutations: {
     nextPage: state => state.transitionName = 'slide-left',
@@ -24,8 +24,8 @@ const store = new Vuex.Store({
     saveCurrentOrder: (state, json) => {
     	state.currentOrder = json
     },
-    saveOrderList: (state, array) => {
-    	state.orderList = array
+    saveOrderList: (state, list) => {
+    	state.orderList = list
     },
   }
 })

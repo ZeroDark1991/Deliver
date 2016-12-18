@@ -75,7 +75,7 @@ export default {
 			.then(res => {
 				self.$Indicator.close();
 				console.log(res)
-				if (!res.success) {self.$Toast(res.message);return}
+				if (res == false) return
 				let date = self.$Moment(new Date()).format("HH")
 				let arr = []
 				res.timeSlots.forEach( function(item, index) {
@@ -97,7 +97,7 @@ export default {
 			agent.post('/api/order/create', self.userInfo)
 			.then(res => {
 				console.log(res)
-				if (!res.success) {self.$Toast(res.message);return}
+				if (res == false) return
 				self.go('/order_list','0')
 			})
 		},

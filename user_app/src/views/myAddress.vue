@@ -102,7 +102,7 @@ export default {
 			agent.post('/api/u/setAddress', s)
 			.then(res => {
 				console.log(res)
-				if (!res.success) {self.$Toast(res.message);return}
+				if (res == false) return
 				self.addressInfo.address = self.editAddressData.street+self.editAddressData.detail_address
 				self.addressInfo.areaCode = self.editAddressData.areaCode+''
 				store.commit('saveUserInfo',self.addressInfo)
@@ -122,7 +122,7 @@ export default {
 			agent.get('/api/app/areaCodes', '')
 			.then(res => {
 				console.log(res)
-				if (!res.success) {self.$Toast(res.message);return}
+				if (res == false) return
 				let areaCodeList = []
 				self.district = res.district
 				self.slots[0].values = self.district.map( item => {

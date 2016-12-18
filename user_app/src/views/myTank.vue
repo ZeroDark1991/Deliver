@@ -29,7 +29,7 @@ export default {
 			agent.get('/api/u/currentTank', '')
 			.then(res => {
 				console.log(res)
-				if (!res.success) {self.$Toast(res.message);return}
+				if (res == false) return
 				self.tank = res.tank
 			})
 		}

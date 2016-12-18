@@ -55,8 +55,12 @@ const router = new VueRouter({
       component: require('./views/center.vue')
     },
     {
-      path: '/order_list/:type',
-      component: require('./views/order_list.vue')
+      path: '/order_current',
+      component: require('./views/order_current.vue')
+    },
+    {
+      path: '/order_history',
+      component: require('./views/order_history.vue')
     },
     {
       path: '/myAddress',

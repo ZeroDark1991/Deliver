@@ -19,7 +19,7 @@
 				</mt-cell>
 			</div>
 			<div  style="margin-top: .5rem;">
-				<mt-cell @click.native="go('/order_list', '0')">
+				<mt-cell @click.native="go('/order_current')">
 					<div slot="title">
 						<div class="flex-middle">
 							<div class="media flex-center">
@@ -80,11 +80,12 @@ export default {
 				agent.get('/api/u/info', '')
 				.then(res => {
 					console.log(res)
-					if (!res.success) {self.$Toast(res.message);return}
+					if (res == false) return
 					self.userInfo.address = res.user.address
 					self.userInfo.areaCode = res.user.areaCode
 					self.userInfo.mobilePhoneNumber = res.user.mobilePhoneNumber
 					self.userInfo.username = res.user.username
+					console.log(12121212121212)
 					store.commit('saveUserInfo',self.userInfo)
 				})
 			}

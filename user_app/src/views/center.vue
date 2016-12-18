@@ -10,7 +10,7 @@
 					<div class="flex-center tel">{{addressInfo.username || addressInfo.tel}}</div>
 				</div>
 			</div>
-			<mt-cell is-link title="我的订单" class="text-large" @click.native="go('/order_list','1')"></mt-cell>
+			<mt-cell is-link title="我的订单" class="text-large" @click.native="go('/order_history')"></mt-cell>
 			<mt-cell is-link title="收货地址" class="text-large" @click.native="go('/myAddress')"></mt-cell>
 			<mt-cell is-link title="我的气罐" class="text-large" @click.native="go('/myTank')"></mt-cell>
 		</div>
