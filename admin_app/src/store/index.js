@@ -4,10 +4,10 @@ Vue.use(Vuex)
 
 const store = new Vuex.Store({
 	state: {
-    xxxx: 0
+    hello: 0
 	},
 	mutations: {
-    increment(state){
+    increment(state) {
       state.hello++
     }
 	},

@@ -5,10 +5,8 @@
 </template>
 
 <script>
-import store from './store'
 export default {
-  name: 'app',
-  store
+  name: 'app'
 }
 </script>
 

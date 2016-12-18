@@ -13,8 +13,10 @@ Vue.use(VueRouter)
 
 /* eslint-disable no-new */
 import router from './router'
+import store from './store'
 
 const app = new Vue({
-  router: router,
+  router,
+  store,
   render: h => h(App)
 }).$mount('#app')

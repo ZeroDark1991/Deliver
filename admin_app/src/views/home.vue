@@ -1,6 +1,7 @@
 <template>
 	<div>
-		hello i am home
+		hello i am home {{hello}}
+		<button @click='increment()'>++</button>
 	</div>
 </template>
 <script>
@@ -13,9 +14,7 @@ export default {
 		}
 	},
 	computed: {
-    hello() {
-    	return this.$store.state.hello
-    }
+    ...mapState(['hello'])
 	},
 	created(){
 		console.log(this.$store.state)
