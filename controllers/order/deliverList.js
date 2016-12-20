@@ -22,11 +22,11 @@ const _ = require('lodash')
 const deliverList = function*() {
   let params = this.query
   let result
+  let headers = this.headers
 
   if(params.type && params.type != '0') { 
     // 查询过往订单 或已确认的订单
-
-    if(!this.session.deliverId) {
+    if(!headers.deliver) {
       throw new APIError('session lost', 'session 失效，重新登录')
       return
     }
@@ -43,7 +43,7 @@ const deliverList = function*() {
         query.equalTo('status', 10)
         break        
     }
-    let deliver = AV.Object.createWithoutData('Deliver', this.session.deliverId)
+    let deliver = AV.Object.createWithoutData('Deliver', headers.deliver)
     query.equalTo('deliver', deliver)
     query.ascending('timeSlot') // 按预约时间升序
     query.include('user')
@@ -72,6 +72,7 @@ const deliverList = function*() {
 
     this.body = {
   	  success: true,
+      message: '成功',
   	  list: list
     }
 
@@ -86,8 +87,6 @@ const deliverList = function*() {
         query.lessThanOrEqualTo('status', 0)
         query.ascending('timeSlot') // 按预约时间升序
         query.include('user')
-        query.include('user.mobilePhoneNumber')
-        query.include('user.nickName')
 
         return query
       })
@@ -106,8 +105,6 @@ const deliverList = function*() {
       query.lessThanOrEqualTo('status', 0)
       query.ascending('timeSlot') // 按预约时间升序
       query.include('user')
-      query.include('user.mobilePhoneNumber')
-      query.include('user.nickName')
       query.select(['address', 'status', 'timeSlot', 'user'])
 
       try {
@@ -118,9 +115,25 @@ const deliverList = function*() {
       }
     }
 
+    let list = result.map(order => {
+      let user = order.get('user')
+      let handler = {
+        address: order.get('address'),
+        status: order.get('status'),
+        timeSlot: order.get('timeSlot'),
+        user: {
+          objectId: user.id,
+          phoneNumber: user.get('mobilePhoneNumber')
+        },
+        objectId: order.id
+      }
+      return handler
+    })
+
     this.body = {
       success: true,
-      list: result
+      message: '成功',
+      list: list
     }    
 
   } else {

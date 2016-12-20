@@ -9,6 +9,7 @@ const APIError = require('../../config/apiError')
 
 const confirm = function*() {
   let data = this.request.body
+  let headers = this.headers
 
   // 校验
   if(!data.id) {
@@ -16,7 +17,7 @@ const confirm = function*() {
   	return
   }
 
-  if(!this.session.deliverId) {
+  if(!headers.deliver) {
   	throw new APIError('session lost', 'session 失效，重新登录')
   	return
   }
@@ -34,9 +35,20 @@ const confirm = function*() {
   	return
   }
 
+  try {
+    let deliverQuery = new AV.Query('Deliver')
+    let checkDeliver = yield deliverQuery.get(headers.deliver)
+    if(!checkDeliver) {
+      throw new APIError('Invalid', '该送气工不存在')
+    }
+  } catch(e) {
+    throw new APIError('Invalid', e.message)
+    return
+  }
+
   // 更新
   let update =  AV.Object.createWithoutData('Order', data.id)
-  let deliver =  AV.Object.createWithoutData('Deliver', this.session.deliverId)
+  let deliver =  AV.Object.createWithoutData('Deliver', headers.deliver)
   update.set('status', 1)
   update.set('deliver', deliver)
 

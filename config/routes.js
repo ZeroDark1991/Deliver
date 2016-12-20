@@ -17,6 +17,7 @@ router.get('/app/areaCodes', App.areaCodes)
 router.get('/app/timeSlots', App.timeSlots)
 
 // order
+router.get('/order/info', Order.info)
 router.get('/order/userList', Order.userList)
 router.get('/order/deliverList', Order.deliverList)
 

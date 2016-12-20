@@ -99,7 +99,7 @@ export default {
 		}
 		agent.post('/api/u/logIn', {
 			phoneNumber: this.PhoneNumber,
-			verifyCode: this.VerifyCode
+			verifyCode: this.VerifyCode.toString()
 		})
 		.then(res => {
 			console.log(res)
