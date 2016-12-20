@@ -5,7 +5,7 @@ const APIError = require('../../config/apiError')
 const Deliver = AV.Object.extend('Deliver')
 
 const logIn = function*() {
-  let data = this.request.body
+  const data = this.request.body
   if(!data.phoneNumber || !data.passWord) {
   	throw new APIError('Incompelete Information', '请完整填写信息')
 		return
@@ -29,7 +29,7 @@ const logIn = function*() {
       deliver: {
         id: result.id,
         phoneNumber: result.get('phoneNumber'),
-        name: result.name
+        name: result.get('name')
       }
   	}
   } else {

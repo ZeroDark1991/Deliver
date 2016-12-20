@@ -21,7 +21,15 @@ module.exports = {
     port: 8080,
     assetsSubDirectory: 'static',
     assetsPublicPath: '/',
-    proxyTable: {},
+    proxyTable: {
+      '/api': {
+        // target: 'http://127.0.0.1:3000',
+        target: 'http://deliver.leanapp.cn',
+        ignorePath: false, // true时删除代理时请求中的path
+        secure: false,
+        changeOrigin: true // 修改掉前端页面host 防止出现跨域现象
+      }
+    },
     // CSS Sourcemaps off by default because relative paths are "buggy"
     // with this option, according to the CSS-Loader README
     // (https://github.com/webpack/css-loader#sourcemaps)

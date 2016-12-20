@@ -20,11 +20,11 @@ app.use(logger())
 
 // session
 const CONFIG = {
-  key: 'koa:sess', /** (string) cookie key (default is koa:sess) */
-  maxAge: 365*24*3600*1000, /** (number) maxAge in ms (default is 1 days) */
+  key: 'deliver', /** (string) cookie key (default is koa:sess) */
+  maxAge: 2*365*24*3600*1000, /** (number) maxAge in ms (default is 1 days) */
   overwrite: true, /** (boolean) can overwrite or not (default true) */
   httpOnly: true, /** (boolean) httpOnly or not (default true) */
-  signed: true, /** (boolean) signed or not (default true) */
+  signed: false /** (boolean) signed or not (default true) */
 }
 
 app.use(session(CONFIG, app))
@@ -38,8 +38,8 @@ require('./cloud');
 app.use(AV.koa())
 app.use(AV.Cloud.CookieSession({
 	framework: 'koa',
-	secret: 'my secret',
-	maxAge: 365*24*3600*1000,
+	secret: 'user secret',
+	maxAge: 2*365*24*3600*1000,
 	fetchUser: true
 }))
 

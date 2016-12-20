@@ -22,12 +22,12 @@ const create = function*() {
     let checkDup = yield query.first()
     if(!checkDup){
     	yield deliverModel.save()
-    }else {
-    	throw new APIError('duplicated deliver', '手机号已存在')
+    } else {
+    	throw new APIError('Duplicated Deliver', '手机号已存在')
     	return
     }
 	} catch(e) {
-    throw new APIError('DB error', e.message)
+    throw new APIError('DB Error', e.message)
     return
 	}
 

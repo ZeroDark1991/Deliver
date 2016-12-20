@@ -9,7 +9,9 @@ module.exports = function*() {
 			message: '成功退出登录'
 		}
 	}else {
-		throw new APIError('session lost', '当前是未登录状态')
-		return
+		this.body = {
+			success: true,
+			message: '已经是未登录的状态'
+		}
 	}
 }
