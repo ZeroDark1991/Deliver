@@ -6,11 +6,11 @@
 		<div class="container-top">
 			<mt-cell class="address-list" v-if="addressInfo">
 				<div slot="title" class="address-wrap">
-					<div class="flex-middle">
+					<div class="flex-middle text-extra">
 						<div style="padding-right: 1rem;">{{addressInfo.username}}</div>
 						<div>{{addressInfo.mobilePhoneNumber}}</div>
 					</div>
-					<div class="flex-middle text-small" style="margin-top: .5rem;">
+					<div class="flex-middle" style="margin-top: .5rem;">
 						<div class="one-line">{{addressInfo.address}}</div>
 					</div>
 				</div>
@@ -66,10 +66,8 @@ export default {
 					values: ['白杨街道1','白杨街道2','白杨街道3','白杨街道4','白杨街道5'],
 					textAlign: 'center',
 					className: 'slot1'
-
 				}
 			]
-			
 		}
 	},
 	computed: {
@@ -104,9 +102,11 @@ export default {
 			agent.post('/api/u/setAddress', s)
 			.then(res => {
 				console.log(res)
-				if (res.success==true) {
-					self.go('/center')
-				}
+				if (res == false) return
+				self.addressInfo.address = self.editAddressData.street+self.editAddressData.detail_address
+				self.addressInfo.areaCode = self.editAddressData.areaCode+''
+				store.commit('saveUserInfo',self.addressInfo)
+				self.go('/center')
 			})
 		},
 		onValuesChange(picker, values) {
@@ -122,24 +122,23 @@ export default {
 			agent.get('/api/app/areaCodes', '')
 			.then(res => {
 				console.log(res)
-				if (res.success == true) {
-					let areaCodeList = []
-					self.district = res.district
-					self.slots[0].values = self.district.map( item => {
-						areaCodeList.push(item.areaCode)
-						return item.name
-					})
-					self.areaCodeList =  areaCodeList
-					self.district.forEach( function(item, index) {
-						if (item.areaCode == self.addressInfo.areaCode) {
-							self.editAddressData.street = item.name
-							self.editAddressData.areaCode = item.areaCode
-							self.editAddressData.detail_address = 
-							self.addressInfo.address.split(item.name)[1]
-							return
-						}
-					});
-				}
+				if (res == false) return
+				let areaCodeList = []
+				self.district = res.district
+				self.slots[0].values = self.district.map( item => {
+					areaCodeList.push(item.areaCode)
+					return item.name
+				})
+				self.areaCodeList =  areaCodeList
+				self.district.forEach( function(item, index) {
+					if (item.areaCode == self.addressInfo.areaCode) {
+						self.editAddressData.street = item.name
+						self.editAddressData.areaCode = item.areaCode
+						self.editAddressData.detail_address = 
+						self.addressInfo.address.split(item.name)[1]
+						return
+					}
+				});
 			})
 		},
 	},
@@ -178,7 +177,7 @@ export default {
 	}
 }
 .address-list{
-	min-height: 3rem;
+	min-height: 4rem;
 	.address-wrap{
 		width: 85%;
 		max-width: 250px;
