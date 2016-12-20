@@ -63,6 +63,9 @@ export default {
 			},
 		}
 	},
+	created() {
+		store.commit('saveLogSuccessCallback',this.getUserInfo)
+	},
   	methods:{
   		tabChange(link){
   			this.$transfer.noTransfer(self, link)
@@ -74,7 +77,7 @@ export default {
 		back (link, param) {
 			this.$transfer.back(self, link)
 		},
-		getData() {
+		getUserInfo() {
 			let self = this
 			if (store.state.userInfo == null) {
 				agent.get('/api/u/info', '')
@@ -85,7 +88,6 @@ export default {
 					self.userInfo.areaCode = res.user.areaCode
 					self.userInfo.mobilePhoneNumber = res.user.mobilePhoneNumber
 					self.userInfo.username = res.user.username
-					console.log(12121212121212)
 					store.commit('saveUserInfo',self.userInfo)
 				})
 			}
@@ -93,7 +95,7 @@ export default {
 	},
 	beforeRouteEnter (to, from, next) {
 		next(vm => {
-			vm.getData()
+			vm.getUserInfo()
 		})
 	}
 	

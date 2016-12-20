@@ -46,7 +46,7 @@ export default {
 		}
 	},
 	created() {
-		// console.log(112)
+		store.commit('saveLogSuccessCallback',this.getUserInfo)
 	},
   	methods:{
 		go (link, param) {
@@ -58,7 +58,6 @@ export default {
 		onValuesChange(picker, values) {
 			console.log(values[0])
 			this.userInfo.timeSlot = values[0]
-			// this..street = values[0]
 		},
 		openPicker() {
 			if (!this.isLater) {
@@ -101,6 +100,21 @@ export default {
 				self.go('/order_list','0')
 			})
 		},
+		getUserData() {
+			let self = this
+			if (store.state.userInfo == null) {
+				agent.get('/api/u/info', '')
+				.then(res => {
+					console.log(res)
+					if (res == false) return
+					self.userInfo.address = res.user.address
+					self.userInfo.areaCode = res.user.areaCode
+					self.userInfo.mobilePhoneNumber = res.user.mobilePhoneNumber
+					self.userInfo.username = res.user.username
+					store.commit('saveUserInfo',self.userInfo)
+				})
+			}
+		}
 			
 	},
 	beforeRouteEnter (to, from, next) {
@@ -108,6 +122,7 @@ export default {
 			vm.userInfo.address = store.state.userInfo ? store.state.userInfo.address : ''
 			vm.userInfo.areaCode = store.state.userInfo ? store.state.userInfo.areaCode : ''
 			vm.getTimeSlot()
+			vm.getUserData()
 		})
 	},
 	beforeRouteLeave (to, from, next) {

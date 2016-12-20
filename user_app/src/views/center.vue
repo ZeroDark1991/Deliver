@@ -7,7 +7,7 @@
 					<div class="head-img flex-center">
 						<img :src="head">
 					</div>
-					<div class="flex-center tel">{{addressInfo.username || addressInfo.tel}}</div>
+					<div class="flex-center tel">{{userInfo.username || userInfo.tel}}</div>
 				</div>
 			</div>
 			<mt-cell is-link title="我的订单" class="text-large" @click.native="go('/order_history')"></mt-cell>
@@ -37,15 +37,16 @@ export default {
 			selected: 'center',
 			head,
 			store,
-		}
-	},
-	computed: {
-		addressInfo () {
-			return {
-				username:store.state.userInfo.username || '',
-				tel:store.state.userInfo.mobilePhoneNumber || ''
+			userInfo:{
+				username: null,
+				tel: null,
+				address: null,
+				areaCode: null
 			}
 		}
+	},
+	created() {
+		store.commit('saveLogSuccessCallback',this.getUserInfo)
 	},
   	methods:{
   		tabChange(link){
@@ -56,7 +57,30 @@ export default {
 		},
 		back(link, param)  {
 			this.$transfer.back(self, link)
+		},
+		getUserInfo() {
+			let self = this
+			if (store.state.userInfo == null) {
+				agent.get('/api/u/info', '')
+				.then(res => {
+					console.log(res)
+					if (res == false) return
+					self.userInfo.address = res.user.address
+					self.userInfo.areaCode = res.user.areaCode
+					self.userInfo.mobilePhoneNumber = res.user.mobilePhoneNumber
+					self.userInfo.username = res.user.username
+					store.commit('saveUserInfo',self.userInfo)
+				})
+			}else {
+				self.userInfo.username = store.state.userInfo.username || ''
+				self.userInfo.tel = store.state.userInfo.mobilePhoneNumber || ''
+			}
 		}
+	},
+	beforeRouteEnter (to, from, next) {
+		next(vm => {
+			vm.getUserInfo()
+		})
 	}
 }
 </script>

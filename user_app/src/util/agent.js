@@ -10,18 +10,18 @@ import 'whatwg-fetch'
 
 // Settings configured here will be merged into the final config object.
 export default {
-  get (url, query) {
+  get (url, query, cb) {
     return fetch(queryParser(url, query), config._get)
       .then(checkStatus)
       .then(jsonParser)
       .then(checkSuccess)
       .catch(errorHandler)
   },
-  post (url, body) {
+  post (url, body, cb) {
     return fetch(url, config._post(body))
       .then(checkStatus)
       .then(jsonParser)
-      .then(checkSuccess)
+      .then(checkSuccess,cb)
       .catch(errorHandler)
   }
 }
@@ -42,7 +42,7 @@ const config = {
       headers: {
         'Content-Type': 'application/json'
       },
-      body: body
+      body: body,
     })
   }
 }
@@ -64,11 +64,12 @@ const jsonParser = function (response) {
 
 const queryParser = function (url, query) {
   if (!query) return url
-
   let parsedQuery = Object.keys(query).map(key => `${key}=${query[key]}`).join('&')
   return `${url}?${parsedQuery}`
 }
+
 const checkSuccess = function (parsed) {
+
   if(!parsed.success) {
     if(parsed.code == 'Unlogged'){
       store.commit('notLogin')
@@ -77,7 +78,10 @@ const checkSuccess = function (parsed) {
     error.message = parsed.message
     throw error
   } else {
-      return parsed
+  	// if (parsed.message != "短信发送成功") {
+   //  	store.commit('loginSuccess')
+  	// }
+    return parsed
   }
 }
 

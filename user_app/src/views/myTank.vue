@@ -10,12 +10,17 @@
 </template>
 
 <script type="text/javascript">
+import store from '../../vuex/store'
 import agent from '../util/agent'
 export default {
 	data () {
 		return {
-			tank:null
+			tank:null,
+			store,
 		}
+	},
+	created() {
+		store.commit('saveLogSuccessCallback',this.getData)
 	},
   	methods:{
 		go(link, param)  {

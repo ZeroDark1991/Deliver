@@ -3,59 +3,61 @@
 		<mt-header fixed title="订单列表">
 			<mt-button icon="back" slot="left" @click="back('/home')"></mt-button>
 		</mt-header>
-		<div class="container-top" v-if="loadOk">
-			<mt-navbar v-model="selected" fixed style="top: 2.2rem;">
-				<mt-tab-item id="订单状态">订单状态</mt-tab-item>
-				<mt-tab-item id="订单详情">订单详情</mt-tab-item>
-			</mt-navbar>
+		<div class="container-top">
+			<div v-if="loadOk">
+				<mt-navbar v-model="selected" fixed style="top: 2.2rem;">
+					<mt-tab-item id="订单状态">订单状态</mt-tab-item>
+					<mt-tab-item id="订单详情">订单详情</mt-tab-item>
+				</mt-navbar>
 
-			<mt-tab-container v-model="selected" style="margin-top: 2.2rem;">
-				<mt-tab-container-item id="订单状态" class="tree">
-					<div class="tree-item" v-if="currentOrder.statusCode==-1">
-						<div class="text-extra">订单被取消</div>
-						<div class="text-grey text-large">待送气工接单</div>
-					</div>
-					<div class="tree-item" v-if="currentOrder.statusCode>=0">
-						<div class="text-extra">订单待确认</div>
-						<div class="text-grey text-large">待送气工接单</div>
-					</div>
-					<div class="tree-item" v-if="currentOrder.statusCode>=1" style="position: relative">
-						<div class="text-extra">订单已确认</div>
-						<div class="text-grey text-large">送气工赶往你家路上</div>
-					</div>
-					<div class="tree-item" v-if="currentOrder.statusCode>=2">
-						<div class="text-extra">气罐已被取走</div>
-						<div class="text-grey text-large">新气罐装配中</div>
-					</div>
-					<div class="tree-item tree-item-ok" v-if="currentOrder.statusCode>=10">
-						<!-- <i class="iconfont tree-icon">&#xe6cd;</i> -->
-						<div class="text-extra">订单已完成</div>
-						<div class="text-grey text-large">气罐已送达</div>
-					</div>
-				</mt-tab-container-item>
-				<mt-tab-container-item id="订单详情" style="margin-top: 1rem;">
-					<mt-cell title="我的订单">
-						<div slot="title">
-							<div style="height: 1.5rem;" class="flex-middle">
-								<span class="item-title">地址:</span>{{currentOrder.address}}
-							</div>
-							<div style="height: 1.5rem;" class="flex-middle">
-								<span class="item-title">预约时间:</span>{{currentOrder.timeSlot}}
-							</div>
-							<div style="height: 1.5rem;" class="flex-middle" v-if="currentOrder.createAt">
-								<span class="item-title">下单时间:</span>{{currentOrder.createAt}}
-							</div>
-							<div style="height: 1.5rem;" class="flex-middle" v-if="currentOrder.name">
-								<span class="item-title">配送员:</span>{{currentOrder.name}}
-							</div>
-							<div style="height: 1.5rem;" class="flex-middle" v-if="currentOrder.phoneNumber">
-								<span class="item-title">联系方式:</span>{{currentOrder.phoneNumber}}
-							</div>
+				<mt-tab-container v-model="selected" style="margin-top: 2.2rem;">
+					<mt-tab-container-item id="订单状态" class="tree">
+						<div class="tree-item" v-if="currentOrder.statusCode==-1">
+							<div class="text-extra">订单被取消</div>
+							<div class="text-grey text-large">待送气工接单</div>
 						</div>
-					</mt-cell>
-					<div class="tip" v-if="!currentOrder">目前暂无订单</div>
-				</mt-tab-container-item>
-			</mt-tab-container>	
+						<div class="tree-item" v-if="currentOrder.statusCode>=0">
+							<div class="text-extra">订单待确认</div>
+							<div class="text-grey text-large">待送气工接单</div>
+						</div>
+						<div class="tree-item" v-if="currentOrder.statusCode>=1" style="position: relative">
+							<div class="text-extra">订单已确认</div>
+							<div class="text-grey text-large">送气工赶往你家路上</div>
+						</div>
+						<div class="tree-item" v-if="currentOrder.statusCode>=2">
+							<div class="text-extra">气罐已被取走</div>
+							<div class="text-grey text-large">新气罐装配中</div>
+						</div>
+						<div class="tree-item tree-item-ok" v-if="currentOrder.statusCode>=10">
+							<!-- <i class="iconfont tree-icon">&#xe6cd;</i> -->
+							<div class="text-extra">订单已完成</div>
+							<div class="text-grey text-large">气罐已送达</div>
+						</div>
+					</mt-tab-container-item>
+					<mt-tab-container-item id="订单详情" style="margin-top: 1rem;">
+						<mt-cell title="我的订单">
+							<div slot="title">
+								<div style="height: 1.5rem;" class="flex-middle">
+									<span class="item-title">地址:</span>{{currentOrder.address}}
+								</div>
+								<div style="height: 1.5rem;" class="flex-middle">
+									<span class="item-title">预约时间:</span>{{currentOrder.timeSlot}}
+								</div>
+								<div style="height: 1.5rem;" class="flex-middle" v-if="currentOrder.createAt">
+									<span class="item-title">下单时间:</span>{{currentOrder.createAt}}
+								</div>
+								<div style="height: 1.5rem;" class="flex-middle" v-if="currentOrder.name">
+									<span class="item-title">配送员:</span>{{currentOrder.name}}
+								</div>
+								<div style="height: 1.5rem;" class="flex-middle" v-if="currentOrder.phoneNumber">
+									<span class="item-title">联系方式:</span>{{currentOrder.phoneNumber}}
+								</div>
+							</div>
+						</mt-cell>
+					</mt-tab-container-item>
+				</mt-tab-container>	
+			</div>
+			<div class="tip" v-if="tip">当前无订单</div>
 		</div>
 	</div>
 </template>
@@ -67,7 +69,6 @@ export default {
 	data () {
 		return {
 			store,
-			lists:[],
 			currentOrder:{
 				address:null,
 				status:null,
@@ -76,12 +77,13 @@ export default {
 				name:null,
 				phoneNumber:null
 			},
-			deliver: null,
 			selected: '订单状态',
-			loadOk: false
+			loadOk: false,
+			tip: false
 		}
 	},
 	created() {
+		store.commit('saveLogSuccessCallback',this.getCurrentOrder)
 		if (store.state.currentOrder) {
 			this.currentOrder = store.state.currentOrder
 			this.loadOk = true
@@ -151,7 +153,7 @@ export default {
 				console.log(res)
 				let data = res
 				if (res == false) return
-				if (data.list) {
+				if (data.list && data.list.length!=0) {
 					self.currentOrder.address = data.list[0].address,
 					self.currentOrder.status = self.stringStatus(data.list[0].status)
 					self.currentOrder.statusCode = data.list[0].status
@@ -162,6 +164,8 @@ export default {
 						store.commit('saveCurrentOrder', self.currentOrder)
 						self.loadOk = true
 					}
+				}else {
+					self.tip = true
 				}
 			})
 		},
@@ -172,10 +176,10 @@ export default {
 		})
 	},
 	beforeRouteLeave (to, from, next) {
-		this.lists = []
-		this.deliver = null
-		this.loadOk = false
-		next()
+		next(vm => {
+			vm.loadOk = false
+		})
+		
 	}
 }
 </script>

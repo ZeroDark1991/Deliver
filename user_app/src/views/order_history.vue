@@ -48,6 +48,7 @@ export default {
 
 	},
 	created() {
+		store.commit('saveLogSuccessCallback',this.getOrderList)
 		if (store.state.orderList) {
 			this.lists = store.state.orderList
 			this.filteredList = this.lists.slice(0, this.limit)

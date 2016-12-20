@@ -8,22 +8,15 @@
 		</keep-alive>
 		<mt-popup v-model="isNotLogin" popup-transition="popup-fade">
 			<div class="page">
-				<div class="login-wrap bk-white">
-					<div class="flex-middle login-form">
-						<label class="text-large">手机号码</label>
-						<input type="" name="" v-model='PhoneNumber' placeholder="请输入短信验证码">
-					</div>
-					<div class="flex-middle login-form">
-						<div class="unit flex-middle">
-							<label class="text-large">验证码</label>
-							<input type="number" class="code-input" v-model='VerifyCode' placeholder="请输入短信验证码">
+				<div class="container" style="padding-top: 1rem;">
+					<mt-field label="手机号码" placeholder="输入验证码" type="tel" v-model='PhoneNumber'></mt-field>
+					<mt-field label="验证码" placeholder="输入验证码" type="number" v-model='VerifyCode'>
+						<div class="login-messageBtn">
+							<button @click="fetchVerifyCode()" class="get-code text-cyan bk-white no-radius no-border" :disabled="isGetCheck">{{ hint }}</button>
 						</div>
-						<div class="login-messageBtn flex-center unit-0">
-							<button @click="fetchVerifyCode()" class="text-cyan" :disabled="isGetCheck">{{ hint }}</button>
-						</div>
-					</div>
+					</mt-field>
+					<mt-button size='large' class="bk-cyan no-radius no-border text-white" @click="login()">登录</mt-button>
 				</div>
-				<mt-button size='large' class="bk-cyan no-radius no-border text-white" @click="login()">登录</mt-button>
 			</div>
 		</mt-popup>
 	</div>
@@ -32,14 +25,15 @@
 <script>
 import agent from './util/agent'
 import store from '../vuex/store'
+import logo from './assets/logo.png'
 export default {
   name: 'app',
   data () {
 	return {
 		mask:false,
 		show:false,
-		PhoneNumber: '',//13588277370
-		VerifyCode: '',//438811
+		PhoneNumber: '13588277370',//13588277370
+		VerifyCode: '438811',//438811
 		isGetCheck:false,
 		hint: '获取验证码',
 		timer: null,
@@ -50,7 +44,7 @@ export default {
 			mobilePhoneNumber:'',
 			username:''
 		},
-		isNotLogin: false
+		logo,
 	}
   },
   store,
@@ -58,32 +52,41 @@ export default {
 	transitionName () {
 		return store.state.transitionName
 	},
+	isNotLogin () {
+		return store.state.isNotLogin
+	}
   },
   created() {
 	let self = this
-	if(!store.state.isNotLogin){
-		agent.get('/api/u/info', '')
+	store.commit('saveLogSuccessCallback',this.getUserInfo)
+	if(!self.isNotLogin){
+		store.commit('loginSuccess')
+		if (self.$route.path == '/') {
+			self.$router.replace('/home')
+		}
+	}else{
+		self.getUserInfo()
+	}
+  },
+  methods:{
+  	getUserInfo() {
+  		let self = this
+  		agent.get('/api/u/info', '')
 		.then(res => {
 			console.log(res)
 			if (res == false) return
-			self.userInfo.address = res.user.address
-			self.userInfo.areaCode = res.user.areaCode
-			self.userInfo.mobilePhoneNumber = res.user.mobilePhoneNumber
-			self.userInfo.username = res.user.username
-			store.commit('saveUserInfo',self.userInfo)
-			store.commit('loginSuccess')
-			self.isNotLogin = false
-			$router.replace('/home')
-		})
-	}else{
-		self.isNotLogin = true
-	}
+			if (res.user) {
+				self.userInfo.address = res.user.address
+				self.userInfo.areaCode = res.user.areaCode
+				self.userInfo.mobilePhoneNumber = res.user.mobilePhoneNumber
+				self.userInfo.username = res.user.username
+				store.commit('saveUserInfo',self.userInfo)
+				store.commit('loginSuccess')
+				$router.replace('/home')
 
-	this.$on('transfer', function (type) {
-		this.transitionName = type
-	})
-  },
-  methods:{
+			}
+		})
+  	},
 	login () {
 		let self = this
 		let reg = /^(0|86|17951)?(13[0-9]|15[012356789]|17[01678]|18[0-9]|14[57])[0-9]{8}$/
@@ -97,16 +100,21 @@ export default {
 			self.$Toast("请输入验证码");
 			return
 		}
+		console.log(this.VerifyCode+'')
+		self.$Indicator.open();
 		agent.post('/api/u/logIn', {
 			phoneNumber: this.PhoneNumber,
-			verifyCode: this.VerifyCode
+			verifyCode: this.VerifyCode+''
 		})
 		.then(res => {
+			self.$Indicator.close();
 			console.log(res)
 			if (res == false) return
 			store.commit('loginSuccess')
-			$router.replace('/home')
-		})
+			if (self.$route.path == '/') {
+				$router.replace('/home')
+			}
+		}).then(store.dispatch('getData'))
 	},
 	fetchVerifyCode () {
 		let self = this
@@ -173,8 +181,16 @@ export default {
 	.code-input{
 		width: 130px;
 	}
-	.login-messageBtn{
-		width: 100px;
-	}
+
+}
+.get-code{
+	width: 120px;
+	height: 46px;
+}
+.login-messageBtn{
+	margin-top: 1px;
+	height: 46px;
+	width: 100px;
+	line-height: 46px;
 }
 </style>

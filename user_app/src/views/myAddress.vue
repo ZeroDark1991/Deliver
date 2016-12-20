@@ -4,21 +4,21 @@
 			<mt-button icon="back" slot="left" @click="back('/center')"></mt-button>
 		</mt-header>
 		<div class="container-top">
-			<mt-cell class="address-list" v-if="addressInfo">
+			<mt-cell class="address-list" v-if="userInfo">
 				<div slot="title" class="address-wrap">
 					<div class="flex-middle text-extra">
-						<div style="padding-right: 1rem;">{{addressInfo.username}}</div>
-						<div>{{addressInfo.mobilePhoneNumber}}</div>
+						<div style="padding-right: 1rem;">{{userInfo.username}}</div>
+						<div>{{userInfo.mobilePhoneNumber}}</div>
 					</div>
 					<div class="flex-middle" style="margin-top: .5rem;">
-						<div class="one-line">{{addressInfo.address}}</div>
+						<div class="one-line">{{userInfo.address}}</div>
 					</div>
 				</div>
 				<div class="flex-middle flex-right text-large edit-btn" @click="editAddress()">
 					<i class="iconfont">&#xe63d;</i>
 				</div>
 			</mt-cell>
-			<div class="add-btn flex-middle flex-center" v-if="!addressInfo">
+			<div class="add-btn flex-middle flex-center" v-if="!userInfo">
 				<i class="unit-0 iconfont" @click="newAddress()">&#xe634;</i>
 			</div>
 		</div>
@@ -51,6 +51,12 @@ export default {
 	data () {
 		return {
 			store,
+			userInfo:{
+				username: null,
+				tel: null,
+				address: null,
+				areaCode: null
+			},
 			areaCodeList: [],
 			popupVisible:false,
 			addressPicker:false,
@@ -70,10 +76,8 @@ export default {
 			]
 		}
 	},
-	computed: {
-		addressInfo () {
-			return store.state.userInfo
-		}
+	created() {
+		store.commit('saveLogSuccessCallback',this.getUserInfo)
 	},
   	methods:{
 		go(link, param)  {
@@ -103,9 +107,9 @@ export default {
 			.then(res => {
 				console.log(res)
 				if (res == false) return
-				self.addressInfo.address = self.editAddressData.street+self.editAddressData.detail_address
-				self.addressInfo.areaCode = self.editAddressData.areaCode+''
-				store.commit('saveUserInfo',self.addressInfo)
+				self.userInfo.address = self.editAddressData.street+self.editAddressData.detail_address
+				self.userInfo.areaCode = self.editAddressData.areaCode+''
+				store.commit('saveUserInfo',self.userInfo)
 				self.go('/center')
 			})
 		},
@@ -131,20 +135,40 @@ export default {
 				})
 				self.areaCodeList =  areaCodeList
 				self.district.forEach( function(item, index) {
-					if (item.areaCode == self.addressInfo.areaCode) {
+					if (item.areaCode == self.userInfo.areaCode) {
 						self.editAddressData.street = item.name
 						self.editAddressData.areaCode = item.areaCode
 						self.editAddressData.detail_address = 
-						self.addressInfo.address.split(item.name)[1]
+						self.userInfo.address.split(item.name)[1]
 						return
 					}
 				});
 			})
 		},
+		getUserInfo() {
+			let self = this
+			if (store.state.userInfo == null) {
+				agent.get('/api/u/info', '')
+				.then(res => {
+					console.log(res)
+					if (res == false) return
+					self.userInfo.address = res.user.address
+					self.userInfo.areaCode = res.user.areaCode
+					self.userInfo.mobilePhoneNumber = res.user.mobilePhoneNumber
+					self.userInfo.username = res.user.username
+					store.commit('saveUserInfo',self.userInfo)
+				})
+			}else {
+				self.userInfo.address = store.state.userInfo.address || ''
+				self.userInfo.areaCode = store.state.userInfo.areaCode || ''
+				self.userInfo.username = store.state.userInfo.username || ''
+				self.userInfo.tel = store.state.userInfo.mobilePhoneNumber || ''
+			}
+		}
 	},
 	beforeRouteEnter (to, from, next) {
 		next(vm => {
-			
+			vm.getUserInfo()
 		})
 	}
 }
