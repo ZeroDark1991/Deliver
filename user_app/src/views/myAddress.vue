@@ -53,7 +53,7 @@ export default {
 			store,
 			userInfo:{
 				username: null,
-				tel: null,
+				mobilePhoneNumber: null,
 				address: null,
 				areaCode: null
 			},
@@ -145,30 +145,30 @@ export default {
 				});
 			})
 		},
-		getUserInfo() {
-			let self = this
-			if (store.state.userInfo == null) {
-				agent.get('/api/u/info', '')
-				.then(res => {
-					console.log(res)
-					if (res == false) return
-					self.userInfo.address = res.user.address
-					self.userInfo.areaCode = res.user.areaCode
-					self.userInfo.mobilePhoneNumber = res.user.mobilePhoneNumber
-					self.userInfo.username = res.user.username
-					store.commit('saveUserInfo',self.userInfo)
-				})
-			}else {
-				self.userInfo.address = store.state.userInfo.address || ''
-				self.userInfo.areaCode = store.state.userInfo.areaCode || ''
-				self.userInfo.username = store.state.userInfo.username || ''
-				self.userInfo.tel = store.state.userInfo.mobilePhoneNumber || ''
-			}
-		}
+		// getUserInfo() {
+		// 	let self = this
+		// 	if (store.state.userInfo == null) {
+		// 		agent.get('/api/u/info', '')
+		// 		.then(res => {
+		// 			console.log(res)
+		// 			if (res == false) return
+		// 			self.userInfo.address = res.user.address
+		// 			self.userInfo.areaCode = res.user.areaCode
+		// 			self.userInfo.mobilePhoneNumber = res.user.mobilePhoneNumber
+		// 			self.userInfo.username = res.user.username
+		// 			store.commit('saveUserInfo',self.userInfo)
+		// 		})
+		// 	}else {
+		// 		self.userInfo.address = store.state.userInfo.address || ''
+		// 		self.userInfo.areaCode = store.state.userInfo.areaCode || ''
+		// 		self.userInfo.username = store.state.userInfo.username || ''
+		// 		self.userInfo.mobilePhoneNumber = store.state.userInfo.mobilePhoneNumber || ''
+		// 	}
+		// }
 	},
 	beforeRouteEnter (to, from, next) {
 		next(vm => {
-			vm.getUserInfo()
+			store.dispatch('getUserInfo', vm)
 		})
 	}
 }

@@ -84,6 +84,7 @@ export default {
 					}
 				})
 				self.slots[0].values = arr
+				store.dispatch('saveTimeSlot', arr)
 				if (arr.length==0) {
 					self.isLater = true
 					self.userInfo.timeSlot = '超过预约时间'
@@ -99,30 +100,14 @@ export default {
 				if (res == false) return
 				self.go('/order_list','0')
 			})
-		},
-		getUserData() {
-			let self = this
-			if (store.state.userInfo == null) {
-				agent.get('/api/u/info', '')
-				.then(res => {
-					console.log(res)
-					if (res == false) return
-					self.userInfo.address = res.user.address
-					self.userInfo.areaCode = res.user.areaCode
-					self.userInfo.mobilePhoneNumber = res.user.mobilePhoneNumber
-					self.userInfo.username = res.user.username
-					store.commit('saveUserInfo',self.userInfo)
-				})
-			}
-		}
-			
+		}	
 	},
 	beforeRouteEnter (to, from, next) {
 		next(vm => {
 			vm.userInfo.address = store.state.userInfo ? store.state.userInfo.address : ''
 			vm.userInfo.areaCode = store.state.userInfo ? store.state.userInfo.areaCode : ''
 			vm.getTimeSlot()
-			vm.getUserData()
+			store.dispatch('getUserInfo', vm)
 		})
 	},
 	beforeRouteLeave (to, from, next) {

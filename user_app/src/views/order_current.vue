@@ -66,9 +66,9 @@
 import agent from '../util/agent'
 import store from '../vuex/store'
 export default {
+	store,
 	data () {
 		return {
-			store,
 			currentOrder:{
 				address:null,
 				status:null,
@@ -98,30 +98,30 @@ export default {
 		back(link, param) {
 			this.$transfer.back(self, link)
 		},
-		stringStatus(status) {
-			let state
-			switch (status) {
-				case -1:
-					state = '待送气工接单'
-					break;
-				case 0:
-					state = '待送气工接单'
-					break;
-				case 1:
-					state = '送气工赶往你家路上'
-					break;
-				case 2:
-					state = '新气罐装配中'
-					break;
-				case 10:
-					state = '气罐已送达 订单完成'
-					break;
-				default:
-					// statements_def
-					break;
-			}
-			return state
-		},
+		// stringStatus(status) {
+		// 	let state
+		// 	switch (status) {
+		// 		case -1:
+		// 			state = '待送气工接单'
+		// 			break;
+		// 		case 0:
+		// 			state = '待送气工接单'
+		// 			break;
+		// 		case 1:
+		// 			state = '送气工赶往你家路上'
+		// 			break;
+		// 		case 2:
+		// 			state = '新气罐装配中'
+		// 			break;
+		// 		case 10:
+		// 			state = '气罐已送达 订单完成'
+		// 			break;
+		// 		default:
+		// 			// statements_def
+		// 			break;
+		// 	}
+		// 	return state
+		// },
 		getDeliver(id) {
 			let self = this
 			if (!store.state.currentOrder) {
@@ -155,7 +155,7 @@ export default {
 				if (res == false) return
 				if (data.list && data.list.length!=0) {
 					self.currentOrder.address = data.list[0].address,
-					self.currentOrder.status = self.stringStatus(data.list[0].status)
+					// self.currentOrder.status = self.stringStatus(data.list[0].status)
 					self.currentOrder.statusCode = data.list[0].status
 					self.currentOrder.timeSlot = data.list[0].timeSlot
 					if (data.list[0].deliver) {
@@ -205,7 +205,7 @@ export default {
 	}
 	.tree-item{
 		position: relative;
-		background-color: #f7f7f7;
+		background-color: #f0f0f0;
 		overflow: visible;
 		height: 70px;
 		line-height: 30px;

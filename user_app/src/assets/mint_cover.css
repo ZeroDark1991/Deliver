@@ -53,6 +53,9 @@ a:active, a:hover{
 .mint-toast{
 	z-index: 3000;
 }
+.mint-cell{
+	min-height: 68px;
+}
 .invoice-cell .mint-cell-wrapper .mint-cell-title{
     -webkit-box-flex: 0;
     flex: none;

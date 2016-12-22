@@ -33,15 +33,16 @@
 import agent from '../util/agent'
 import store from '../vuex/store'
 export default {
+	store,
 	data () {
 		return {
 			loadOk: false,
-			store,
 			lists:[],
 			filteredList:[],
 			loading: false,
 			limit:10,
 			selected: '订单状态',
+			noMore: false
 		}
 	},
 	mounted() {
@@ -65,37 +66,42 @@ export default {
 			this.$transfer.back(self, link)
 		},
 		loadMore() {
-			this.loading = true;
-			setTimeout(() => {
-				this.limit += 10
-				this.filteredList = this.lists.slice(0, this.limit)
-				this.loading = false;
-			}, 1000);
-		},
-		stringStatus(status) {
-			let state
-			switch (status) {
-				case -1:
-					state = '待送气工接单'
-					break;
-				case 0:
-					state = '待送气工接单'
-					break;
-				case 1:
-					state = '送气工赶往你家路上'
-					break;
-				case 2:
-					state = '新气罐装配中'
-					break;
-				case 10:
-					state = '气罐已送达 订单完成'
-					break;
-				default:
-					// statements_def
-					break;
+			this.loading = true
+			if(this.lists.length>this.limit){
+				setTimeout(() => {
+					this.limit += 10
+					this.filteredList = this.lists.slice(0, this.limit)
+					this.loading = false
+				}, 1000);
+			}else{
+				this.loading = false
+				this.noMore = true
 			}
-			return state
 		},
+		// stringStatus(status) {
+		// 	let state
+		// 	switch (status) {
+		// 		case -1:
+		// 			state = '待送气工接单'
+		// 			break;
+		// 		case 0:
+		// 			state = '待送气工接单'
+		// 			break;
+		// 		case 1:
+		// 			state = '送气工赶往你家路上'
+		// 			break;
+		// 		case 2:
+		// 			state = '新气罐装配中'
+		// 			break;
+		// 		case 10:
+		// 			state = '气罐已送达 订单完成'
+		// 			break;
+		// 		default:
+		// 			// statements_def
+		// 			break;
+		// 	}
+		// 	return state
+		// },
 		getOrderList() {
 			let self = this
 			if (store.state.orderList) {
@@ -112,7 +118,7 @@ export default {
 					self.lists = res.list.map(item => {
 						return {
 							address: item.address,
-							status: self.stringStatus(item.status),
+							// status: self.stringStatus(item.status),
 							statusCode:item.status,
 							timeSlot: item.timeSlot,
 							createAt: self.$Moment(res.list[0].createdAt).format("YYYY-MM-DD HH:mm:ss"),
@@ -134,6 +140,7 @@ export default {
 	beforeRouteLeave (to, from, next) {
 		this.lists = []
 		this.loadOk = false
+		this.noMore = false
 		next()
 	}
 }

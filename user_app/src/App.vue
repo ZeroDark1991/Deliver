@@ -69,38 +69,38 @@ export default {
   },
   created() {
 	let self = this
-	store.commit('saveLogSuccessCallback',this.getUserInfo)
-	if(!self.isNotLogin){
-		console.log(111)
-		store.commit('loginSuccess')
-		// store.commit('getUserInfo')
-		if (self.$route.path == '/') {
-			self.$router.replace('/home')
-		}
-	}else{
-		console.log(222)
-    	self.getUserInfo()
-	}
+	store.commit('saveLogSuccessCallback',self.getUserInfo)
+	store.dispatch('getUserInfo', self)
+	// if(!self.isNotLogin){
+	// 	console.log(111)
+	// 	store.commit('loginSuccess')
+		
+	// }else{
+	// 	console.log(222)
+ //    	self.getUserInfo()
+	// }
   },
   methods:{
-  	getUserInfo() {
-  		let self = this
-  		agent.get('/api/u/info', '')
-		.then(res => {
-			console.log(res)
-			if (res == false) return
-			if (res.user) {
-				self.userInfo.address = res.user.address
-				self.userInfo.areaCode = res.user.areaCode
-				self.userInfo.mobilePhoneNumber = res.user.mobilePhoneNumber
-				self.userInfo.username = res.user.username
-				store.commit('saveUserInfo',self.userInfo)
-				store.commit('loginSuccess')
-				$router.replace('/home')
-
-			}
-		})
-  	},
+	  // 	getUserInfo() {
+	  // 		let self = this
+	  // 		agent.get('/api/u/info', '')
+		// .then(res => {
+		// 	console.log(res)
+		// 	if (res == false) return
+		// 	if (res.user) {
+		// 		self.userInfo.address = res.user.address
+		// 		self.userInfo.areaCode = res.user.areaCode
+		// 		self.userInfo.mobilePhoneNumber = res.user.mobilePhoneNumber
+		// 		self.userInfo.username = res.user.username
+		// 		store.commit('saveUserInfo',self.userInfo)
+		// 		store.commit('loginSuccess')
+		// 		store.dispatch('closePopup')
+		// 		if (self.$route.path == '/') {
+		// 			self.$router.replace('/home')
+		// 		}
+		// 	}
+		// })
+  		// 	},
 	login () {
 		let self = this
 		let reg = /^(0|86|17951)?(13[0-9]|15[012356789]|17[01678]|18[0-9]|14[57])[0-9]{8}$/
@@ -125,6 +125,7 @@ export default {
 			console.log(res)
 			if (res == false) return
 			store.commit('loginSuccess')
+			store.dispatch('closePopup')
 			if (self.$route.path == '/') {
 				$router.replace('/home')
 			}
@@ -168,7 +169,6 @@ export default {
 			}
 		}
 	},
-
   }
 
 }

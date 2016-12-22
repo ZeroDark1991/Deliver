@@ -49,16 +49,10 @@
 import agent from '../util/agent'
 import store from '../vuex/store'
 export default {
+	store,
 	data () {
 		return {
-			store,
 			selected: 'home',
-			userInfo: {
-				address:'',
-				areaCode:'',
-				mobilePhoneNumber:'',
-				username:''
-			},
 		}
 	},
 	created() {
@@ -73,27 +67,7 @@ export default {
 		},
 		back (link, param) {
 			this.$transfer.back(self, link)
-		},
-		getUserInfo() {
-			let self = this
-			if (store.state.userInfo == null) {
-				agent.get('/api/u/info', '')
-				.then(res => {
-					console.log(res)
-					if (res == false) return
-					self.userInfo.address = res.user.address
-					self.userInfo.areaCode = res.user.areaCode
-					self.userInfo.mobilePhoneNumber = res.user.mobilePhoneNumber
-					self.userInfo.username = res.user.username
-					store.commit('saveUserInfo',self.userInfo)
-				})
-			}
 		}
-	},
-	beforeRouteEnter (to, from, next) {
-		next(vm => {
-			vm.getUserInfo()
-		})
 	}
 	
 }
