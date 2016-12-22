@@ -2,7 +2,7 @@
 
 import Promise from 'promise-polyfill'
 import setAsap from 'setasap'
-import store from '../../vuex/store'
+import store from '../vuex/store'
 import { Toast } from 'mint-ui'
 Promise._immediateFn = setAsap
 
@@ -10,18 +10,18 @@ import 'whatwg-fetch'
 
 // Settings configured here will be merged into the final config object.
 export default {
-  get (url, query, cb) {
+  get (url, query) {
     return fetch(queryParser(url, query), config._get)
       .then(checkStatus)
       .then(jsonParser)
       .then(checkSuccess)
       .catch(errorHandler)
   },
-  post (url, body, cb) {
+  post (url, body) {
     return fetch(url, config._post(body))
       .then(checkStatus)
       .then(jsonParser)
-      .then(checkSuccess,cb)
+      .then(checkSuccess)
       .catch(errorHandler)
   }
 }
@@ -73,14 +73,12 @@ const checkSuccess = function (parsed) {
   if(!parsed.success) {
     if(parsed.code == 'Unlogged'){
       store.commit('notLogin')
+      store.dispatch('openPopup')
     }
     let error = new Error(parsed.code)
     error.message = parsed.message
     throw error
   } else {
-  	// if (parsed.message != "短信发送成功") {
-   //  	store.commit('loginSuccess')
-  	// }
     return parsed
   }
 }

@@ -10,8 +10,8 @@
 </template>
 
 <script type="text/javascript">
-import store from '../../vuex/store'
 import agent from '../util/agent'
+import store from '../vuex/store'
 export default {
 	data () {
 		return {

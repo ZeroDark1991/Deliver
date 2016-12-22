@@ -1,7 +1,6 @@
 <template>
 	<div class="page">
-		<mt-header fixed title="个人中心"></mt-header>
-		<div class="container-top">
+		<div class="container">
 			<div class="user-info">
 				<div class="top-wrap">
 					<div class="head-img flex-center">
@@ -16,19 +15,19 @@
 		</div>
 		<mt-tabbar v-model="selected">
 			<mt-tab-item id="home" @click.native="tabChange('/home')">
-				<span class="iconfont">&#xe600;</span>
-				<span>首页</span>
+				<span class="iconfont">&#xe691;</span>
+				<span class="mt-tab-item-title">首页</span>
 			</mt-tab-item>
 			<mt-tab-item id="center">
 				<span class="iconfont">&#xe606;</span>
-				<span>个人中心</span>
+				<span class="mt-tab-item-title">个人中心</span>
 			</mt-tab-item>
 		</mt-tabbar>
 	</div>
 </template>
 
 <script type="text/javascript">
-import store from '../../vuex/store'
+import store from '../vuex/store'
 import agent from '../util/agent'
 import head from '../assets/head.jpg'
 export default {

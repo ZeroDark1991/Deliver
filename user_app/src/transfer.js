@@ -1,4 +1,4 @@
-import store from '../vuex/store'
+import store from './vuex/store'
 export default class Transfer{
 	constructor(){
 		this.tran_go = 'slide-left'
