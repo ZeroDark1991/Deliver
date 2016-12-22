@@ -7,7 +7,7 @@ const APIError = require('../../config/apiError')
  * 员工端接收气罐
  */
 
-const recieveTank = function*() {
+const receiveTank = function*() {
   let data = this.request.body
   // 校验
   if(!data.id) {
@@ -53,4 +53,4 @@ const recieveTank = function*() {
   }
 }
 
-module.exports = recieveTank
+module.exports = receiveTank

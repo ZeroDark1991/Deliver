@@ -17,7 +17,7 @@ export default {
     ...mapState(['hello'])
 	},
 	created(){
-		console.log(this.$store.state)
+		// console.log(this.$store.state)
 	},
 	methods: {
     ...mapActions(['increment'])

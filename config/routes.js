@@ -21,11 +21,12 @@ router.get('/order/info', Order.info)
 router.get('/order/userList', Order.userList)
 router.get('/order/deliverList', Order.deliverList)
 
+router.post('/order/audit', Order.audit)
 router.post('/order/create', Order.create)
 router.post('/order/cancel', Order.cancel)
 router.post('/order/finish', Order.finish)
 router.post('/order/confirm', Order.confirm)
-router.post('/order/recieveTank', Order.recieveTank)
+router.post('/order/receiveTank', Order.receiveTank)
 
 // deliver
 router.get('/d/info', Deliver.info)

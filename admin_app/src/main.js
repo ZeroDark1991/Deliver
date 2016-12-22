@@ -7,6 +7,7 @@ import Vuex from 'vuex'
 import Element from 'element-ui'
 
 import 'normalize.css'
+import 'element-ui/lib/theme-default/index.css'
 
 Vue.use(Element)
 Vue.use(VueRouter)

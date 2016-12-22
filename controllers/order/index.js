@@ -2,7 +2,8 @@
 const create = require('./create')
 const cancel = require('./cancel')
 const confirm = require('./confirm')
-const recieveTank = require('./recieveTank')
+const audit = require('./audit')
+const receiveTank = require('./receiveTank')
 const finish = require('./finish')
 const info = require('./info')
 
@@ -13,9 +14,10 @@ module.exports = {
 	create,
 	cancel,
 	confirm,
-	recieveTank,
+	receiveTank,
 	finish,
 	userList,
 	deliverList,
-	info
+	info,
+	audit
 }
