@@ -3,7 +3,7 @@
 	<el-menu theme="light" :default-active='active' :router="true">
     <el-menu-item index="/home"><i class="el-icon-message"></i>快捷面板</el-menu-item>
     <el-menu-item index="/deliver"><i class="el-icon-menu"></i>员工管理</el-menu-item>
-    <el-menu-item index="3"><i class="el-icon-setting"></i>导航三</el-menu-item>
+    <el-menu-item index="3"><i class="el-icon-setting"></i>人工审核</el-menu-item>
   </el-menu>		
 </aside>	
 </template>

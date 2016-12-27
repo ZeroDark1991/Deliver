@@ -25,6 +25,7 @@ const create = function*() {
   order.set('timeSlot', data.timeSlot)
   order.set('areaCode', data.areaCode)
   order.set('status', 0)
+  order.set('audit', 0)
 
   let user = AV.Object.createWithoutData('_User', currentUser.id)
   // 订单关联用户

@@ -19,18 +19,12 @@ const info = function*() {
     result = yield user.get(currentUser.id)
   } catch(e) {
   	throw new APIError('DB Error', e.message)
+    return
   }
 
   this.body = {
   	success: true,
-  	user: {
-      username: reslut.get('username'),
-      mobilePhoneNumber: result.get('mobilePhoneNumber'),
-      address: result.get('address'),
-      areaCode: result.get('areaCode'),
-      objectId: result.id,
-      nickname: result.get('nickname')
-    }
+  	user: result
   }
 }
 
