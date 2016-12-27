@@ -21,7 +21,7 @@
 
 <script type="text/javascript">
 import agent from '../util/agent'
-import store from '../../vuex/store'
+import store from '../vuex/store'
 export default {
 	data () {
 		return {
@@ -46,7 +46,7 @@ export default {
 		}
 	},
 	created() {
-		// console.log(112)
+		store.commit('saveLogSuccessCallback',this.getUserInfo)
 	},
   	methods:{
 		go (link, param) {
@@ -58,7 +58,6 @@ export default {
 		onValuesChange(picker, values) {
 			console.log(values[0])
 			this.userInfo.timeSlot = values[0]
-			// this..street = values[0]
 		},
 		openPicker() {
 			if (!this.isLater) {
@@ -85,6 +84,7 @@ export default {
 					}
 				})
 				self.slots[0].values = arr
+				store.dispatch('saveTimeSlot', arr)
 				if (arr.length==0) {
 					self.isLater = true
 					self.userInfo.timeSlot = '超过预约时间'
@@ -100,14 +100,14 @@ export default {
 				if (res == false) return
 				self.go('/order_list','0')
 			})
-		},
-			
+		}	
 	},
 	beforeRouteEnter (to, from, next) {
 		next(vm => {
 			vm.userInfo.address = store.state.userInfo ? store.state.userInfo.address : ''
 			vm.userInfo.areaCode = store.state.userInfo ? store.state.userInfo.areaCode : ''
 			vm.getTimeSlot()
+			store.dispatch('getUserInfo', vm)
 		})
 	},
 	beforeRouteLeave (to, from, next) {

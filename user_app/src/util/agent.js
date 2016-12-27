@@ -2,7 +2,7 @@
 
 import Promise from 'promise-polyfill'
 import setAsap from 'setasap'
-import store from '../../vuex/store'
+import store from '../vuex/store'
 import { Toast } from 'mint-ui'
 Promise._immediateFn = setAsap
 
@@ -42,7 +42,7 @@ const config = {
       headers: {
         'Content-Type': 'application/json'
       },
-      body: body
+      body: body,
     })
   }
 }
@@ -64,20 +64,22 @@ const jsonParser = function (response) {
 
 const queryParser = function (url, query) {
   if (!query) return url
-
   let parsedQuery = Object.keys(query).map(key => `${key}=${query[key]}`).join('&')
   return `${url}?${parsedQuery}`
 }
+
 const checkSuccess = function (parsed) {
+
   if(!parsed.success) {
     if(parsed.code == 'Unlogged'){
       store.commit('notLogin')
+      store.dispatch('openPopup')
     }
     let error = new Error(parsed.code)
     error.message = parsed.message
     throw error
   } else {
-      return parsed
+    return parsed
   }
 }
 

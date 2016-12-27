@@ -1,3 +1,7 @@
+.container{
+	background-color: #f7f7f7;
+}
+
 .mint-header{
 	background-color: #383a40;
 	color:#ffffff;
@@ -14,13 +18,16 @@
 
 .mint-tabbar .mint-tab-item{
 	height: 2.5rem;
+	background-color: #fefefe;
 }
 .mint-tabbar .mint-tab-item .mint-tab-item-label{
 	line-height: 1.8rem;
 }
+/*
 .mint-tabbar .iconfont{
 	vertical-align: middle;
 }
+*/
 .mint-tabbar .mint-tab-item{
 	color: #000;
 }
@@ -45,6 +52,9 @@ a:active, a:hover{
 
 .mint-toast{
 	z-index: 3000;
+}
+.mint-cell{
+	min-height: 68px;
 }
 .invoice-cell .mint-cell-wrapper .mint-cell-title{
     -webkit-box-flex: 0;

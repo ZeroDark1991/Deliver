@@ -6,24 +6,25 @@
 			</transition>
 			<div class="home-mask" v-show="mask"></div>
 		</keep-alive>
-		<mt-popup v-model="isNotLogin" popup-transition="popup-fade">
+		<mt-popup v-model="open" popup-transition="popup-fade">
 			<div class="page">
-				<div class="login-wrap bk-white">
-					<div class="flex-middle login-form">
-						<label class="text-large">手机号码</label>
-						<input type="" name="" v-model='PhoneNumber' placeholder="请输入短信验证码">
+				<div class="container">
+					<div class="flex-center">
+						<img class="logo-img" :src="logo">
 					</div>
-					<div class="flex-middle login-form">
-						<div class="unit flex-middle">
-							<label class="text-large">验证码</label>
-							<input type="number" class="code-input" v-model='VerifyCode' placeholder="请输入短信验证码">
+					<div class="login-form">
+						<div class="input-wrap">
+							<input type="tel" name="" placeholder="输入手机号" v-model='PhoneNumber'>
 						</div>
-						<div class="login-messageBtn flex-center unit-0">
-							<button @click="fetchVerifyCode()" class="text-cyan" :disabled="isGetCheck">{{ hint }}</button>
+						<div class="input-wrap flex-center">
+							<input type="tel" name="" placeholder="输入验证码" v-model='VerifyCode'>
+							<div class="login-messageBtn">
+								<button @click="fetchVerifyCode()" class="get-code text-theme-blue bk-white no-radius no-border" :disabled="isGetCheck">{{ hint }}</button>
+							</div>
 						</div>
+						<mt-button size='large' class="login-btn bk-theme-blue no-border text-white" @click="login()">登录</mt-button>
 					</div>
 				</div>
-				<mt-button size='large' class="bk-cyan no-radius no-border text-white" @click="login()">登录</mt-button>
 			</div>
 		</mt-popup>
 	</div>
@@ -31,7 +32,8 @@
 
 <script>
 import agent from './util/agent'
-import store from '../vuex/store'
+import store from './vuex/store'
+import logo from './assets/logo.png'
 export default {
   name: 'app',
   data () {
@@ -41,7 +43,7 @@ export default {
 		PhoneNumber: '',//13588277370
 		VerifyCode: '',//438811
 		isGetCheck:false,
-		hint: '获取验证码',
+		hint: '获取短信验证码',
 		timer: null,
 		canGet: false,
 		userInfo: {
@@ -50,7 +52,7 @@ export default {
 			mobilePhoneNumber:'',
 			username:''
 		},
-		isNotLogin: false
+		logo,
 	}
   },
   store,
@@ -58,32 +60,47 @@ export default {
 	transitionName () {
 		return store.state.transitionName
 	},
+	isNotLogin () {
+		return store.state.isNotLogin
+	},
+	open () {
+		return store.state.open
+	}
   },
   created() {
 	let self = this
-	if(!store.state.isNotLogin){
-		agent.get('/api/u/info', '')
-		.then(res => {
-			console.log(res)
-			if (res == false) return
-			self.userInfo.address = res.user.address
-			self.userInfo.areaCode = res.user.areaCode
-			self.userInfo.mobilePhoneNumber = res.user.mobilePhoneNumber
-			self.userInfo.username = res.user.username
-			store.commit('saveUserInfo',self.userInfo)
-			store.commit('loginSuccess')
-			self.isNotLogin = false
-			$router.replace('/home')
-		})
-	}else{
-		self.isNotLogin = true
-	}
-
-	this.$on('transfer', function (type) {
-		this.transitionName = type
-	})
+	store.commit('saveLogSuccessCallback',self.getUserInfo)
+	store.dispatch('getUserInfo', self)
+	// if(!self.isNotLogin){
+	// 	console.log(111)
+	// 	store.commit('loginSuccess')
+		
+	// }else{
+	// 	console.log(222)
+ //    	self.getUserInfo()
+	// }
   },
   methods:{
+	  // 	getUserInfo() {
+	  // 		let self = this
+	  // 		agent.get('/api/u/info', '')
+		// .then(res => {
+		// 	console.log(res)
+		// 	if (res == false) return
+		// 	if (res.user) {
+		// 		self.userInfo.address = res.user.address
+		// 		self.userInfo.areaCode = res.user.areaCode
+		// 		self.userInfo.mobilePhoneNumber = res.user.mobilePhoneNumber
+		// 		self.userInfo.username = res.user.username
+		// 		store.commit('saveUserInfo',self.userInfo)
+		// 		store.commit('loginSuccess')
+		// 		store.dispatch('closePopup')
+		// 		if (self.$route.path == '/') {
+		// 			self.$router.replace('/home')
+		// 		}
+		// 	}
+		// })
+  		// 	},
 	login () {
 		let self = this
 		let reg = /^(0|86|17951)?(13[0-9]|15[012356789]|17[01678]|18[0-9]|14[57])[0-9]{8}$/
@@ -97,29 +114,38 @@ export default {
 			self.$Toast("请输入验证码");
 			return
 		}
+		console.log(this.VerifyCode+'')
+		self.$Indicator.open();
 		agent.post('/api/u/logIn', {
 			phoneNumber: this.PhoneNumber,
 			verifyCode: this.VerifyCode.toString()
 		})
 		.then(res => {
+			self.$Indicator.close();
 			console.log(res)
 			if (res == false) return
 			store.commit('loginSuccess')
-			$router.replace('/home')
-		})
+			store.dispatch('closePopup')
+			if (self.$route.path == '/') {
+				$router.replace('/home')
+			}
+		}).then(store.dispatch('getData'))
 	},
 	fetchVerifyCode () {
 		let self = this
+		self.isGetCheck = true
 		let reg = /^(0|86|17951)?(13[0-9]|15[012356789]|17[01678]|18[0-9]|14[57])[0-9]{8}$/
 		if (self.timer == null) {
 			if (!self.PhoneNumber) {
 				self.$Toast("请输入手机号码");
+				self.isGetCheck = false
 				return
 			} else if (!reg.test(self.PhoneNumber)) {
+				self.isGetCheck = false
 				self.$Toast("手机号码不正确");
 				return
 			}else {
-				self.canGet = true
+				// self.canGet = true
 				agent.post('/api/u/verifyCode', {
 					phoneNumber: this.PhoneNumber
 				})
@@ -130,11 +156,12 @@ export default {
 					var time=60;
 					var t=setInterval(function() {
 						time--;
-						self.hint = time+" s";
+						self.hint = time+"秒后重新发送";
 						if (time<=0) {
-							clearInterval(t);
-							self.hint = "重新获取";
-					  	self.canGet = false;
+							clearInterval(t)
+							self.hint = "重新获取?";
+							self.isGetCheck = false
+					  	// self.canGet = false;
 						}
 					},1000);
 				})
@@ -142,7 +169,6 @@ export default {
 			}
 		}
 	},
-
   }
 
 }
@@ -154,27 +180,36 @@ export default {
 	height: 100%;
 	background-color: #f7f7f7;
 }
+.container{
+	padding: 2rem 1rem 0 1rem;
+}
 .login-form{
-	padding: .5rem;
-	width: 100%;
-	height: 2.5rem;
-	line-height: 2.5rem;
-	label{
-		width: 70px;
-	}
+	margin-top: 2rem;
+}
+.logo-img{
+	height: 6rem;
+	width: 7rem;
+	/*background-color: #009BF7;*/
+}
+.get-code{
+	width: 130px;
+	height: 2.4rem;
+}
+.login-messageBtn{
+	line-height: 2.4rem;
+}
+.input-wrap{
+	font-size: .8rem;
+	margin-bottom: 1rem;
 	input{
-		height: 1.5rem;
-		line-height: 1.5rem;
-		font-size: .8rem;
-		&::-webkit-input-placeholder{
-			font-size: .7rem;
-		}
+		height: 2.4rem;
+		width: 100%;
+		padding: .25rem .5rem;
+		border-radius: 3px;
 	}
-	.code-input{
-		width: 130px;
-	}
-	.login-messageBtn{
-		width: 100px;
-	}
+}
+.login-btn{
+	border-radius: 3px;
+	margin-top: 3rem;
 }
 </style>

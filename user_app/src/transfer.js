@@ -1,4 +1,4 @@
-import store from '../vuex/store'
+import store from './vuex/store'
 export default class Transfer{
 	constructor(){
 		this.tran_go = 'slide-left'
@@ -6,25 +6,23 @@ export default class Transfer{
 	}
 
 	go(self, link, param){
-		// Pointer.$emit('transfer',this.tran_go )
 		store.commit('nextPage')
 		this.closeToasts()
 		let path = param?link +'\/'+ param:link
-		self.$router.replace(path)
+		self.$router.push(path)
 	}
 
 	back(self, link, param){
-		// Pointer.$emit('transfer', this.tran_back)
 		store.commit('backPage')
 		this.closeToasts()
 		let path = param?link +'\/'+ param:link
-		self.$router.replace(path)
+		self.$router.push(path)
 	}
 
 	noTransfer(self, link){
 		store.commit('noTransfer')
 		this.closeToasts()
-		self.$router.replace(link)
+		self.$router.push(link)
 	}
 
 	closeToasts(){
