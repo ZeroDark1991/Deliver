@@ -6,7 +6,7 @@
 		</mt-header>
 		<div class="container-top" v-if="loadOk">
 			<mt-cell title="配送地址" :value="userInfo.address"></mt-cell>
-			<mt-cell title="预约时间" :is-link="!isLater" @click.native="openPicker()" :value="userInfo.timeSlot"></mt-cell>
+			<mt-cell title="预约时间" :is-link="!isLater" @click.native="openPicker()" :value="timeSlot"></mt-cell>
 			<button class="bottom-btn text-extra" :disabled="isLater" @click="submitOrder()"
 			v-bind:class="{ 'bk-grey': isLater }">确认下单</button>
 			<div class="v-modal" style="z-index:2006" @click="timeSlotPicker=false" v-show="timeSlotPicker"></div>
@@ -25,11 +25,6 @@ import store from '../vuex/store'
 export default {
 	data () {
 		return {
-			userInfo: {
-				address: '',
-				areaCode: '',
-				timeSlot: ''
-			},
 			timeSlot:null,
 			timeSlotPicker: false,
 			slots: [
@@ -38,7 +33,6 @@ export default {
 					values: [],
 					textAlign: 'center',
 					className: 'slot1'
-
 				}
 			],
 			isLater:false,
@@ -46,7 +40,38 @@ export default {
 		}
 	},
 	created() {
-		store.commit('saveLogSuccessCallback',this.getUserInfo)
+		store.commit('saveLogSuccessCallback', null)
+		let self = this
+		if (store.state.timeSlots) {
+			let date = self.$Moment(new Date()).format("HH")
+			let arr = []
+			self.timeSlots.forEach( function(item, index) {
+				let timeSlot = item.split(' - ')[1].split(':')[0]
+				if (timeSlot > date) {
+					arr.push(item)
+				}
+			})
+			self.slots[0].values = arr
+			if (arr.length==0) {
+				self.isLater = true
+				self.timeSlot = '超过预约时间'
+			}else {
+				self.timeSlot = self.slots[0].values[0]
+			}
+			self.loadOk = true
+		}else {
+			this.getTimeSlot()
+		}
+		store.dispatch('getUserInfo')
+		
+	},
+	computed: {
+		userInfo () {
+			return store.state.userInfo
+		},
+		timeSlots () {
+			return store.state.timeSlots
+		}
 	},
   	methods:{
 		go (link, param) {
@@ -64,9 +89,6 @@ export default {
 				this.timeSlotPicker = true
 			}
 		},
-		closePicker() {
-
-		},
 		getTimeSlot() {
 			let self = this 
 			self.$Indicator.open();
@@ -76,39 +98,41 @@ export default {
 				console.log(res)
 				if (res == false) return
 				let date = self.$Moment(new Date()).format("HH")
-				let arr = []
-				res.timeSlots.forEach( function(item, index) {
-					let timeSlot = item.split(' - ')[1].split(':')[0]
-					if (timeSlot > date) {
-						arr.push(item)
+				if (res.timeSlots) {
+					let arr = []
+					res.timeSlots.forEach( function(item, index) {
+						let timeSlot = item.split(' - ')[1].split(':')[0]
+						if (timeSlot > date) {
+							arr.push(item)
+						}
+					})
+
+					self.slots[0].values = arr
+					store.dispatch('saveTimeSlot', res.timeSlots)
+					if (arr.length==0) {
+						self.isLater = true
+						self.timeSlot = '超过预约时间'
+					}else {
+						self.timeSlot = self.slots[0].values[0]
 					}
-				})
-				self.slots[0].values = arr
-				store.dispatch('saveTimeSlot', arr)
-				if (arr.length==0) {
-					self.isLater = true
-					self.userInfo.timeSlot = '超过预约时间'
 				}
 				self.loadOk = true
 			})
 		},
 		submitOrder() {
 			let self = this 
-			agent.post('/api/order/create', self.userInfo)
+			console.log(self.userInfo.timeSlot)
+			agent.post('/api/order/create', {
+				address:self.userInfo.address,
+				areaCode:self.userInfo.areaCode,
+				timeSlot:self.timeSlot
+			})
 			.then(res => {
 				console.log(res)
 				if (res == false) return
-				self.go('/order_list','0')
+				self.go('/order_current')
 			})
 		}	
-	},
-	beforeRouteEnter (to, from, next) {
-		next(vm => {
-			vm.userInfo.address = store.state.userInfo ? store.state.userInfo.address : ''
-			vm.userInfo.areaCode = store.state.userInfo ? store.state.userInfo.areaCode : ''
-			vm.getTimeSlot()
-			store.dispatch('getUserInfo', vm)
-		})
 	},
 	beforeRouteLeave (to, from, next) {
 		this.isLater = false

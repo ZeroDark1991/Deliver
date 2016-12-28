@@ -56,7 +56,7 @@ export default {
 		}
 	},
 	created() {
-		store.commit('saveLogSuccessCallback',this.getUserInfo)
+		store.commit('saveLogSuccessCallback', null)
 	},
   	methods:{
   		tabChange(link){

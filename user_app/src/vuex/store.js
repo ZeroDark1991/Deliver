@@ -9,11 +9,17 @@ const store = new Vuex.Store({
 		transitionName: 'fade',
 		isNotLogin: true,
 		open: false,
-		userInfo: null,
+		userInfo: {
+			address:null,
+			areaCode:null,
+			mobilePhoneNumber:null,
+			username:null
+		},
 		currentOrder:null,
 		orderList:null,
 		logSuccessCallback:null,
-		timeSlot:null
+		timeSlots:null,
+		tank:null
 	},
 	mutations: {
 		nextPage (state) {
@@ -44,16 +50,21 @@ const store = new Vuex.Store({
 			state.orderList = list
 		},
 		SAVETIMESLOT(state, array) {
-			state.timeSlot = array 
+			state.timeSlots = array 
 		},
 	},
 	actions: {
 		saveTimeSlot({commit}, array) {
 			commit('SAVETIMESLOT',array)
 		},
-		getData ({state}) {
+		getData ({dispatch, state}, pointer) {
 			console.log('登录成功回调')
-			state.logSuccessCallback()
+			if (state.logSuccessCallback) {
+				state.logSuccessCallback()
+			}else{
+				console.log(pointer)
+				dispatch('getUserInfo',pointer)
+			}
 		},
 		openPopup ({state}) {
 			state.open = true
@@ -61,24 +72,33 @@ const store = new Vuex.Store({
 		closePopup ({state}) {
 			state.open = false
 		},
-		getUserInfo ({ dispatch, commit }, pointer) {
-			agent.get('/api/u/info', '')
-			.then(res => {
-				console.log(res)
-				if (res == false) return
-				if (res.user) {
-					pointer.userInfo.address = res.user.address
-					pointer.userInfo.areaCode = res.user.areaCode
-					pointer.userInfo.mobilePhoneNumber = res.user.mobilePhoneNumber
-					pointer.userInfo.username = res.user.username
-					commit('loginSuccess')
-					commit('saveUserInfo', pointer.userInfo)
-					dispatch('closePopup')
-					if (pointer.$route.path == '/') {
-						pointer.$router.replace('/home')
+		getUserInfo ({ state, dispatch, commit }, pointer) {
+			if (!state.userInfo.address || 
+				!state.userInfo.areaCode || 
+				!state.userInfo.mobilePhoneNumber || 
+				!state.userInfo.username ) {
+				agent.get('/api/u/info', '')
+				.then(res => {
+					console.log(res)
+					if (res == false) return
+					if (res.user) {
+						let userInfo = {
+							address: res.user.address,
+							areaCode: res.user.areaCode,
+							mobilePhoneNumber: res.user.mobilePhoneNumber,
+							username: res.user.username
+						}
+						commit('loginSuccess')
+						commit('saveUserInfo', userInfo)
+						dispatch('closePopup')
+						if (pointer) {
+							if (pointer.$route.path == '/') {
+								$router.replace('/home')
+							}
+						}
 					}
-				}
-			})
+				})
+			}
 		}
 	}
 })

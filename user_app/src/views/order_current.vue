@@ -128,7 +128,7 @@ export default {
 				self.$Indicator.open();
 			}
 			agent.get('/api/d/info', {
-				id: '58451ae60ce46300577fb0d4'//id
+				id: 'id'//id
 			})
 			.then(res => {
 				self.$Indicator.close();

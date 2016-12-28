@@ -18,7 +18,7 @@
 					<i class="iconfont">&#xe63d;</i>
 				</div>
 			</mt-cell>
-			<div class="add-btn flex-middle flex-center" v-if="!userInfo">
+			<div class="add-btn text-theme-blue flex-middle flex-center" v-if="!userInfo">
 				<i class="unit-0 iconfont" @click="newAddress()">&#xe634;</i>
 			</div>
 		</div>
@@ -77,7 +77,13 @@ export default {
 		}
 	},
 	created() {
-		store.commit('saveLogSuccessCallback',this.getUserInfo)
+		store.commit('saveLogSuccessCallback', null)
+		store.dispatch('getUserInfo')
+	},
+	computed: {
+		userInfo () {
+			return store.state.userInfo
+		}
 	},
   	methods:{
 		go(link, param)  {
@@ -145,31 +151,6 @@ export default {
 				});
 			})
 		},
-		// getUserInfo() {
-		// 	let self = this
-		// 	if (store.state.userInfo == null) {
-		// 		agent.get('/api/u/info', '')
-		// 		.then(res => {
-		// 			console.log(res)
-		// 			if (res == false) return
-		// 			self.userInfo.address = res.user.address
-		// 			self.userInfo.areaCode = res.user.areaCode
-		// 			self.userInfo.mobilePhoneNumber = res.user.mobilePhoneNumber
-		// 			self.userInfo.username = res.user.username
-		// 			store.commit('saveUserInfo',self.userInfo)
-		// 		})
-		// 	}else {
-		// 		self.userInfo.address = store.state.userInfo.address || ''
-		// 		self.userInfo.areaCode = store.state.userInfo.areaCode || ''
-		// 		self.userInfo.username = store.state.userInfo.username || ''
-		// 		self.userInfo.mobilePhoneNumber = store.state.userInfo.mobilePhoneNumber || ''
-		// 	}
-		// }
-	},
-	beforeRouteEnter (to, from, next) {
-		next(vm => {
-			store.dispatch('getUserInfo', vm)
-		})
 	}
 }
 </script>
@@ -215,6 +196,5 @@ export default {
 }
 .add-btn i{
 	font-size: 3rem;
-	color: red;
 }
 </style>

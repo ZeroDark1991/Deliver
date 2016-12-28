@@ -45,7 +45,13 @@ export default {
 		}
 	},
 	created() {
-		store.commit('saveLogSuccessCallback',this.getUserInfo)
+		store.commit('saveLogSuccessCallback', null)
+	},
+	computed: {
+		userInfo () {
+			console.log('center')
+			return store.state.userInfo
+		}
 	},
   	methods:{
   		tabChange(link){
@@ -60,7 +66,7 @@ export default {
 	},
 	beforeRouteEnter (to, from, next) {
 		next(vm => {
-			store.dispatch('getUserInfo', vm)
+			store.dispatch('getUserInfo')
 		})
 	}
 }
