@@ -4,7 +4,7 @@
 			<mt-button icon="back" slot="left" @click="back('/center')"></mt-button>
 		</mt-header>
 		<div class="container-top">
-			<mt-cell class="address-list" v-if="userInfo">
+			<mt-cell class="address-list" v-if="userInfo.address">
 				<div slot="title" class="address-wrap">
 					<div class="flex-middle text-extra">
 						<div style="padding-right: 1rem;">{{userInfo.username}}</div>
@@ -18,7 +18,7 @@
 					<i class="iconfont">&#xe63d;</i>
 				</div>
 			</mt-cell>
-			<div class="add-btn text-theme-blue flex-middle flex-center" v-if="!userInfo">
+			<div class="add-btn text-theme-blue flex-middle flex-center" v-if="!userInfo.address">
 				<i class="unit-0 iconfont" @click="newAddress()">&#xe634;</i>
 			</div>
 		</div>
@@ -51,13 +51,7 @@ export default {
 	data () {
 		return {
 			store,
-			userInfo:{
-				username: null,
-				mobilePhoneNumber: null,
-				address: null,
-				areaCode: null
-			},
-			areaCodeList: [],
+			areaCodeList:null,
 			popupVisible:false,
 			addressPicker:false,
 			editAddressData:{
@@ -65,12 +59,12 @@ export default {
 				areaCode:'',
 				detail_address:''
 			},
-			district:[],
 			slots: [
 				{
 					flex: 1,
 					values: ['白杨街道1','白杨街道2','白杨街道3','白杨街道4','白杨街道5'],
 					textAlign: 'center',
+					defaultIndex: 5,
 					className: 'slot1'
 				}
 			]
@@ -79,11 +73,21 @@ export default {
 	created() {
 		store.commit('saveLogSuccessCallback', null)
 		store.dispatch('getUserInfo')
+		this.getAreaCodes()
 	},
 	computed: {
 		userInfo () {
 			return store.state.userInfo
-		}
+		},
+		district(){
+			return store.state.district
+		},
+		// areaNameList() {
+		// 	return store.state.areaNameList
+		// },
+		// areaCodeList() {
+		// 	return store.state.areaCodeList
+		// }
 	},
   	methods:{
 		go(link, param)  {
@@ -116,7 +120,8 @@ export default {
 				self.userInfo.address = self.editAddressData.street+self.editAddressData.detail_address
 				self.userInfo.areaCode = self.editAddressData.areaCode+''
 				store.commit('saveUserInfo',self.userInfo)
-				self.go('/center')
+				self.popupVisible = false
+				// self.go('/center')
 			})
 		},
 		onValuesChange(picker, values) {
@@ -127,29 +132,39 @@ export default {
 		closePicker() {
 			this.addressPicker=false
 		},
+		getAreaList(district) {
+			let self = this
+			let areaCodeList = [], areaNameList = []
+			district.forEach( function(item, index) {
+				areaCodeList.push(item.areaCode)
+				areaNameList.push(item.name)
+				if (item.areaCode == self.userInfo.areaCode) {
+					self.editAddressData.street = item.name
+					self.editAddressData.areaCode = item.areaCode
+					self.editAddressData.detail_address = 
+					self.userInfo.address.split(item.name)[1]
+				}
+			});
+			this.areaCodeList = areaCodeList
+			this.slots[0].values = areaNameList
+		},
 		getAreaCodes() {
 			let self = this 
-			agent.get('/api/app/areaCodes', '')
-			.then(res => {
-				console.log(res)
-				if (res == false) return
-				let areaCodeList = []
-				self.district = res.district
-				self.slots[0].values = self.district.map( item => {
-					areaCodeList.push(item.areaCode)
-					return item.name
-				})
-				self.areaCodeList =  areaCodeList
-				self.district.forEach( function(item, index) {
-					if (item.areaCode == self.userInfo.areaCode) {
-						self.editAddressData.street = item.name
-						self.editAddressData.areaCode = item.areaCode
-						self.editAddressData.detail_address = 
-						self.userInfo.address.split(item.name)[1]
-						return
+			if (!store.state.district) {
+				agent.get('/api/app/areaCodes', '')
+				.then(res => {
+					console.log(res)
+					if (res == false) return
+					if (res.district) {
+						store.dispatch('saveDistrict', res.district)
+						self.getAreaList(res.district)
 					}
-				});
-			})
+				})
+			}else{
+				this.getAreaList(self.district)
+			}
+			
+			
 		},
 	}
 }

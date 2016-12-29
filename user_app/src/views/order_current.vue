@@ -128,7 +128,7 @@ export default {
 				self.$Indicator.open();
 			}
 			agent.get('/api/d/info', {
-				id: 'id'//id
+				id: id
 			})
 			.then(res => {
 				self.$Indicator.close();
@@ -159,7 +159,7 @@ export default {
 					self.currentOrder.statusCode = data.list[0].status
 					self.currentOrder.timeSlot = data.list[0].timeSlot
 					if (data.list[0].deliver) {
-						self.getDeliver(data.list[0].objectId)
+						self.getDeliver(data.list[0].deliver.objectId)
 					}else{
 						store.commit('saveCurrentOrder', self.currentOrder)
 						self.loadOk = true

@@ -43,7 +43,10 @@ export default {
 				.then(res => {
 					console.log(res)
 					if (res == false) return
-					self.tank = res.tank
+					if (res.tank) {
+						self.tank = res.tank
+						store.dispatch('saveTank',res.tank)
+					}
 				})
 			}
 			

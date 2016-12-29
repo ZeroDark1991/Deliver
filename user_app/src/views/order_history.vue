@@ -104,7 +104,7 @@ export default {
 		// },
 		getOrderList() {
 			let self = this
-			if (store.state.orderList) {
+			if (!store.state.orderList) {
 				self.$Indicator.open();
 			}
 			agent.get('/api/order/userList', {

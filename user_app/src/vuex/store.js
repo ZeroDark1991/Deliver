@@ -19,6 +19,9 @@ const store = new Vuex.Store({
 		orderList:null,
 		logSuccessCallback:null,
 		timeSlots:null,
+		district:null,
+		areaNameList:null,
+		areaCodeList:null,
 		tank:null
 	},
 	mutations: {
@@ -52,10 +55,34 @@ const store = new Vuex.Store({
 		SAVETIMESLOT(state, array) {
 			state.timeSlots = array 
 		},
+		SAVEDISTRICT(state, array) {
+			state.district = array 
+		},
+			// SAVEAREANAMELIST(state, array) {
+			// 	state.areaNameList = array 
+			// },
+			// SAVEAREACODELIST(state, array) {
+			// 	state.areaCodeList = array 
+			// },
+		SAVETANK(state, array) {
+			state.tank = array 
+		}
 	},
 	actions: {
 		saveTimeSlot({commit}, array) {
 			commit('SAVETIMESLOT',array)
+		},
+		saveDistrict({commit}, array) {
+			commit('SAVEDISTRICT',array)
+		},
+		// saveAreaNameList({commit}, array) {
+		// 	commit('SAVEAREANAMELIST',array)
+		// },
+		// saveAreaCodeList({commit}, array) {
+		// 	commit('SAVEAREACODELIST',array)
+		// },
+		saveTank({commit}, json) {
+			commit('SAVETANK',json)
 		},
 		getData ({dispatch, state}, pointer) {
 			console.log('登录成功回调')
