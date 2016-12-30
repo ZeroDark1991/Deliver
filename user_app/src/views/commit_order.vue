@@ -121,7 +121,7 @@ export default {
 		},
 		submitOrder() {
 			let self = this 
-			console.log(self.userInfo.timeSlot)
+			console.log(self.timeSlot)
 			agent.post('/api/order/create', {
 				address:self.userInfo.address,
 				areaCode:self.userInfo.areaCode,

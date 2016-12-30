@@ -60,9 +60,7 @@ export default {
 		return store.state.transitionName
 	},
 	userInfo () {
-		console.log(store.state.userInfo)
   		return store.state.userInfo
-  		// return '111'
   	},
 	isNotLogin () {
 		return store.state.isNotLogin
@@ -96,11 +94,13 @@ export default {
 			console.log(res)
 			if (res == false) return
 			store.commit('loginSuccess')
+			self.PhoneNumber = ''
+			self.PhoneNumber = ''
 			store.dispatch('closePopup')
 			if (self.$route.path == '/') {
 				$router.replace('/home')
 			}
-		}).then(store.dispatch('getData', self))
+		})
 	},
 	fetchVerifyCode () {
 		let self = this

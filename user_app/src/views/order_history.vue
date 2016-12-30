@@ -25,7 +25,7 @@
 					<mt-spinner type="fading-circle"></mt-spinner>
 				</p>
 			</div>
-			
+			<div v-if="lists.length==0" class="tip">暂无历史订单</div>
 		</div>
 	</div>
 </template>
@@ -114,7 +114,7 @@ export default {
 				self.$Indicator.close();
 				console.log(res)
 				if (res == false) return
-				if (res.list) {
+				if (res.list && res.list.length!=0) {
 					self.lists = res.list.map(item => {
 						return {
 							address: item.address,

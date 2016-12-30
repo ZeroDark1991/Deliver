@@ -43,7 +43,6 @@ export default {
 	},
 	computed: {
 		userInfo () {
-			console.log('center')
 			return store.state.userInfo
 		}
 	},
