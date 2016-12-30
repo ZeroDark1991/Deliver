@@ -40,6 +40,7 @@ export default {
 	},
 	created() {
 		store.commit('saveLogSuccessCallback', null)
+		store.dispatch('getUserInfo')
 	},
 	computed: {
 		userInfo () {
@@ -59,7 +60,7 @@ export default {
 	},
 	beforeRouteEnter (to, from, next) {
 		next(vm => {
-			store.dispatch('getUserInfo')
+			
 		})
 	}
 }

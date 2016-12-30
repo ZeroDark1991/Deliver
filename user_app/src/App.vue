@@ -100,7 +100,8 @@ export default {
 			if (self.$route.path == '/') {
 				$router.replace('/home')
 			}
-		})
+			console.log(111)
+		}).then(store.dispatch('getData', self))
 	},
 	fetchVerifyCode () {
 		let self = this

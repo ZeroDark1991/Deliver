@@ -116,6 +116,8 @@ const store = new Vuex.Store({
 							username: res.user.username
 						}
 						commit('loginSuccess')
+						console.log(222)
+						console.log(userInfo)
 						commit('saveUserInfo', userInfo)
 						dispatch('closePopup')
 						if (pointer) {
