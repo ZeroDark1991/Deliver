@@ -41,8 +41,8 @@ export default {
 	return {
 		mask:false,
 		show:false,
-		PhoneNumber: '13588277370',//13588277370
-		VerifyCode: '438811',//438811
+		PhoneNumber: '',//13588277370
+		VerifyCode: '',//438811
 		isGetCheck:false,
 		hint: '获取短信验证码',
 		timer: null,
