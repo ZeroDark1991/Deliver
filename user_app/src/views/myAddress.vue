@@ -1,24 +1,27 @@
 <template>
 	<div class="page">
 		<mt-header fixed title="我的地址">
-			<mt-button icon="back" slot="left" @click="back('/center')"></mt-button>
+			<mt-button icon="back" slot="left" @click="back('/home')"></mt-button>
 		</mt-header>
 		<div class="container-top">
-			<mt-cell class="address-list" v-if="userInfo">
+			<mt-cell class="address-list" v-for="item in addressList">
 				<div slot="title" class="address-wrap">
-					<div class="flex-middle text-extra">
-						<div style="padding-right: 1rem;">{{userInfo.username}}</div>
-						<div>{{userInfo.mobilePhoneNumber}}</div>
-					</div>
 					<div class="flex-middle" style="margin-top: .5rem;">
-						<div class="one-line">{{userInfo.address}}</div>
+						<div class="one-line">{{item.address}}</div>
+					</div>
+					<div class="flex-middle" style="margin-top: 1rem;">
+						<div class="unit-1-2 flex-middle" @click="changeCurrentAddress(item.id)">
+							<span class="checked iconfont" :class="{'is-checked': item.current, 'not-checked': !item.current}">&#xe627;</span>默认地址
+						</div>
+						<div class="flex-middle flex-right unit-1-2">
+							<i class="iconfont edit-btn" @click="editAddress(item.id)">&#xe63d;</i>
+							<i class="iconfont delete-btn" @click="deleteAddress(item.id,item.current)">&#xe601;</i>
+						</div>
 					</div>
 				</div>
-				<div class="flex-middle flex-right text-large edit-btn" @click="editAddress()">
-					<i class="iconfont">&#xe63d;</i>
-				</div>
+				
 			</mt-cell>
-			<div class="add-btn flex-middle flex-center" v-if="!userInfo">
+			<div class="add-btn text-theme-blue flex-middle flex-center">
 				<i class="unit-0 iconfont" @click="newAddress()">&#xe634;</i>
 			</div>
 		</div>
@@ -29,7 +32,6 @@
 				<mt-button icon="back" slot="left" @click="popupVisible = false"></mt-button>
 			</mt-header>
 			<div class="container-top">
-				<!-- <mt-field label="昵称" placeholder="（可选）" v-model="editAddressData.name"></mt-field> -->
 				<mt-cell class="invoice-cell" title="街道" is-link @click.native="addressPicker = true" :value="editAddressData.street"></mt-cell>
 				<mt-field label="详细地址" placeholder="请输入详细地址" type="textarea" rows="2" v-model="editAddressData.detail_address"></mt-field>
 			</div>
@@ -51,33 +53,45 @@ export default {
 	data () {
 		return {
 			store,
-			userInfo:{
-				username: null,
-				mobilePhoneNumber: null,
-				address: null,
-				areaCode: null
-			},
-			areaCodeList: [],
+			type:null,
+			areaCodeList:null,
 			popupVisible:false,
 			addressPicker:false,
 			editAddressData:{
 				street:'',
 				areaCode:'',
-				detail_address:''
+				detail_address:'',
+				id:''
 			},
-			district:[],
 			slots: [
 				{
 					flex: 1,
 					values: ['白杨街道1','白杨街道2','白杨街道3','白杨街道4','白杨街道5'],
 					textAlign: 'center',
+					defaultIndex: 5,
 					className: 'slot1'
 				}
 			]
 		}
 	},
 	created() {
-		store.commit('saveLogSuccessCallback',this.getUserInfo)
+		store.commit('saveLogSuccessCallback', null)
+		store.dispatch('getUserInfo')
+		this.getAreaCodes()
+	},
+	computed: {
+		addressList () {
+			return store.state.addressList
+		},
+		district(){
+			return store.state.district
+		},
+		// areaNameList() {
+		// 	return store.state.areaNameList
+		// },
+		// areaCodeList() {
+		// 	return store.state.areaCodeList
+		// }
 	},
   	methods:{
 		go(link, param)  {
@@ -88,30 +102,109 @@ export default {
 		},
 		newAddress() {
 			this.getAreaCodes()
+			this.type = 'new'
 			this.popupVisible = true
 			this.editAddressData.street = ''
 			this.editAddressData.detail_address = ''
 		},
-		editAddress() {
-			this.getAreaCodes()
-			this.popupVisible = true
+		editAddress(addressId) {
+			let self = this
+			self.type = 'edit'
+			self.getAreaCodes()
+			self.popupVisible = true
+			self.editAddressData.id = addressId
+			store.state.addressList.forEach( function(item, index) {
+				if (item.id == addressId) {
+					self.editAddressData.areaCode = item.areaCode
+					self.district.forEach( function(item1, index1) {
+						if (item.areaCode == item1.areaCode) {
+							self.editAddressData.street = item1.name
+							self.editAddressData.detail_address = item.address.split(item1.name)[1]
+						}
+					});
+				}
+			})
+		},
+		deleteAddress(addressId, isCurrent) {
+			let self = this
+			self.$MessageBox.confirm('确定要删除改地址吗?').then(action => {
+				if (isCurrent) {
+					self.$Toast('不能删除默认地址')
+					return
+				}else{
+					self.$Indicator.open()
+					agent.post('/api/u/removeAddress', {id:addressId})
+					.then(res => {
+						self.$Indicator.close()
+						console.log(res)
+						if (res == false) return
+						let arr = []
+						store.state.addressList.forEach( function(item, index) {
+							if (item.id != addressId) {
+								arr.push(item)
+							}
+						})
+						store.commit('SAVEADDRESSLIST',arr)
+						self.$Toast('删除成功')
+					})
+				}
+			});
+		},
+		changeCurrentAddress(addressId) {
+			let self = this
+			self.$Indicator.open()
+			agent.post('/api/u/currentAddress', {id:addressId})
+			.then(res => {
+				self.$Indicator.close()
+				console.log(res)
+				if (res == false) return
+				store.state.addressList = self.addressList.map( item => {
+					return {
+						address: item.address,
+						areaCode: item.areaCode,
+						current: addressId==item.id ? true: false,
+						id: item.id
+					}
+				})
+			})
 		},
 		saveAddress() {
 			let self = this
-			let s = {
-				'address': self.editAddressData.street+self.editAddressData.detail_address,
-				'areaCode': self.editAddressData.areaCode+''
+			if (self.type == 'new') {
+				let s = {
+					'address': self.editAddressData.street+self.editAddressData.detail_address,
+					'areaCode': self.editAddressData.areaCode+''
+				}
+				self.$Indicator.open()
+				agent.post('/api/u/setAddress', s)
+				.then(res => {
+					self.$Indicator.close()
+					console.log(res)
+					if (res == false) return
+					self.addressList = res.addressList
+					store.commit('SAVEADDRESSLIST',res.addressList)
+					self.popupVisible = false
+				})
+			}else if (self.type == 'edit') {
+				let s = {
+					'address': self.editAddressData.street+self.editAddressData.detail_address,
+					'areaCode': self.editAddressData.areaCode+'',
+					'id': self.editAddressData.id
+				}
+				self.$Indicator.open()
+				agent.post('/api/u/editAddress', s)
+				.then(res => {
+					self.$Indicator.close()
+					console.log(res)
+					if (res == false) return
+					self.addressList = res.addressList
+					store.commit('SAVEADDRESSLIST',res.addressList)
+					self.popupVisible = false
+					self.$Toast('修改成功')
+
+				})
 			}
-			console.log(s)
-			agent.post('/api/u/setAddress', s)
-			.then(res => {
-				console.log(res)
-				if (res == false) return
-				self.userInfo.address = self.editAddressData.street+self.editAddressData.detail_address
-				self.userInfo.areaCode = self.editAddressData.areaCode+''
-				store.commit('saveUserInfo',self.userInfo)
-				self.go('/center')
-			})
+			
 		},
 		onValuesChange(picker, values) {
 			let index = this.slots[0].values.indexOf(values[0])
@@ -121,62 +214,41 @@ export default {
 		closePicker() {
 			this.addressPicker=false
 		},
+		getAreaList(district) {
+			let self = this
+			let areaCodeList = [], areaNameList = []
+			district.forEach( function(item, index) {
+				areaCodeList.push(item.areaCode)
+				areaNameList.push(item.name)
+			});
+			this.areaCodeList = areaCodeList
+			this.slots[0].values = areaNameList
+		},
 		getAreaCodes() {
 			let self = this 
-			agent.get('/api/app/areaCodes', '')
-			.then(res => {
-				console.log(res)
-				if (res == false) return
-				let areaCodeList = []
-				self.district = res.district
-				self.slots[0].values = self.district.map( item => {
-					areaCodeList.push(item.areaCode)
-					return item.name
-				})
-				self.areaCodeList =  areaCodeList
-				self.district.forEach( function(item, index) {
-					if (item.areaCode == self.userInfo.areaCode) {
-						self.editAddressData.street = item.name
-						self.editAddressData.areaCode = item.areaCode
-						self.editAddressData.detail_address = 
-						self.userInfo.address.split(item.name)[1]
-						return
+			if (!store.state.district) {
+				agent.get('/api/app/areaCodes', '')
+				.then(res => {
+					console.log(res)
+					if (res == false) return
+					if (res.district) {
+						store.dispatch('saveDistrict', res.district)
+						self.getAreaList(res.district)
 					}
-				});
-			})
+				})
+			}else{
+				this.getAreaList(self.district)
+			}
+			
+			
 		},
-		// getUserInfo() {
-		// 	let self = this
-		// 	if (store.state.userInfo == null) {
-		// 		agent.get('/api/u/info', '')
-		// 		.then(res => {
-		// 			console.log(res)
-		// 			if (res == false) return
-		// 			self.userInfo.address = res.user.address
-		// 			self.userInfo.areaCode = res.user.areaCode
-		// 			self.userInfo.mobilePhoneNumber = res.user.mobilePhoneNumber
-		// 			self.userInfo.username = res.user.username
-		// 			store.commit('saveUserInfo',self.userInfo)
-		// 		})
-		// 	}else {
-		// 		self.userInfo.address = store.state.userInfo.address || ''
-		// 		self.userInfo.areaCode = store.state.userInfo.areaCode || ''
-		// 		self.userInfo.username = store.state.userInfo.username || ''
-		// 		self.userInfo.mobilePhoneNumber = store.state.userInfo.mobilePhoneNumber || ''
-		// 	}
-		// }
-	},
-	beforeRouteEnter (to, from, next) {
-		next(vm => {
-			store.dispatch('getUserInfo', vm)
-		})
 	}
 }
 </script>
 
 <style scoped lang="less">
 .container-top{
-	height: 80%;
+	// height: 80%;
 }
 .mint-popup{
 	width: 100%;
@@ -203,18 +275,35 @@ export default {
 .address-list{
 	min-height: 4rem;
 	.address-wrap{
-		width: 85%;
-		max-width: 250px;
+		// width: 85%;
+		// max-width: 250px;
 	}
 }
 .edit-btn{
+	font-size: 1.25rem;
 	width: 2.4rem;
-	i{
-		font-size: 1.5rem;
-	}
+}
+.delete-btn{
+	font-size: 1.25rem;
 }
 .add-btn i{
 	font-size: 3rem;
-	color: red;
+}
+.checked{
+	display: inline-block;
+	width: 1rem;
+	height: 1rem;
+	border-radius: 50%;
+	margin-right: .5rem;
+	color: #009BF7;
+	font-size: 1.1rem;
+}
+.is-checked{
+	// background-color: #009BF7;
+}
+.not-checked{
+	background-color: #fff;
+	text-indent: 99999px;
+	border: 1px solid #333;
 }
 </style>

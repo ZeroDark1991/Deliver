@@ -3,10 +3,10 @@
 		<div class="container">
 			<div class="user-info">
 				<div class="top-wrap">
-					<div class="head-img flex-center">
-						<img :src="head">
+					<div class="head-img text-center">
+						<img :src="headSrc">
 					</div>
-					<div class="flex-center tel">{{userInfo.username || userInfo.tel}}</div>
+					<div class="flex-center tel">{{userInfo.username || userInfo.mobilePhoneNumber}}</div>
 				</div>
 			</div>
 			<mt-cell is-link title="我的订单" class="text-large" @click.native="go('/order_history')"></mt-cell>
@@ -29,23 +29,23 @@
 <script type="text/javascript">
 import store from '../vuex/store'
 import agent from '../util/agent'
-import head from '../assets/head.jpg'
+import headSrc from '../assets/head.jpg'
 export default {
+	store,
 	data () {
 		return {
 			selected: 'center',
-			head,
-			store,
-			userInfo:{
-				username: null,
-				tel: null,
-				address: null,
-				areaCode: null
-			}
+			headSrc
 		}
 	},
 	created() {
-		store.commit('saveLogSuccessCallback',this.getUserInfo)
+		store.commit('saveLogSuccessCallback', null)
+		store.dispatch('getUserInfo')
+	},
+	computed: {
+		userInfo () {
+			return store.state.userInfo
+		}
 	},
   	methods:{
   		tabChange(link){
@@ -60,7 +60,7 @@ export default {
 	},
 	beforeRouteEnter (to, from, next) {
 		next(vm => {
-			store.dispatch('getUserInfo', vm)
+			
 		})
 	}
 }

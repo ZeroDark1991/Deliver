@@ -1,7 +1,7 @@
 <template>
 	<div class="page">
 		<mt-header fixed title="订单列表">
-			<mt-button icon="back" slot="left" @click="back('/center')"></mt-button>
+			<mt-button icon="back" slot="left" @click="back('/home')"></mt-button>
 		</mt-header>
 		<div class="container-top" v-show="loadOk">
 			<div v-infinite-scroll="loadMore"
@@ -25,7 +25,7 @@
 					<mt-spinner type="fading-circle"></mt-spinner>
 				</p>
 			</div>
-			
+			<div v-if="lists.length==0" class="tip">暂无历史订单</div>
 		</div>
 	</div>
 </template>
@@ -104,7 +104,7 @@ export default {
 		// },
 		getOrderList() {
 			let self = this
-			if (store.state.orderList) {
+			if (!store.state.orderList) {
 				self.$Indicator.open();
 			}
 			agent.get('/api/order/userList', {
@@ -114,7 +114,7 @@ export default {
 				self.$Indicator.close();
 				console.log(res)
 				if (res == false) return
-				if (res.list) {
+				if (res.list && res.list.length!=0) {
 					self.lists = res.list.map(item => {
 						return {
 							address: item.address,

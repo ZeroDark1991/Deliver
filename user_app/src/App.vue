@@ -33,9 +33,10 @@
 <script>
 import agent from './util/agent'
 import store from './vuex/store'
-import logo from './assets/logo.png'
+import logo from './assets/logo1.png'
 export default {
   name: 'app',
+  store,
   data () {
 	return {
 		mask:false,
@@ -46,20 +47,21 @@ export default {
 		hint: '获取短信验证码',
 		timer: null,
 		canGet: false,
-		userInfo: {
-			address:'',
-			areaCode:'',
-			mobilePhoneNumber:'',
-			username:''
-		},
 		logo,
 	}
   },
-  store,
-  computed: {
+  created() {
+  	console.log(123)
+	let self = this
+	store.dispatch('getUserInfo', self)
+  },
+  computed: {	
 	transitionName () {
 		return store.state.transitionName
 	},
+	userInfo () {
+  		return store.state.userInfo
+  	},
 	isNotLogin () {
 		return store.state.isNotLogin
 	},
@@ -67,40 +69,7 @@ export default {
 		return store.state.open
 	}
   },
-  created() {
-	let self = this
-	store.commit('saveLogSuccessCallback',self.getUserInfo)
-	store.dispatch('getUserInfo', self)
-	// if(!self.isNotLogin){
-	// 	console.log(111)
-	// 	store.commit('loginSuccess')
-		
-	// }else{
-	// 	console.log(222)
- //    	self.getUserInfo()
-	// }
-  },
   methods:{
-	  // 	getUserInfo() {
-	  // 		let self = this
-	  // 		agent.get('/api/u/info', '')
-		// .then(res => {
-		// 	console.log(res)
-		// 	if (res == false) return
-		// 	if (res.user) {
-		// 		self.userInfo.address = res.user.address
-		// 		self.userInfo.areaCode = res.user.areaCode
-		// 		self.userInfo.mobilePhoneNumber = res.user.mobilePhoneNumber
-		// 		self.userInfo.username = res.user.username
-		// 		store.commit('saveUserInfo',self.userInfo)
-		// 		store.commit('loginSuccess')
-		// 		store.dispatch('closePopup')
-		// 		if (self.$route.path == '/') {
-		// 			self.$router.replace('/home')
-		// 		}
-		// 	}
-		// })
-  		// 	},
 	login () {
 		let self = this
 		let reg = /^(0|86|17951)?(13[0-9]|15[012356789]|17[01678]|18[0-9]|14[57])[0-9]{8}$/
@@ -125,11 +94,17 @@ export default {
 			console.log(res)
 			if (res == false) return
 			store.commit('loginSuccess')
+			self.PhoneNumber = ''
+			self.VerifyCode = ''
 			store.dispatch('closePopup')
 			if (self.$route.path == '/') {
 				$router.replace('/home')
 			}
-		}).then(store.dispatch('getData'))
+			console.log(111)
+			return
+		}).then(function(){
+			store.dispatch('getData', self)
+		})
 	},
 	fetchVerifyCode () {
 		let self = this
@@ -188,7 +163,7 @@ export default {
 }
 .logo-img{
 	height: 6rem;
-	width: 7rem;
+	width: 6rem;
 	/*background-color: #009BF7;*/
 }
 .get-code{

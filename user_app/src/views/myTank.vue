@@ -1,7 +1,7 @@
 <template>
 	<div class="page">
 		<mt-header fixed title="当前煤气罐">
-			<mt-button icon="back" slot="left" @click="back('/center')"></mt-button>
+			<mt-button icon="back" slot="left" @click="back('/home')"></mt-button>
 		</mt-header>
 		<div class="container-top">
 			<div v-if="!tank" class="tip">暂无信息</div>
@@ -13,14 +13,21 @@
 import agent from '../util/agent'
 import store from '../vuex/store'
 export default {
+	store,
 	data () {
 		return {
 			tank:null,
-			store,
+		}
+	},
+	computed: {
+		userInfo () {
+			console.log('tank')
+			return store.state.tank
 		}
 	},
 	created() {
 		store.commit('saveLogSuccessCallback',this.getData)
+		this.getData()
 	},
   	methods:{
 		go(link, param)  {
@@ -31,18 +38,22 @@ export default {
 		},
 		getData() {
 			let self = this
-			agent.get('/api/u/currentTank', '')
-			.then(res => {
-				console.log(res)
-				if (res == false) return
-				self.tank = res.tank
-			})
+			if (!store.state.tank) {
+				agent.get('/api/u/currentTank', '')
+				.then(res => {
+					console.log(res)
+					if (res == false) return
+					if (res.tank) {
+						self.tank = res.tank
+						store.dispatch('saveTank',res.tank)
+					}
+				})
+			}
+			
 		}
 	},
 	beforeRouteEnter (to, from, next) {
-		next(vm => {
-			vm.getData()
-		})
+		next()
 	},
 }
 </script>
