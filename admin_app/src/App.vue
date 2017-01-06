@@ -37,7 +37,6 @@ export default {
 @import './assets/colors'
 
 #app
-  font-size 22px
   height 100%
   width 100%
 .wrapper

@@ -25,8 +25,20 @@ const create = function*() {
   order.set('timeSlot', data.timeSlot)
   order.set('areaCode', data.areaCode)
   order.set('status', 0)
+  order.set('price', '')
+  
+  order.set('payment', '货到付款')
+  order.set('confirmedAt', null)
+  order.set('receivedAt', null)
+  order.set('finishedAt', null)
+
+  let userPhone = data.userPhone
+  ? data.userPhone
+  : currentUser.get('mobilePhoneNumber')
+  order.set('userPhone', userPhone)
 
   let user = AV.Object.createWithoutData('_User', currentUser.id)
+
   // 订单关联用户
   order.set('user', user)
 

@@ -1,6 +1,6 @@
 <template>
 	<div class="page">
-		<mt-header fixed title="订单列表">
+		<mt-header fixed title="当前订单">
 			<mt-button icon="back" slot="left" @click="back('/home')"></mt-button>
 		</mt-header>
 		<div class="container-top">

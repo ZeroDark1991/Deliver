@@ -5,12 +5,19 @@ import App from './App'
 import VueRouter from 'vue-router'
 import Vuex from 'vuex'
 import Element from 'element-ui'
+import AMap from 'vue-amap'
 
 import 'normalize.css'
 import 'element-ui/lib/theme-default/index.css'
 
 Vue.use(Element)
 Vue.use(VueRouter)
+Vue.use(AMap)
+
+AMap.initAMapApiLoader({
+  key: 'your amap key',
+  plugin: ['AMap.Autocomplete', 'AMap.PlaceSearch', 'AMap.Scale', 'AMap.OverView', 'AMap.ToolBar', 'AMap.MapType', 'AMap.PolyEditor', 'AMap.CircleEditor']
+});
 
 /* eslint-disable no-new */
 import router from './router'

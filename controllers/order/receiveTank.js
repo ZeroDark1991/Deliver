@@ -39,7 +39,9 @@ const receiveTank = function*() {
 
   // 更新
   let update = AV.Object.createWithoutData('Order', data.id)
+  let date = new Date()
   update.set('status', 2)
+  update.set('receivedAt', date)
   try {
   	yield update.save()
   } catch(e) {

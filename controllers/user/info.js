@@ -12,7 +12,7 @@ const info = function*() {
   }
 
   let user = new AV.Query('_User')
-  user.select(['username', 'mobilePhoneNumber', 'address', 'areaCode', 'nickname'])
+  // user.select(['username', 'mobilePhoneNumber', 'address', 'areaCode', 'nickname'])
 
   let result
   try {
@@ -23,14 +23,7 @@ const info = function*() {
 
   this.body = {
   	success: true,
-  	user: {
-      username: reslut.get('username'),
-      mobilePhoneNumber: result.get('mobilePhoneNumber'),
-      address: result.get('address'),
-      areaCode: result.get('areaCode'),
-      objectId: result.id,
-      nickname: result.get('nickname')
-    }
+  	user: result
   }
 }
 

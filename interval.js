@@ -14,7 +14,7 @@ const interval = function() {
     .catch(function(error){
       console.log('Error Occurs While Deleting Expired Orders')
     })    
-  }, 5*60*1000)
+  }, 10*60*1000)
 }
 
 module.exports = interval

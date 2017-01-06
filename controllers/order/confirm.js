@@ -35,21 +35,23 @@ const confirm = function*() {
   	return
   }
 
-  try {
-    let deliverQuery = new AV.Query('Deliver')
-    let checkDeliver = yield deliverQuery.get(headers.deliver)
-    if(!checkDeliver) {
-      throw new APIError('Invalid', '该送气工不存在')
-    }
-  } catch(e) {
-    throw new APIError('Invalid', e.message)
-    return
-  }
+  // try {
+  //   let deliverQuery = new AV.Query('Deliver')
+  //   let checkDeliver = yield deliverQuery.get(headers.deliver)
+  //   if(!checkDeliver) {
+  //     throw new APIError('Invalid', '该送气工不存在')
+  //   }
+  // } catch(e) {
+  //   throw new APIError('Invalid', e.message)
+  //   return
+  // }
 
   // 更新
   let update =  AV.Object.createWithoutData('Order', data.id)
   let deliver =  AV.Object.createWithoutData('Deliver', headers.deliver)
+  let date = new Date()
   update.set('status', 1)
+  update.set('confirmedAt', date)
   update.set('deliver', deliver)
 
   try {

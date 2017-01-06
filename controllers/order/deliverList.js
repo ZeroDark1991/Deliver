@@ -47,7 +47,6 @@ const deliverList = function*() {
     query.equalTo('deliver', deliver)
     query.ascending('timeSlot') // 按预约时间升序
     query.include('user')
-    query.select(['address', 'status', 'timeSlot', 'user'])
 
     try {
   	  result = yield query.find()
@@ -57,14 +56,22 @@ const deliverList = function*() {
     }
     let list = result.map(order => {
       let user = order.get('user')
+      let u = null
+      if(user) {
+        u = {
+          objectId: user.id,
+          phoneNumber: user.get('mobilePhoneNumber')
+        }
+      }
       let handler = {
         address: order.get('address'),
         status: order.get('status'),
         timeSlot: order.get('timeSlot'),
-        user: {
-          objectId: user.id,
-          phoneNumber: user.get('mobilePhoneNumber')
-        },
+        createdAt: order.createdAt,
+        confirmedAt: order.get('confirmedAt'),
+        receivedAt: order.get('receivedAt'),
+        finishedAt: order.get('finishedAt'),
+        user: u,
         objectId: order.id
       }
       return handler
@@ -92,7 +99,7 @@ const deliverList = function*() {
       })
 
       let query = AV.Query.or.apply(AV.Query, options)
-      query.select(['address', 'status', 'timeSlot', 'user'])
+      // query.select(['address', 'status', 'timeSlot', 'user'])
       try {
         result = yield query.find()
       } catch(e) {
@@ -105,7 +112,7 @@ const deliverList = function*() {
       query.lessThanOrEqualTo('status', 0)
       query.ascending('timeSlot') // 按预约时间升序
       query.include('user')
-      query.select(['address', 'status', 'timeSlot', 'user'])
+      // query.select(['address', 'status', 'timeSlot', 'user'])
 
       try {
         result = yield query.find()
@@ -121,6 +128,10 @@ const deliverList = function*() {
         address: order.get('address'),
         status: order.get('status'),
         timeSlot: order.get('timeSlot'),
+        createdAt: order.createdAt,
+        confirmedAt: order.get('confirmedAt'),
+        receivedAt: order.get('receivedAt'),
+        finishedAt: order.get('finishedAt'),
         user: {
           objectId: user.id,
           phoneNumber: user.get('mobilePhoneNumber')

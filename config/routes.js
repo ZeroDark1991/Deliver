@@ -15,6 +15,8 @@ const Deliver = require('../controllers/deliver/')
 // global
 router.get('/app/areaCodes', App.areaCodes)
 router.get('/app/timeSlots', App.timeSlots)
+router.get('/app/version', App.version.fetch)
+router.post('/app/version', App.version.update)
 
 // order
 router.get('/order/info', Order.info)
@@ -30,6 +32,9 @@ router.post('/order/receiveTank', Order.receiveTank)
 
 // deliver
 router.get('/d/info', Deliver.info)
+router.get('/d/list', Deliver.list)
+router.post('/d/edit', Deliver.edit)
+router.post('/d/remove', Deliver.remove)
 router.post('/d/logIn', Deliver.logIn)
 router.post('/d/create', Deliver.create)
 router.post('/d/signOut', Deliver.signOut)
@@ -40,6 +45,9 @@ router.get('/u/currentTank', User.currentTank)
 
 router.post('/u/logIn', User.logIn)
 router.post('/u/setAddress', User.setAddress)
+router.post('/u/editAddress', User.editAddress)
+router.post('/u/removeAddress', User.removeAddress)
+router.post('/u/currentAddress', User.currentAddress)
 router.post('/u/verifyCode', User.verifyCode)
 
 // tank

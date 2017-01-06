@@ -22,7 +22,8 @@ const info = function*() {
 
   try {
   	result = yield query.get(params.id)
-  } catch(e) {
+  }
+  catch(e) {
   	throw new APIError('DB Error', e.message)
   	return
   }
@@ -36,6 +37,10 @@ const info = function*() {
   		status: result.get('status'),
   		timeSlot: result.get('timeSlot'),
   		objectId: result.id,
+      createdAt: result.createdAt,
+      confirmedAt: result.get('confirmedAt'),
+      receivedAt: result.get('receivedAt'),
+      finishedAt: result.get('finishedAt'),
   		user: {
   			objectId: user.id,
   			phoneNumber: user.get('mobilePhoneNumber')
