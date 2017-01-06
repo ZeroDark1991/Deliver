@@ -23,7 +23,7 @@ Fastclick.attach(document.body)
 
 import transfer from './transfer'
 Vue.prototype.$transfer = new transfer()
-// Vue.prototype.$MessageBox = MessageBox
+Vue.prototype.$MessageBox = MessageBox
 Vue.prototype.$Toast = _MyToast
 // Vue.prototype.$imgHandler = imgHandler
 Vue.prototype.$Indicator = Indicator
@@ -55,6 +55,10 @@ const router = new VueRouter({
       component: require('./views/center.vue')
     },
     {
+      path: '/order_detail/:id',
+      component: require('./views/order_detail.vue')
+    },
+     {
       path: '/order_current',
       component: require('./views/order_current.vue')
     },
@@ -67,7 +71,7 @@ const router = new VueRouter({
       component: require('./views/myAddress.vue')
     },
     {
-      path: '/commit_order',
+      path: '/commit_order/:type',
       component: require('./views/commit_order.vue')
     },
     {

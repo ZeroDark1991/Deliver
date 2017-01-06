@@ -67,3 +67,8 @@ a:active, a:hover{
 .mint-cell:not(:first-child) .mint-cell-wrapper .mint-cell-title{
 	padding: .5rem 0;
 }
+
+
+.link-tel .mint-field-core{
+	text-align: right;
+}

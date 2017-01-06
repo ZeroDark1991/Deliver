@@ -1,7 +1,7 @@
 <template>
 	<div class="page">
 		<mt-header fixed title="当前煤气罐">
-			<mt-button icon="back" slot="left" @click="back('/center')"></mt-button>
+			<mt-button icon="back" slot="left" @click="back('/home')"></mt-button>
 		</mt-header>
 		<div class="container-top">
 			<div v-if="!tank" class="tip">暂无信息</div>

@@ -33,7 +33,7 @@
 <script>
 import agent from './util/agent'
 import store from './vuex/store'
-import logo from './assets/logo.png'
+import logo from './assets/logo1.png'
 export default {
   name: 'app',
   store,
@@ -41,8 +41,8 @@ export default {
 	return {
 		mask:false,
 		show:false,
-		PhoneNumber: '',//13588277370
-		VerifyCode: '',//438811
+		PhoneNumber: '13588277370',//13588277370
+		VerifyCode: '438811',//438811
 		isGetCheck:false,
 		hint: '获取短信验证码',
 		timer: null,
@@ -95,13 +95,16 @@ export default {
 			if (res == false) return
 			store.commit('loginSuccess')
 			self.PhoneNumber = ''
-			self.PhoneNumber = ''
+			self.VerifyCode = ''
 			store.dispatch('closePopup')
 			if (self.$route.path == '/') {
 				$router.replace('/home')
 			}
 			console.log(111)
-		}).then(store.dispatch('getData', self))
+			return
+		}).then(function(){
+			store.dispatch('getData', self)
+		})
 	},
 	fetchVerifyCode () {
 		let self = this
@@ -160,7 +163,7 @@ export default {
 }
 .logo-img{
 	height: 6rem;
-	width: 7rem;
+	width: 6rem;
 	/*background-color: #009BF7;*/
 }
 .get-code{

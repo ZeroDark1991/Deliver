@@ -1,7 +1,7 @@
 <template>
 	<div class="page">
 		<mt-header fixed title="订单列表">
-			<mt-button icon="back" slot="left" @click="back('/center')"></mt-button>
+			<mt-button icon="back" slot="left" @click="back('/home')"></mt-button>
 		</mt-header>
 		<div class="container-top" v-show="loadOk">
 			<div v-infinite-scroll="loadMore"
