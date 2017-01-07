@@ -8,7 +8,13 @@
 				<mt-cell title="我的订单" v-for="item in orderList" @click.native="go('/order_detail',item.objectId)">
 					<div slot="title">
 						<div style="height: 1.5rem;" class="flex-middle">
-							<span class="item-title">地址:</span>{{item.address}}
+							<span class="item-title">收货人:</span>{{item.userName}}
+						</div>
+						<div style="height: 1.5rem;" class="flex-middle">
+							<span class="item-title">联系电话:</span>{{item.userPhone}}
+						</div>
+						<div style="height: 1.5rem;" class="flex-middle">
+							<span class="item-title">收货地址:</span>{{item.address}}
 						</div>
 						<div style="height: 1.5rem;" class="flex-middle">
 							<span class="item-title">预约时间:</span>{{item.timeSlot}}
@@ -41,12 +47,12 @@ export default {
 	},
 	created() {
 		store.commit('saveLogSuccessCallback',this.getCurrentOrderList)
-		if (store.state.currentOrderList) {
-			this.orderList = store.state.currentOrderList
-			this.loadOk = true
-		}else{
+		// if (store.state.currentOrderList) {
+		// 	this.orderList = store.state.currentOrderList
+		// 	this.loadOk = true
+		// }else{
 			this.getCurrentOrderList()
-		}
+		// }
 	},
   	methods:{
 		go(link, param)  {
@@ -99,9 +105,9 @@ export default {
 		// },
 		getCurrentOrderList () {
 			let self = this
-			if (!store.state.currentOrderList) {
-				self.$Indicator.open();
-			}
+			// if (!store.state.currentOrderList) {
+			self.$Indicator.open();
+			// }
 			agent.get('/api/order/userList', {
 				type: 0
 			})
@@ -111,16 +117,21 @@ export default {
 				let data = res
 				if (res == false) return
 				if (data.list && data.list.length!=0) {
-					self.orderList = data.list.map( item => {
+					let orderList = []
+					orderList = data.list.map( item => {
 						return {
 							address: item.address,
 							timeSlot: item.timeSlot,
 							objectId: item.objectId,
+							userPhone: item.userPhone,
+							userName: item.userName,
 							deliver:item.deliver ? item.deliver : null,
 							createdAt: self.$Moment(item.createdAt).format("YYYY-MM-DD HH:mm:ss"),
 							status: self.stringStatus(item.status)
 						}
 					})
+					// self.orderList = orderList.slice(0,1)
+					self.orderList = orderList
 					store.commit('saveCurrentOrderList', self.orderList)
 					self.loadOk = true
 					// self.currentOrder.address = data.list[0].address,

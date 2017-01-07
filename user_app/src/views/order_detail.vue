@@ -37,14 +37,20 @@
 					<mt-tab-container-item id="订单详情" style="margin-top: 1rem;">
 						<mt-cell title="我的订单">
 							<div slot="title">
+								<div style="height: 1.5rem;" class="flex-middle" v-if="currentOrder.userPhone">
+									<span class="item-title">收货人:</span>{{currentOrder.userPhone}}
+								</div>
+								<div style="height: 1.5rem;" class="flex-middle" v-if="currentOrder.userPhone">
+									<span class="item-title">联系电话:</span>{{currentOrder.userPhone}}
+								</div>
 								<div style="height: 1.5rem;" class="flex-middle">
-									<span class="item-title">地址:</span>{{currentOrder.address}}
+									<span class="item-title">收货地址:</span>{{currentOrder.address}}
 								</div>
 								<div style="height: 1.5rem;" class="flex-middle">
 									<span class="item-title">预约时间:</span>{{currentOrder.timeSlot}}
 								</div>
-								<div style="height: 1.5rem;" class="flex-middle" v-if="currentOrder.createAt">
-									<span class="item-title">下单时间:</span>{{currentOrder.createAt}}
+								<div style="height: 1.5rem;" class="flex-middle" v-if="currentOrder.createdAt">
+									<span class="item-title">下单时间:</span>{{currentOrder.createdAt}}
 								</div>
 								<div style="height: 1.5rem;" class="flex-middle" v-if="currentOrder.deliver">
 									<span class="item-title">配送员:</span>{{currentOrder.deliver.name}}
@@ -76,7 +82,7 @@ export default {
 				status:null,
 				timeSlot:null,
 				name:null,
-				phoneNumber:null
+				userPhone:null
 			},
 			selected: '订单状态',
 			loadOk: false,
@@ -114,6 +120,7 @@ export default {
 							self.currentOrder.status = item.status
 							self.currentOrder.timeSlot = item.timeSlot
 							self.currentOrder.deliver = item.deliver
+							self.currentOrder.userPhone = item.userPhone
 							self.currentOrder.createdAt = self.$Moment(item.createdAt).format("YYYY-MM-DD HH:mm:ss")
 							store.commit('saveCurrentOrder', self.currentOrder)
 							self.loadOk = true
