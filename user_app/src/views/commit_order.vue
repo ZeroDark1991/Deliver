@@ -6,6 +6,7 @@
 		</mt-header>
 		<div class="container-top" v-if="loadOk">
 			<div v-if="type=='ol'">
+				<mt-cell title="收货人" :value="currentAddress.userName"></mt-cell>
 				<mt-cell title="配送地址" :value="currentAddress.address"></mt-cell>
 				<mt-field label="手机号" :placeholder="telPlaceholder" disableClear :disabled="telDisabled" 
 				type="tel" v-model="tel" class="link-tel"></mt-field>
@@ -92,7 +93,8 @@ export default {
 		currentAddress () {
 			let currentAddress = {
 				address:null,
-				areaCode:null
+				areaCode:null,
+				userName:null
 			}
 			if (store.state.addressList) {
 				store.state.addressList.forEach( function(item, index) {
@@ -172,6 +174,7 @@ export default {
 			let s = {
 				address:self.currentAddress.address,
 				areaCode:self.currentAddress.areaCode,
+				userName:self.currentAddress.userName,
 				timeSlot:self.timeSlot,
 				userPhone:self.tel
 			}

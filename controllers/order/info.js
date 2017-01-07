@@ -1,6 +1,7 @@
 'use strict'
 const AV = require('leanengine')
 const APIError = require('../../config/apiError')
+const formatDate = require('../util/formatDate')
 
 /**
  * Method: GET 单条订单详情
@@ -18,7 +19,7 @@ const info = function*() {
   let result
   let query = new AV.Query('Order')
   query.include('user')
-  query.select(['address', 'status', 'timeSlot', 'user'])
+  // query.select(['address', 'status', 'timeSlot', 'user'])
 
   try {
   	result = yield query.get(params.id)
@@ -29,9 +30,9 @@ const info = function*() {
   }
 
   let user = result.get('user')
-  let confirmedAt = result.get('confirmedAt') || ''
-  let receivedAt = result.get('receivedAt') || ''
-  let finishedAt = result.get('finishedAt') || ''  
+  let confirmedAt = result.get('confirmedAt') ? formatDate(result.get('confirmedAt')) : ''
+  let receivedAt = result.get('receivedAt') ? formatDate(result.get('receivedAt')) : ''
+  let finishedAt = result.get('finishedAt')  ? formatDate(result.get('finishedAt')) : '' 
   let u = null
   if(user) {
     u = {
@@ -50,7 +51,7 @@ const info = function*() {
       payment: result.get('payment'),
       price: result.get('price'),
   		objectId: result.id,
-      createdAt: result.createdAt,
+      createdAt: formatDate(result.createdAt),
       confirmedAt: confirmedAt,
       receivedAt: receivedAt,
       finishedAt: finishedAt,

@@ -20,8 +20,10 @@ router.post('/app/version', App.version.update)
 
 // order
 router.get('/order/info', Order.info)
+router.get('/order/list', Order.list)
 router.get('/order/userList', Order.userList)
 router.get('/order/deliverList', Order.deliverList)
+router.get('/order/auditList', Order.auditList)
 
 router.post('/order/audit', Order.audit)
 router.post('/order/create', Order.create)
@@ -41,6 +43,8 @@ router.post('/d/signOut', Deliver.signOut)
 
 // user
 router.get('/u/info', User.info)
+router.get('/u/list', User.list)
+router.get('/u/adminInfo', User.adminInfo)
 router.get('/u/currentTank', User.currentTank)
 
 router.post('/u/logIn', User.logIn)
@@ -51,6 +55,9 @@ router.post('/u/currentAddress', User.currentAddress)
 router.post('/u/verifyCode', User.verifyCode)
 
 // tank
+router.get('/t/list', Tank.list)
+router.get('/t/info', Tank.info)
+
 router.post('/t/create', Tank.create)
 
 // 404 not found

@@ -7,6 +7,9 @@
 			<mt-cell class="address-list" v-for="item in addressList">
 				<div slot="title" class="address-wrap">
 					<div class="flex-middle" style="margin-top: .5rem;">
+						<div class="one-line">{{item.userName}}</div>
+					</div>
+					<div class="flex-middle" style="margin-top: .5rem;">
 						<div class="one-line">{{item.address}}</div>
 					</div>
 					<div class="flex-middle" style="margin-top: 1rem;">
@@ -28,12 +31,13 @@
 		
 		<!-- <mt-button size="large" class="bottom-btn" @click="newAddress()"><i class="iconfont">&#xe62b;</i>新建地址</mt-button> -->
 		<mt-popup v-model="popupVisible" position="right">
-			<mt-header fixed title="修改地址">
+			<mt-header fixed :title="popupTitle">
 				<mt-button icon="back" slot="left" @click="popupVisible = false"></mt-button>
 			</mt-header>
 			<div class="container-top">
+				<mt-field label="收货人" placeholder="收货人姓名" v-model="editAddressData.userName"></mt-field>
 				<mt-cell class="invoice-cell" title="街道" is-link @click.native="addressPicker = true" :value="editAddressData.street"></mt-cell>
-				<mt-field label="详细地址" placeholder="请输入详细地址" type="textarea" rows="2" v-model="editAddressData.detail_address"></mt-field>
+				<mt-field label="详细地址" placeholder="详细地址" type="textarea" rows="2" v-model="editAddressData.detail_address"></mt-field>
 			</div>
 			<mt-button size="large" class="bottom-btn" @click="saveAddress()">保存</mt-button>
 		</mt-popup>
@@ -53,11 +57,13 @@ export default {
 	data () {
 		return {
 			store,
+			popupTitle:'',
 			type:null,
 			areaCodeList:null,
 			popupVisible:false,
 			addressPicker:false,
 			editAddressData:{
+				userName:'',
 				street:'',
 				areaCode:'',
 				detail_address:'',
@@ -86,12 +92,6 @@ export default {
 		district(){
 			return store.state.district
 		},
-		// areaNameList() {
-		// 	return store.state.areaNameList
-		// },
-		// areaCodeList() {
-		// 	return store.state.areaCodeList
-		// }
 	},
   	methods:{
 		go(link, param)  {
@@ -103,19 +103,23 @@ export default {
 		newAddress() {
 			this.getAreaCodes()
 			this.type = 'new'
+			this.popupTitle = '新增地址'
 			this.popupVisible = true
-			this.editAddressData.street = ''
+			this.editAddressData.userName = ''
+			this.editAddressData.street = '请选择'
 			this.editAddressData.detail_address = ''
 		},
 		editAddress(addressId) {
 			let self = this
 			self.type = 'edit'
+			self.popupTitle = '修改地址'
 			self.getAreaCodes()
 			self.popupVisible = true
 			self.editAddressData.id = addressId
 			store.state.addressList.forEach( function(item, index) {
 				if (item.id == addressId) {
 					self.editAddressData.areaCode = item.areaCode
+					self.editAddressData.userName = item.userName
 					self.district.forEach( function(item1, index1) {
 						if (item.areaCode == item1.areaCode) {
 							self.editAddressData.street = item1.name
@@ -173,7 +177,8 @@ export default {
 			if (self.type == 'new') {
 				let s = {
 					'address': self.editAddressData.street+self.editAddressData.detail_address,
-					'areaCode': self.editAddressData.areaCode+''
+					'areaCode': self.editAddressData.areaCode+'',
+					'userName': self.editAddressData.userName
 				}
 				self.$Indicator.open()
 				agent.post('/api/u/setAddress', s)
@@ -189,7 +194,8 @@ export default {
 				let s = {
 					'address': self.editAddressData.street+self.editAddressData.detail_address,
 					'areaCode': self.editAddressData.areaCode+'',
-					'id': self.editAddressData.id
+					'id': self.editAddressData.id,
+					'userName': self.editAddressData.userName
 				}
 				self.$Indicator.open()
 				agent.post('/api/u/editAddress', s)
