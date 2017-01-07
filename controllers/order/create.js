@@ -18,7 +18,22 @@ const create = function*() {
   }
 
   // 验证是否存在未完成订单
-  // 待续。。。
+  let user = AV.Object.createWithoutData('_User', currentUser.id)
+  let query = new AV.Query('Order')
+  query.equalTo('user', user)
+  query.lessThan('status', 10)
+  let check
+  try {
+    check = yield query.find()
+  } catch(e) {
+    throw new APIError('DB Error', e.message)
+    return
+  }
+  
+  if(check.length > 0){
+    throw new APIError('Invalid', '您当前的订单还未完成')
+    return
+  }
 
   let order = new Order()
   order.set('address', data.address)
@@ -37,8 +52,6 @@ const create = function*() {
   ? data.userPhone
   : currentUser.get('mobilePhoneNumber')
   order.set('userPhone', userPhone)
-
-  let user = AV.Object.createWithoutData('_User', currentUser.id)
 
   // 订单关联用户
   order.set('user', user)

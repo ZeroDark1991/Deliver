@@ -12,15 +12,22 @@ const APIError = require('../../config/apiError')
 const userList = function*() {
 
   let currentUser = AV.User.current()
+  let params = this.query
+  let id
   if (!currentUser) {
-  	throw new APIError('Unlogged', '用户未登录')
-  	return
+    if(params.id){
+      id = params.id
+    } else {
+    	throw new APIError('Unlogged', '用户未登录')
+    	return
+    }
+  } else {
+    id = currentUser.id
   }
 
-  let params = this.query
   let type = params.type || '1'
   let query = new AV.Query('Order')
-  let user = AV.Object.createWithoutData('_User', currentUser.id)
+  let user = AV.Object.createWithoutData('_User', id)
   query.equalTo('user', user)
   query.include('deliver')
   

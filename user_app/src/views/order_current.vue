@@ -130,8 +130,8 @@ export default {
 							status: self.stringStatus(item.status)
 						}
 					})
-					// self.orderList = orderList.slice(0,1)
-					self.orderList = orderList
+					self.orderList = orderList.slice(0,1)
+					// self.orderList = orderList
 					store.commit('saveCurrentOrderList', self.orderList)
 					self.loadOk = true
 					// self.currentOrder.address = data.list[0].address,

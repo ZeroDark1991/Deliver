@@ -13,6 +13,7 @@ const info = function*() {
 
   let user = new AV.Query('_User')
   // user.select(['username', 'mobilePhoneNumber', 'address', 'areaCode', 'nickname'])
+  user.include('tank')
 
   let result
   try {

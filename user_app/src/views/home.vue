@@ -12,14 +12,14 @@
 				@click="go('/commit_order','tel')"
 				style="background-color: #C970CA;">
 				<i class="iconfont" style="font-size: 1.3rem;">&#xe608;</i>
-				<div class="text-large">电话预约</div>
+				<div class="text-extra">电话预约</div>
 			</div>
 		</div>
 		<div class="flex-center">
 			<div class="unit-1-2 text-center text-white item-block" @click="go('/myAddress')"
 				style="background-color: #FF6655;">
 				<i class="iconfont" style="font-size: 1.3rem;">&#xe60b;</i>
-				<div class="text-extra">收货地址</div>
+				<div class="text-extra">我的信息</div>
 			</div>
 			<div class="unit-1-2 text-center text-white item-block" @click="go('/myTank')" 
 				style="background-color: #FBD44E;">
