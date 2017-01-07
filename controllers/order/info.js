@@ -29,22 +29,32 @@ const info = function*() {
   }
 
   let user = result.get('user')
+  let confirmedAt = result.get('confirmedAt') || ''
+  let receivedAt = result.get('receivedAt') || ''
+  let finishedAt = result.get('finishedAt') || ''  
+  let u = null
+  if(user) {
+    u = {
+      objectId: user.id,
+      phoneNumber: user.get('mobilePhoneNumber')
+    }
+  }  
   this.body = {
   	success: true,
   	message: '成功',
   	info: {
   		address: result.get('address'),
+      userName: result.get('userName'),
   		status: result.get('status'),
   		timeSlot: result.get('timeSlot'),
+      payment: result.get('payment'),
+      price: result.get('price'),
   		objectId: result.id,
       createdAt: result.createdAt,
-      confirmedAt: result.get('confirmedAt'),
-      receivedAt: result.get('receivedAt'),
-      finishedAt: result.get('finishedAt'),
-  		user: {
-  			objectId: user.id,
-  			phoneNumber: user.get('mobilePhoneNumber')
-  		}
+      confirmedAt: confirmedAt,
+      receivedAt: receivedAt,
+      finishedAt: finishedAt,
+  		user: u
   	}
   }
   

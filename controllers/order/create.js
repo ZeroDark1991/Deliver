@@ -22,6 +22,7 @@ const create = function*() {
 
   let order = new Order()
   order.set('address', data.address)
+  order.set('userName', data.userName || '')
   order.set('timeSlot', data.timeSlot)
   order.set('areaCode', data.areaCode)
   order.set('status', 0)

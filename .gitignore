@@ -3,8 +3,8 @@ npm-debug.log
 start.sh
 .avoscloud
 .leancloud
-static/admin
-static/user
+static/admin/*
+static/user/*
 # VIM
 *~
 *.swp

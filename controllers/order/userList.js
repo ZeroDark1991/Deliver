@@ -57,6 +57,9 @@ const userList = function*() {
           phoneNumber: d.get('phoneNumber')
         }
       }
+      let confirmedAt = order.get('confirmedAt') || ''
+      let receivedAt = order.get('receivedAt') || ''
+      let finishedAt = order.get('finishedAt') || ''    
       return {
         objectId: order.id,
         timeSlot: order.get('timeSlot'),
@@ -64,12 +67,13 @@ const userList = function*() {
         areaCode: order.get('areaCode'),
         status: order.get('status'),
         userPhone: order.get('userPhone'),
+        userName: order.get('userName'),
         price: order.get('price'),
         payment: order.get('payment'),
         createdAt: order.createdAt,
-        confirmedAt: order.get('confirmedAt'),
-        receivedAt: order.get('receivedAt'),
-        finishedAt: order.get('finishedAt'),
+        confirmedAt: confirmedAt,
+        receivedAt: receivedAt,
+        finishedAt: finishedAt,
         deliver: deliver
       }
     }) 

@@ -43,6 +43,7 @@ const editAddress = function*(){
 		if(addr.id === data.id){
 			data.areaCode && (addr.areaCode = data.areaCode)
 			data.address && (addr.address = data.address)
+			data.userName && (addr.userName = data.userName)
 		}
 		return addr
 	})

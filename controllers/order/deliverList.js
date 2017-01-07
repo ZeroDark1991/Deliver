@@ -63,14 +63,20 @@ const deliverList = function*() {
           phoneNumber: user.get('mobilePhoneNumber')
         }
       }
+      let confirmedAt = order.get('confirmedAt') || ''
+      let receivedAt = order.get('receivedAt') || ''
+      let finishedAt = order.get('finishedAt') || ''      
       let handler = {
         address: order.get('address'),
+        userName: order.get('userName'),
         status: order.get('status'),
         timeSlot: order.get('timeSlot'),
+        payment: order.get('payment'),
+        price: order.get('price'),
         createdAt: order.createdAt,
-        confirmedAt: order.get('confirmedAt'),
-        receivedAt: order.get('receivedAt'),
-        finishedAt: order.get('finishedAt'),
+        confirmedAt: confirmedAt,
+        receivedAt: receivedAt,
+        finishedAt: finishedAt,
         user: u,
         objectId: order.id
       }
@@ -124,14 +130,20 @@ const deliverList = function*() {
 
     let list = result.map(order => {
       let user = order.get('user')
+      let confirmedAt = order.get('confirmedAt') || ''
+      let receivedAt = order.get('receivedAt') || ''
+      let finishedAt = order.get('finishedAt') || ''
       let handler = {
         address: order.get('address'),
+        userName: order.get('userName'),
         status: order.get('status'),
         timeSlot: order.get('timeSlot'),
+        payment: order.get('payment'),
+        price: order.get('price'),
         createdAt: order.createdAt,
-        confirmedAt: order.get('confirmedAt'),
-        receivedAt: order.get('receivedAt'),
-        finishedAt: order.get('finishedAt'),
+        confirmedAt: confirmedAt,
+        receivedAt: receivedAt,
+        finishedAt: finishedAt,
         user: {
           objectId: user.id,
           phoneNumber: user.get('mobilePhoneNumber')

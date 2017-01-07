@@ -28,13 +28,14 @@ const finish = function*() {
       let tankQuery = new AV.Query('Tank')
       tankQuery.equalTo('signId', data.tankSignId)
       let tank = yield tankQuery.first()
-      if(data.longitude && data.latitude) {
-        tank.set('longitude', data.longitude)
-        tank.set('latitude', data.latitude)
-        yield tank.save()
+      if(tank){
+        if(data.longitude && data.latitude) {
+          tank.set('longitude', data.longitude)
+          tank.set('latitude', data.latitude)
+          yield tank.save()
+        }
+        user.set('tank', tank)      
       }
-
-      user.set('tank', tank)
       yield user.save()
     }
   } catch(e) {

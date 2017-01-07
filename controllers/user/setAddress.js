@@ -12,8 +12,8 @@ const setAddress = function*() {
   }
 
   let data = this.request.body
-  if(!data.address || !data.areaCode) {
-    throw new APIError('Incompelete Information', '完整填写address和areaCode')
+  if(!data.address || !data.areaCode || !data.userName) {
+    throw new APIError('Incompelete Information', '完整填写address、areaCode、userName')
     return
   }
 
@@ -30,6 +30,7 @@ const setAddress = function*() {
       id: (Date.now()).toString(),
       areaCode: data.areaCode,
       address: data.address,
+      userName: data.userName,
       current: false
     })
   } else {
@@ -38,6 +39,7 @@ const setAddress = function*() {
       id: (Date.now()).toString(),
       areaCode: data.areaCode,
       address: data.address,
+      userName: data.userName,
       current: true
     })
   }
