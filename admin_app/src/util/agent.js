@@ -66,7 +66,7 @@ const queryParser = function (url, query) {
 }
 
 const checkSuccess = function (parsed) {
-
+	// console.log(parsed)
   if(!parsed.success) {
     // if(parsed.code == 'Unlogged'){
     //   store.commit('notLogin')

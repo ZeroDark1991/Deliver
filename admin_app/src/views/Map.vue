@@ -18,8 +18,8 @@ export default {
 	data() {
 		return {
 		  vid: 'amap-vue-1',
-      zoom: 10,
-      center: [121.59996, 31.197646],
+      zoom: 13,
+      center: [120.2419049560, 29.28946517],
       events: {
         'moveend': () => {
           let mapCenter = this.amapManager.getMap().getCenter();
@@ -35,9 +35,10 @@ export default {
       plugin: ['ToolBar'],
       amapManager: amapManager,
       markers: [
-				[121.59996, 31.197646],
-				[121.40018, 31.197622],
-				[121.69991, 31.207649]
+				[120.2419049560, 29.28946517],
+				[120.2419049560, 29.30],
+				[120.2419049560, 29.31],
+				[120.2419049560, 29.32]
       ]	
 		}
 	},

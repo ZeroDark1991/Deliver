@@ -7,6 +7,7 @@ import Vuex from 'vuex'
 import Element from 'element-ui'
 import AMap from 'vue-amap'
 
+
 import 'normalize.css'
 import 'element-ui/lib/theme-default/index.css'
 
@@ -15,7 +16,7 @@ Vue.use(VueRouter)
 Vue.use(AMap)
 
 AMap.initAMapApiLoader({
-  key: 'your amap key',
+  key: 'cedad7cf1b9a633510e2fcd806ed9ba7',
   plugin: ['AMap.Autocomplete', 'AMap.PlaceSearch', 'AMap.Scale', 'AMap.OverView', 'AMap.ToolBar', 'AMap.MapType', 'AMap.PolyEditor', 'AMap.CircleEditor']
 });
 

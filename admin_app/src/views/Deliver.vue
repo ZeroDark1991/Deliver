@@ -26,6 +26,19 @@
 		    </div>
 		    <div v-show='!deliverDetail'>
 		    	<div @click='backToList()' style="cursor: pointer"><i class="el-icon-arrow-left"></i>返回</div>
+					<el-form label-position="left" :model="newDeliver" label-width="80px" style="margin-top: 2rem;">
+					  <el-form-item label="姓名">
+					    <el-input v-model='editDeliver.name'></el-input>
+					  </el-form-item>
+					  <el-form-item label="电话号码">
+					    <el-input v-model='editDeliver.phoneNumber' auto-complete="off"></el-input>
+					  </el-form-item>
+					  <el-form-item label="密码">
+					    <el-input v-model='editDeliver.passWord'></el-input>
+					  </el-form-item>				  
+					</el-form>
+					<!-- <el-button @click='backToList()'>返回</el-button> -->
+					<el-button type='primary' @click='editDeliverInfo()'>提交</el-button>
 		    </div>
 	    </el-tab-pane>
 
@@ -34,8 +47,8 @@
 				  <el-form-item label="姓名">
 				    <el-input v-model='newDeliver.name'></el-input>
 				  </el-form-item>
-				  <el-form-item label="电话号">
-				    <el-input v-model.number='newDeliver.phoneNumber' auto-complete="off"></el-input>
+				  <el-form-item label="电话号码">
+				    <el-input v-model='newDeliver.phoneNumber' auto-complete="off"></el-input>
 				  </el-form-item>
 				  <el-form-item label="密码">
 				    <el-input v-model='newDeliver.passWord'></el-input>
@@ -54,6 +67,12 @@ export default {
 		return {
 			activeTab: 'first',
 			deliverDetail: true,
+			editDeliver: {
+				id:'',
+				name:'',
+				phoneNumber: '',
+				passWord: ''
+			},
 			newDeliver: {
 				name:'',
 				phoneNumber: '',
@@ -70,9 +89,39 @@ export default {
 	methods: {
 		handleEdit(row){
 			this.deliverDetail = false
-			console.log(row.phoneNumber)
+			this.editDeliver.id = row.id
+			this.editDeliver.name = row.name
+			this.editDeliver.phoneNumber = row.phoneNumber
 		},
-		addDeliver(row){
+		editDeliverInfo(){
+			console.log('edit')
+			agent
+				.post('/api/d/edit', {
+					id:	this.editDeliver.id,
+					name:	this.editDeliver.name,
+					passWord:	this.editDeliver.passWord,
+					phoneNumber: this.editDeliver.phoneNumber
+				})
+				.then(data => {
+					console.log(data)
+					this.fetchDelivers()
+					this.deliverDetail = true
+					this.editDeliver.id = ''
+					this.editDeliver.name = ''
+					this.editDeliver.phoneNumber = ''
+					this.$message({
+						type: 'success',
+						message: data.message
+					})
+				})
+				.catch(e => {
+					this.$message({
+						type: 'error',
+						message: e.message
+					})
+				})
+		},
+		addDeliver(){
 			agent
 				.post('/api/d/create',{
 					phoneNumber: this.newDeliver.phoneNumber,
@@ -83,6 +132,7 @@ export default {
 					console.log(data)
 					this.newDeliver.name = ''
 					this.newDeliver.phoneNumber = ''
+					this.newDeliver.passWord = ''
 					this.$message({
 						type: 'success',
 						message: data.message
