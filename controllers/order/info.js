@@ -18,7 +18,7 @@ const info = function*() {
   let result
   let query = new AV.Query('Order')
   query.include('user')
-  query.select(['address', 'status', 'timeSlot', 'user'])
+  // query.select(['address', 'status', 'timeSlot', 'user'])
 
   try {
   	result = yield query.get(params.id)

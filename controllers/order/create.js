@@ -6,7 +6,7 @@ const Order = AV.Object.extend('Order')
 
 const create = function*() {
 	let data = this.request.body
-  if(!data.address || !data.areaCode || !data.timeSlot){
+  if(!data.address || !data.areaCode || !data.timeSlot || !data.userName){
   	throw new APIError('Incompelete Information', '请完整填写信息')
   	return
   }
@@ -22,11 +22,11 @@ const create = function*() {
 
   let order = new Order()
   order.set('address', data.address)
-  order.set('userName', data.userName || '')
+  order.set('userName', data.userName)
   order.set('timeSlot', data.timeSlot)
   order.set('areaCode', data.areaCode)
   order.set('status', 0)
-  order.set('price', '')
+  order.set('price', '90.00')
   
   order.set('payment', '货到付款')
   order.set('confirmedAt', null)

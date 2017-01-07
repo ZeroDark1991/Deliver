@@ -22,6 +22,7 @@ router.post('/app/version', App.version.update)
 router.get('/order/info', Order.info)
 router.get('/order/userList', Order.userList)
 router.get('/order/deliverList', Order.deliverList)
+router.get('/order/auditList', Order.auditList)
 
 router.post('/order/audit', Order.audit)
 router.post('/order/create', Order.create)
