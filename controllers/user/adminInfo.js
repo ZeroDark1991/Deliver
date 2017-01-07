@@ -5,9 +5,9 @@ const APIError = require('../../config/apiError')
 
 const info = function*() {
   // 验证用户是否登录
-  let currentUser = AV.User.current()
-  if (!currentUser) {
-  	throw new APIError('Unlogged', '用户未登录')
+  let params = this.query
+  if(!params.id){
+  	throw new APIError('Incompelete Information', '传入用户Id')
   	return
   }
 
@@ -16,7 +16,7 @@ const info = function*() {
 
   let result
   try {
-    result = yield user.get(currentUser.id)
+    result = yield user.get(params.id)
   } catch(e) {
   	throw new APIError('DB Error', e.message)
     return
@@ -24,6 +24,7 @@ const info = function*() {
 
   this.body = {
   	success: true,
+  	message: '成功',
   	user: result
   }
 }

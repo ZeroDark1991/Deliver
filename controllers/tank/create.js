@@ -7,7 +7,7 @@ const Tank = AV.Object.extend('Tank')
 const create = function*() {
   const tank = new Tank()
   const data = this.request.body
-  if(!data.signId) {
+  if(!data.signId || !data.producedAt || !data.standard) {
   	throw new APIError('Incompelete Information', '请传入合法ID')
   	return
   }
@@ -24,6 +24,8 @@ const create = function*() {
   }
 
   tank.set('signId', data.signId)
+  tank.set('producedAt', data.producedAt)
+  tank.set('standard', data.standard)
   try {
   	yield tank.save()
   } catch(e) {

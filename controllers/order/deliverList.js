@@ -2,7 +2,7 @@
 
 const AV = require('leanengine')
 const APIError = require('../../config/apiError')
-const _ = require('lodash')
+const formatDate = require('../util/formatDate')
 
 /*
  * 订单fetch
@@ -63,9 +63,9 @@ const deliverList = function*() {
           phoneNumber: user.get('mobilePhoneNumber')
         }
       }
-      let confirmedAt = order.get('confirmedAt') || ''
-      let receivedAt = order.get('receivedAt') || ''
-      let finishedAt = order.get('finishedAt') || ''      
+      let confirmedAt = order.get('confirmedAt') ? formatDate(order.get('confirmedAt')) : ''
+      let receivedAt = order.get('receivedAt') ? formatDate(order.get('receivedAt')) : ''
+      let finishedAt = order.get('finishedAt') ? formatDate(order.get('finishedAt')) : ''    
       let handler = {
         address: order.get('address'),
         userName: order.get('userName'),
@@ -73,7 +73,7 @@ const deliverList = function*() {
         timeSlot: order.get('timeSlot'),
         payment: order.get('payment'),
         price: order.get('price'),
-        createdAt: order.createdAt,
+        createdAt: formatDate(order.createdAt),
         confirmedAt: confirmedAt,
         receivedAt: receivedAt,
         finishedAt: finishedAt,
@@ -130,9 +130,9 @@ const deliverList = function*() {
 
     let list = result.map(order => {
       let user = order.get('user')
-      let confirmedAt = order.get('confirmedAt') || ''
-      let receivedAt = order.get('receivedAt') || ''
-      let finishedAt = order.get('finishedAt') || ''
+      let confirmedAt = order.get('confirmedAt') ? formatDate(order.get('confirmedAt')) : ''
+      let receivedAt = order.get('receivedAt') ? formatDate(order.get('receivedAt')) : ''
+      let finishedAt = order.get('finishedAt') ? formatDate(order.get('finishedAt')) : ''
       let handler = {
         address: order.get('address'),
         userName: order.get('userName'),
@@ -140,7 +140,7 @@ const deliverList = function*() {
         timeSlot: order.get('timeSlot'),
         payment: order.get('payment'),
         price: order.get('price'),
-        createdAt: order.createdAt,
+        createdAt: formatDate(order.createdAt),
         confirmedAt: confirmedAt,
         receivedAt: receivedAt,
         finishedAt: finishedAt,

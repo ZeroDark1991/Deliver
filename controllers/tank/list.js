@@ -7,7 +7,10 @@ const list = function*() {
 
 	let params = this.query
   let query = new AV.Query('Tank')
-  // check.equalTo('signId', data.signId)
+  if(params.signId) {
+    query.startsWith('signId', params.signId)
+  }
+
   let result 
   try {
   	result = yield query.find()

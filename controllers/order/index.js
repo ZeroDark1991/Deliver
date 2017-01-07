@@ -7,6 +7,7 @@ const audit = require('./audit')
 const receiveTank = require('./receiveTank')
 const finish = require('./finish')
 const info = require('./info')
+const list = require('./list')
 
 const userList = require('./userList')
 const deliverList = require('./deliverList')
@@ -22,5 +23,6 @@ module.exports = {
 	deliverList,
 	auditList,
 	info,
-	audit
+	audit,
+	list
 }
