@@ -6,7 +6,7 @@
 			</transition>
 			<div class="home-mask" v-show="mask"></div>
 		</keep-alive>
-		<mt-popup v-model="open" popup-transition="popup-fade">
+		<mt-popup v-model="openLoginPop" popup-transition="popup-fade">
 			<div class="page">
 				<div class="container">
 					<div class="flex-center">
@@ -27,6 +27,10 @@
 				</div>
 			</div>
 		</mt-popup>
+		<!-- <mt-popup v-model="" popup-transition="popup-fade">
+			
+
+		</mt-popup> -->
 	</div>
 </template>
 
@@ -65,7 +69,7 @@ export default {
 	isNotLogin () {
 		return store.state.isNotLogin
 	},
-	open () {
+	openLoginPop () {
 		return store.state.open
 	}
   },
@@ -96,6 +100,7 @@ export default {
 			store.commit('loginSuccess')
 			self.PhoneNumber = ''
 			self.VerifyCode = ''
+			self.hint = '获取短信验证码'
 			store.dispatch('closePopup')
 			if (self.$route.path == '/') {
 				$router.replace('/home')
