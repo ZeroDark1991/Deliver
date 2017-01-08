@@ -18,7 +18,7 @@
 						<div v-text="'经度：'+ tankDetail.latitude"></div>
 						<div v-text="'纬度：'+ tankDetail.longitude"></div>
 					</el-collapse-item>
-					<el-collapse-item title="用户" name="5">
+					<el-collapse-item title="用户" name="5" v-if="tankDetail.ownerObjectId">
 						<div @click="go('/userDetail',tankDetail.ownerObjectId)">
 							用户ID：<span style="color: #20A0FF;">{{tankDetail.ownerObjectId}}</span>
 						</div>
