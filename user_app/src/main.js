@@ -67,7 +67,7 @@ const router = new VueRouter({
       component: require('./views/order_history.vue')
     },
     {
-      path: '/myAddress',
+      path: '/myAddress/:type',
       component: require('./views/myAddress.vue')
     },
     {
