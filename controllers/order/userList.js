@@ -11,10 +11,9 @@ const APIError = require('../../config/apiError')
 
 const userList = function*() {
 
-  let currentUser = AV.User.current()
   let params = this.query
   let id
-  if (!currentUser) {
+  if (!this.session.userId) {
     if(params.id){
       id = params.id
     } else {
@@ -22,7 +21,7 @@ const userList = function*() {
     	return
     }
   } else {
-    id = currentUser.id
+    id = this.session.userId
   }
 
   let type = params.type || '1'

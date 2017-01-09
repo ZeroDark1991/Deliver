@@ -17,7 +17,7 @@ const logIn = function*() {
     throw new APIError('login failed', e.message)
     return
   }
-  this.res.saveCurrentUser(user)
+  this.session.userId = user.id
   this.body = {
   	success: true,
   	message: '登录成功',

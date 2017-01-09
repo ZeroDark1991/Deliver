@@ -11,14 +11,13 @@ const create = function*() {
   	return
   }
   // 验证用户是否登录
-  let currentUser = AV.User.current()
-  if (!currentUser) {
+  if (!this.session.userId) {
   	throw new APIError('Unlogged', '用户未登录')
   	return
   }
 
   // 验证是否存在未完成订单
-  let user = AV.Object.createWithoutData('_User', currentUser.id)
+  let user = AV.Object.createWithoutData('_User', this.session.userId)
   let query = new AV.Query('Order')
   query.equalTo('user', user)
   query.lessThan('status', 10)

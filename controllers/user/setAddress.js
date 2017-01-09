@@ -5,19 +5,18 @@ const APIError = require('../../config/apiError')
 
 const setAddress = function*() {
   // 验证用户是否登录
-  let currentUser = AV.User.current()
-  if (!currentUser) {
+  if (!this.session.userId) {
   	throw new APIError('Unlogged', '用户未登录')
   	return
   }
 
   let data = this.request.body
-  if(!data.address || !data.areaCode || !data.userName) {
+  if(!data.address || !data.areaCode || !data.userName || !data.phoneNumber) {
     throw new APIError('Incompelete Information', '完整填写address、areaCode、userName')
     return
   }
 
-  let user = AV.Object.createWithoutData('_User', currentUser.id)
+  let user = AV.Object.createWithoutData('_User', this.session.userId)
   try {
     user = yield user.fetch()
   } catch(e) {
@@ -31,6 +30,7 @@ const setAddress = function*() {
       areaCode: data.areaCode,
       address: data.address,
       userName: data.userName,
+      phoneNumber: data.phoneNumber,
       current: false
     })
   } else {
@@ -40,6 +40,7 @@ const setAddress = function*() {
       areaCode: data.areaCode,
       address: data.address,
       userName: data.userName,
+      phoneNumber: data.phoneNumber,
       current: true
     })
   }

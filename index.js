@@ -39,8 +39,9 @@ app.use(AV.koa())
 app.use(AV.Cloud.CookieSession({
 	framework: 'koa',
 	secret: 'user secret',
+  name: 'user',
 	maxAge: 2*365*24*3600*1000,
-	fetchUser: true
+	fetchUser: false
 }))
 
 // error handle middleware
