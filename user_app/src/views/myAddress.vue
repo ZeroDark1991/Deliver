@@ -7,7 +7,8 @@
 			<mt-cell class="address-list" v-for="item in addressList">
 				<div slot="title" class="address-wrap">
 					<div class="flex-middle" style="margin-top: .5rem;">
-						<div class="one-line">{{item.userName}}</div>
+						<div class="unit one-line">{{item.userName}}</div>
+						<div class="unit">{{item.phoneNumber}}</div>
 					</div>
 					<div class="flex-middle" style="margin-top: .5rem;">
 						<div class="one-line">{{item.address}}</div>
@@ -36,6 +37,7 @@
 			</mt-header>
 			<div class="container-top">
 				<mt-field label="收货人" placeholder="收货人姓名" v-model="editAddressData.userName"></mt-field>
+				<mt-field label="联系电话" placeholder="联系电话" type="tel" v-model="editAddressData.phoneNumber"></mt-field>
 				<mt-cell class="invoice-cell" title="街道" is-link @click.native="addressPicker = true" :value="editAddressData.street"></mt-cell>
 				<mt-field label="详细地址" placeholder="详细地址" type="textarea" rows="2" v-model="editAddressData.detail_address"></mt-field>
 			</div>
@@ -69,7 +71,8 @@ export default {
 				street:'',
 				areaCode:'',
 				detail_address:'',
-				id:''
+				id:'',
+				phoneNumber:''
 			},
 			slots: [
 				{
@@ -110,6 +113,7 @@ export default {
 			this.editAddressData.userName = ''
 			this.editAddressData.street = '请选择'
 			this.editAddressData.detail_address = ''
+			this.editAddressData.phoneNumber = ''
 		},
 		editAddress(addressId) {
 			let self = this
@@ -120,8 +124,9 @@ export default {
 			self.editAddressData.id = addressId
 			store.state.addressList.forEach( function(item, index) {
 				if (item.id == addressId) {
-					self.editAddressData.areaCode = item.areaCode
-					self.editAddressData.userName = item.userName
+					self.editAddressData.phoneNumber = item.phoneNumber ? item.phoneNumber : ''
+					self.editAddressData.areaCode = item.areaCode ? item.areaCode : ''
+					self.editAddressData.userName = item.userName ? item.userName : ''
 					self.district.forEach( function(item1, index1) {
 						if (item.areaCode == item1.areaCode) {
 							self.editAddressData.street = item1.name
@@ -171,6 +176,7 @@ export default {
 						current: addressId==item.id ? true: false,
 						id: item.id,
 						userName: item.userName,
+						phoneNumber: item.phoneNumber
 					}
 				})
 				if (self.type1 == 1) {
@@ -180,11 +186,20 @@ export default {
 		},
 		saveAddress() {
 			let self = this
+			let reg = /^(0|86|17951)?(13[0-9]|15[012356789]|17[01678]|18[0-9]|14[57])[0-9]{8}$/
+			if(!self.editAddressData.phoneNumber){
+				self.$Toast("请输入手机号码");
+				return
+			}else if(!reg.test(self.editAddressData.phoneNumber)){
+				self.$Toast("手机号码不正确");
+				return
+			}
 			if (self.type == 'new') {
 				let s = {
 					'address': self.editAddressData.street+self.editAddressData.detail_address,
 					'areaCode': self.editAddressData.areaCode+'',
-					'userName': self.editAddressData.userName
+					'userName': self.editAddressData.userName,
+					'phoneNumber': self.editAddressData.phoneNumber
 				}
 				self.$Indicator.open()
 				agent.post('/api/u/setAddress', s)
@@ -201,7 +216,8 @@ export default {
 					'address': self.editAddressData.street+self.editAddressData.detail_address,
 					'areaCode': self.editAddressData.areaCode+'',
 					'id': self.editAddressData.id,
-					'userName': self.editAddressData.userName
+					'userName': self.editAddressData.userName,
+					'phoneNumber': self.editAddressData.phoneNumber
 				}
 				self.$Indicator.open()
 				agent.post('/api/u/editAddress', s)
@@ -238,7 +254,7 @@ export default {
 		},
 		getAreaCodes() {
 			let self = this 
-			if (store.state.district) {
+			if (!store.state.district) {
 				agent.get('/api/app/areaCodes', '')
 				.then(res => {
 					console.log(res)
@@ -249,7 +265,7 @@ export default {
 					}
 				})
 			}else{
-				this.getAreaList(self.district)
+				self.getAreaList(self.district)
 			}
 			
 			

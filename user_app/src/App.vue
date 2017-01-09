@@ -46,7 +46,7 @@ export default {
 		mask:false,
 		show:false,
 		PhoneNumber: '',//13588277370
-		VerifyCode: '',//438811
+		VerifyCode: '',//219320
 		isGetCheck:false,
 		hint: '获取短信验证码',
 		timer: null,
@@ -96,7 +96,7 @@ export default {
 		.then(res => {
 			self.$Indicator.close();
 			console.log(res)
-			if (res == false) return
+			if (res == false) return false
 			store.commit('loginSuccess')
 			self.PhoneNumber = ''
 			self.VerifyCode = ''
@@ -106,9 +106,12 @@ export default {
 				$router.replace('/home')
 			}
 			console.log(111)
-			return
-		}).then(function(){
-			store.dispatch('getData', self)
+			return true
+		}).then(res => {
+			if (res) {
+				store.dispatch('getData', self)
+			}
+			
 		})
 	},
 	fetchVerifyCode () {

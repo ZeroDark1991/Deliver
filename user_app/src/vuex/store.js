@@ -14,7 +14,7 @@ const store = new Vuex.Store({
 			username:null,
 			objectId:null
 		},
-		telPlaceholder:null,
+		// telPlaceholder:null,
 		addressList:null,
 		currentOrderList:null,
 		currentOrder:null,
@@ -64,10 +64,10 @@ const store = new Vuex.Store({
 		saveOrderList(state, list) {
 			state.orderList = list
 		},
-		//保存下单时默认手机placeholder
-		SAVETELPLACEHOLDER(state, string) {
-			state.telPlaceholder = string
-		},
+		// //保存下单时默认手机placeholder
+		// SAVETELPLACEHOLDER(state, string) {
+		// 	state.telPlaceholder = string
+		// },
 		//保存地址列表
 		SAVEADDRESSLIST(state, array) {
 			state.addressList = array 
