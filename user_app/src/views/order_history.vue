@@ -8,7 +8,7 @@
 			infinite-scroll-disabled="loading"
 			infinite-scroll-distance="50"
 			infinite-scroll-immediate-check="false">
-				<mt-cell title="我的订单" v-for="(item,index) in filteredList" v-bind:key="item.objectId">
+				<mt-cell title="我的订单" v-for="(item,index) in filteredList" v-bind:key="item.objectId" @click.native="go('/order_detail',item.objectId+1)">
 					<div slot="title" class="">
 						<div style="height: 1.5rem;" class="flex-middle">
 							<span class="item-title">地址:</span>{{item.address}}
@@ -60,7 +60,7 @@ export default {
 	},
   	methods:{
 		go(link, param)  {
-			this.$transfer.go(self, link)
+			this.$transfer.go(self, link, param)
 		},
 		back(link, param) {
 			this.$transfer.back(self, link)

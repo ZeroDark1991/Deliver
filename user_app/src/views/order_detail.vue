@@ -1,7 +1,7 @@
 <template>
 	<div class="page">
 		<mt-header fixed title="订单列表">
-			<mt-button icon="back" slot="left" @click="back('/order_current')"></mt-button>
+			<mt-button icon="back" slot="left" @click="back(backPath)"></mt-button>
 		</mt-header>
 		<div class="container-top">
 			<div v-if="loadOk">
@@ -12,51 +12,79 @@
 
 				<mt-tab-container v-model="selected" style="margin-top: 2.2rem;">
 					<mt-tab-container-item id="订单状态" class="tree">
-						<div class="tree-item" v-if="currentOrder.status==-1">
+					<div class="tree2">
+						<div class="tree-item" v-if="orderData.status==-1">
 							<div class="text-extra">订单被取消</div>
 							<div class="text-grey text-large">待送气工接单</div>
 						</div>
-						<div class="tree-item" v-if="currentOrder.status>=0">
-							<div class="text-extra">订单待确认</div>
+						<div class="tree-item" v-if="orderData.status>=0">
+							<div class="flex-middle">
+								<span class="text-extra unit-0">订单待确认</span>
+								<span class="flex-right unit statusTime text-grey">{{orderData.createdAt2}}</span>
+							</div>
 							<div class="text-grey text-large">待送气工接单</div>
 						</div>
-						<div class="tree-item" v-if="currentOrder.status>=1" style="position: relative">
-							<div class="text-extra">订单已确认</div>
+						<div class="tree-item" v-if="orderData.status>=1" style="position: relative">
+							<div class="flex-middle">
+								<span class="text-extra unit-0">订单已确认</span>
+								<span class="flex-right unit statusTime text-grey">{{orderData.confirmedAt2}}</span>
+							</div>
 							<div class="text-grey text-large">送气工赶往你家路上</div>
 						</div>
-						<div class="tree-item" v-if="currentOrder.status>=2">
-							<div class="text-extra">气罐已被取走</div>
+						<div class="tree-item" v-if="orderData.status>=2">
+							<div class="flex-middle">
+								<span class="text-extra unit-0">气罐已被取走</span>
+								<span class="flex-right unit statusTime text-grey">{{orderData.receivedAt2}}</span>
+							</div>
+							<div class="text-extra"></div>
 							<div class="text-grey text-large">新气罐装配中</div>
 						</div>
-						<div class="tree-item tree-item-ok" v-if="currentOrder.status>=10">
+						<div class="tree-item tree-item-ok" v-if="orderData.status>=10">
+							<div class="flex-middle">
+								<span class="text-extra unit-0">订单已完成</span>
+								<span class="flex-right unit statusTime text-grey">{{orderData.finishedAt2}}</span>
+							</div>
 							<!-- <i class="iconfont tree-icon">&#xe6cd;</i> -->
-							<div class="text-extra">订单已完成</div>
+							<div class="text-extra"></div>
 							<div class="text-grey text-large">气罐已送达</div>
 						</div>
+					</div>
 					</mt-tab-container-item>
 					<mt-tab-container-item id="订单详情" style="margin-top: 1rem;">
 						<mt-cell title="我的订单">
 							<div slot="title">
-								<div style="height: 1.5rem;" class="flex-middle" v-if="currentOrder.userPhone">
-									<span class="item-title">收货人:</span>{{currentOrder.userPhone}}
+								<div style="height: 1.5rem;" class="flex-middle" v-if="orderData.userName">
+									<span class="item-title">收货人:</span>{{orderData.userName}}
 								</div>
-								<div style="height: 1.5rem;" class="flex-middle" v-if="currentOrder.userPhone">
-									<span class="item-title">联系电话:</span>{{currentOrder.userPhone}}
+								<div style="height: 1.5rem;" class="flex-middle" v-if="orderData.userPhone">
+									<span class="item-title">联系电话:</span>{{orderData.userPhone}}
+								</div>
+								<div style="height: 1.5rem;" class="flex-middle" v-if="orderData.price">
+									<span class="item-title">金额:</span>{{orderData.price}}
 								</div>
 								<div style="height: 1.5rem;" class="flex-middle">
-									<span class="item-title">收货地址:</span>{{currentOrder.address}}
+									<span class="item-title">收货地址:</span>{{orderData.address}}
+								</div>
+								<div style="height: 1.5rem;" class="flex-middle" v-if="orderData.deliver">
+									<span class="item-title">配送员:</span>{{orderData.deliver.name}}
+								</div>
+								<div style="height: 1.5rem;" class="flex-middle" v-if="orderData.deliver">
+									<span class="item-title">联系方式:</span>{{orderData.deliver.phoneNumber}}
 								</div>
 								<div style="height: 1.5rem;" class="flex-middle">
-									<span class="item-title">预约时间:</span>{{currentOrder.timeSlot}}
+									<span class="item-title">预约时间:</span>{{orderData.timeSlot}}
 								</div>
-								<div style="height: 1.5rem;" class="flex-middle" v-if="currentOrder.createdAt">
-									<span class="item-title">下单时间:</span>{{currentOrder.createdAt}}
+								<div style="height: 1.5rem;" class="flex-middle" v-if="orderData.createdAt">
+									<span class="item-title">下单时间:</span>{{orderData.createdAt}}
 								</div>
-								<div style="height: 1.5rem;" class="flex-middle" v-if="currentOrder.deliver">
-									<span class="item-title">配送员:</span>{{currentOrder.deliver.name}}
+								<div style="height: 1.5rem;" class="flex-middle" v-if="orderData.confirmedAt">
+									<span class="item-title">确认时间:</span>{{orderData.confirmedAt}}
 								</div>
-								<div style="height: 1.5rem;" class="flex-middle" v-if="currentOrder.deliver">
-									<span class="item-title">联系方式:</span>{{currentOrder.deliver.phoneNumber}}
+								<div style="height: 1.5rem;" class="flex-middle" v-if="orderData.receivedAt">
+									<span class="item-title">取罐时间:</span>{{orderData.receivedAt}}
+								</div>
+								<div style="height: 1.5rem;" class="flex-middle" v-if="orderData.finishedAt">
+									<span class="item-title">完成时间:</span>{{orderData.finishedAt}}
 								</div>
 							</div>
 						</mt-cell>
@@ -76,13 +104,16 @@ export default {
 	data () {
 		return {
 			id:null,
-			currentOrder:{
+			backPath: null,
+			orderData:{
 				objectId:null,
 				address:null,
 				status:null,
 				timeSlot:null,
 				name:null,
-				userPhone:null
+				userPhone:null,
+				createdAt:null,
+				createdAt2:null
 			},
 			selected: '订单状态',
 			loadOk: false,
@@ -90,7 +121,8 @@ export default {
 		}
 	},
 	created() {
-		store.commit('saveLogSuccessCallback',this.getCurrentOrder)
+		console.log(1111111)
+		store.commit('saveLogSuccessCallback',this.getOrder)
 	},
   	methods:{
 		go(link, param)  {
@@ -99,13 +131,14 @@ export default {
 		back(link, param) {
 			this.$transfer.back(self, link)
 		},
-		getCurrentOrder () {
+		getOrder (type) {
+			console.log('type'+ type)
 			let self = this
 			if (!store.state.currentOrder || store.state.currentOrder.objectId!=self.id) {
 				self.$Indicator.open();
 			}
 			agent.get('/api/order/userList', {
-				type: 0
+				type: type
 			})
 			.then(res => {
 				self.$Indicator.close();
@@ -115,14 +148,40 @@ export default {
 				if (data.list && data.list.length!=0) {
 					data.list.every( function(item, index) {
 						if (item.objectId == self.id) {
-							self.currentOrder.objectId = item.objectId
-							self.currentOrder.address = item.address
-							self.currentOrder.status = item.status
-							self.currentOrder.timeSlot = item.timeSlot
-							self.currentOrder.deliver = item.deliver
-							self.currentOrder.userPhone = item.userPhone
-							self.currentOrder.createdAt = self.$Moment(item.createdAt).format("YYYY-MM-DD HH:mm:ss")
-							store.commit('saveCurrentOrder', self.currentOrder)
+							self.orderData.userName = item.userName
+							self.orderData.price = item.price
+							self.orderData.objectId = item.objectId
+							self.orderData.address = item.address
+							self.orderData.status = item.status
+							self.orderData.timeSlot = item.timeSlot
+							self.orderData.deliver = item.deliver
+							self.orderData.userPhone = item.userPhone
+
+							self.orderData.createdAt = item.createdAt
+														? self.$Moment(item.createdAt).format("YYYY-MM-DD HH:mm:ss")
+														:''
+							self.orderData.createdAt2 = item.createdAt
+														? self.$Moment(item.createdAt).format("MM/DD HH:mm:ss")
+														:''
+							self.orderData.confirmedAt = item.confirmedAt
+														? self.$Moment(item.confirmedAt).format("YYYY-MM-DD HH:mm:ss")
+														:''
+							self.orderData.confirmedAt2 = item.confirmedAt
+														? self.$Moment(item.confirmedAt).format("MM/DD HH:mm:ss")
+														:''
+							self.orderData.receivedAt = item.receivedAt
+														? self.$Moment(item.receivedAt).format("YYYY-MM-DD HH:mm:ss")
+														:''
+							self.orderData.receivedAt2 = item.receivedAt
+														? self.$Moment(item.receivedAt).format("MM/DD HH:mm:ss")
+														:''
+							self.orderData.finishedAt = item.finishedAt
+														? self.$Moment(item.finishedAt).format("YYYY-MM-DD HH:mm:ss")
+														:''
+							self.orderData.finishedAt2 = item.finishedAt
+														? self.$Moment(item.finishedAt).format("MM/DD HH:mm:ss")
+														:''						
+							store.commit('saveCurrentOrder', self.orderData)
 							self.loadOk = true
 							self.tip = false
 							return false
@@ -138,20 +197,20 @@ export default {
 		},
 	},
 	beforeRouteEnter (to, from, next) {
+		let type = Number(to.params.id.charAt(to.params.id.length - 1))
 		next(vm => {
 			let self = vm
-			self.id = to.params.id
+			self.backPath = type==1 ? '/order_history' : '/order_current'
+			self.id = to.params.id.substring(0,to.params.id.length-1)
 			if (store.state.currentOrder) {
-				console.log(store.state.currentOrder.objectId)
-				console.log(self.id)
 				if (store.state.currentOrder.objectId==self.id) {
-					self.currentOrder = store.state.currentOrder
+					self.orderData = store.state.currentOrder
 					self.loadOk = true
 				}else{
-					self.getCurrentOrder()
+					self.getOrder(type)
 				}
 			}else{
-				self.getCurrentOrder()
+				self.getOrder(type)
 			}
 		})
 	},
@@ -173,33 +232,40 @@ export default {
 	text-align: center;
 }
 .tree{
-	margin: 1rem .5rem .5rem 1rem;
+	margin: 1rem 0 .5rem 0rem;
 	padding-left: 1rem;
 	position: relative;
-	&:before{
-		content: ' ';
-		width: 1px;
-		height: calc(~"100% - 1rem");
-		position: absolute;
-		background-color: #009BF7;
-		left: 0;
-		top: .4rem;
-	}
-	.tree-item{
+	.tree2{
+		padding-left: 1rem;
 		position: relative;
-		background-color: #f0f0f0;
-		overflow: visible;
-		height: 70px;
-		line-height: 30px;
 		&:before{
 			content: ' ';
-			width: .5rem;
-			height: .5rem;
-			border-radius: 50%;
+			width: 1px;
+			height: calc(~"100% - 1rem");
 			position: absolute;
 			background-color: #009BF7;
-			left: -1.25rem;
+			left: 0;
 			top: .4rem;
+		}
+		.tree-item{
+			position: relative;
+			background-color: #f0f0f0;
+			overflow: visible;
+			height: 70px;
+			line-height: 30px;
+			&:before{
+				content: ' ';
+				width: .5rem;
+				height: .5rem;
+				border-radius: 50%;
+				position: absolute;
+				background-color: #009BF7;
+				left: -1.25rem;
+				top: .4rem;
+			}
+			.statusTime{
+				padding-right: 1rem;
+			}
 		}
 	}
 }

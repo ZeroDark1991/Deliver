@@ -6,7 +6,7 @@
 		</mt-header>
 		<div class="container-top" v-if="loadOk">
 			<div v-if="type=='ol'">
-				<mt-cell title="收货人" :value="currentAddress.userName"></mt-cell>
+				<mt-cell title="收货人" :value="currentAddress.userName" is-link @click.native="go('/myAddress', '1')"></mt-cell>
 				<mt-cell title="配送地址" :value="currentAddress.address"></mt-cell>
 				<mt-field label="手机号" :placeholder="telPlaceholder" disableClear :disabled="telDisabled" 
 				type="tel" v-model="tel" class="link-tel"></mt-field>
@@ -92,15 +92,21 @@ export default {
 		},
 		currentAddress () {
 			let currentAddress = {
-				address:null,
-				areaCode:null,
-				userName:null
+				address: null,
+				areaCode: null,
+				userName: null
 			}
-			if (store.state.addressList) {
+			if (!store.state.addressList) {
 				store.state.addressList.forEach( function(item, index) {
+					console.log(item)
 					if (item.current) {
 						currentAddress = item
 					}
+				})
+			}else{
+				this.loadOk = false
+				this.$MessageBox.alert('请先设置地址').then(action => {
+					this.go('/myAddress', '1')
 				})
 			}
 			return currentAddress

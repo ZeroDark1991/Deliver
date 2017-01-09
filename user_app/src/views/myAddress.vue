@@ -1,7 +1,7 @@
 <template>
 	<div class="page">
 		<mt-header fixed title="我的地址">
-			<mt-button icon="back" slot="left" @click="back('/home')"></mt-button>
+			<mt-button icon="back" slot="left" @click="back(backPath)"></mt-button>
 		</mt-header>
 		<div class="container-top">
 			<mt-cell class="address-list" v-for="item in addressList">
@@ -56,9 +56,11 @@ import store from '../vuex/store'
 export default {
 	data () {
 		return {
+			backPath: null,
 			store,
 			popupTitle:'',
 			type:null,
+			type1:null,
 			areaCodeList:null,
 			popupVisible:false,
 			addressPicker:false,
@@ -167,9 +169,13 @@ export default {
 						address: item.address,
 						areaCode: item.areaCode,
 						current: addressId==item.id ? true: false,
-						id: item.id
+						id: item.id,
+						userName: item.userName,
 					}
 				})
+				if (self.type1 == 1) {
+					self.back(self.backPath)
+				}
 			})
 		},
 		saveAddress() {
@@ -232,7 +238,7 @@ export default {
 		},
 		getAreaCodes() {
 			let self = this 
-			if (!store.state.district) {
+			if (store.state.district) {
 				agent.get('/api/app/areaCodes', '')
 				.then(res => {
 					console.log(res)
@@ -247,8 +253,17 @@ export default {
 			}
 			
 			
-		},
-	}
+		}
+	},
+	beforeRouteEnter (to, from, next) {
+		next(vm => {
+			let self = vm
+			self.type1 = to.params.type
+			self.backPath = to.params.type==1
+							? '/home'
+							:'/home'
+		})
+	},
 }
 </script>
 

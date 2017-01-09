@@ -5,7 +5,7 @@
 		</mt-header>
 		<div class="container-top">
 			<div v-if="loadOk">
-				<mt-cell title="我的订单" v-for="item in orderList" @click.native="go('/order_detail',item.objectId)">
+				<mt-cell title="我的订单" v-for="item in orderList" @click.native="go('/order_detail',item.objectId+0)">
 					<div slot="title">
 						<div style="height: 1.5rem;" class="flex-middle">
 							<span class="item-title">收货人:</span>{{item.userName}}
