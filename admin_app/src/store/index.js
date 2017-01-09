@@ -162,10 +162,11 @@ const store = new Vuex.Store({
 			})
 		},
 		fetchTankDetail(ctx,objectId) {
+			console.log(objectId)
 			agent
-			.get('/api/t/info',{id:objectId})
+			.get('/api/t/info',{id:objectId || ''})
 			.then(data => {
-				console.log(data.info)
+				console.log(data)
 				let tankDetail = {
 					objectId: data.info.objectId || '暂无',
 					signId: data.info.signId || '暂无',

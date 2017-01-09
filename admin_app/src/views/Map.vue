@@ -12,14 +12,14 @@
 	</div>
 </template>
 <script>
-import agent from '../util/agent'
 import { AMapManager } from 'vue-amap'
+import { mapState, mapActions } from 'vuex'
 let amapManager = new AMapManager()
 export default {
 	data() {
 		return {
 		  vid: 'amap-vue-1',
-      zoom: 13,
+      zoom: 11,
       center: [120.2419049560, 29.28946517],
       events: {
         'moveend': () => {
@@ -34,32 +34,24 @@ export default {
         // }
       },
       plugin: ['ToolBar'],
-      amapManager: amapManager,
-      markers: []	
+      amapManager: amapManager
 		}
 	},
-  created(){
-    agent
-    .get('/api/t/list')
-    .then(data => {
-      console.log(data)
-      let markers = []
-      if(data.list){
-        data.list.forEach(tank => {
-          if(tank.longitude && tank.latitude) {
-            markers.push([tank.longitude, tank.latitude])
-          }
-        })
-      }
-      this.markers = markers
-    })
-    .catch(e => {
-      this.$message({
-        type: 'error',
-        message: e.message
-      })
-    })
-  },
+	computed: {
+		...mapState(['tankList']),
+		markers(){	//[longitude,latitude]
+			let arr = []
+			this.tankList.forEach(function(item, index) {
+				if (item.longitude && item.latitude) {
+					arr.push([item.longitude, item.latitude])
+				}
+			})
+			return arr
+		}
+	},
+	created(){
+		this.fetchTankList()
+	},
 	methods: {
     getMap: function() {
       // 高德map对象实例
@@ -74,7 +66,8 @@ export default {
     },
     changeCenter() {
       this.center = [this.center[0] + 0.1, this.center[1] + 0.1];
-    }
+    },
+    ...mapActions(['fetchTankList'])
 	}
 }
 </script>

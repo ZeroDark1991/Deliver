@@ -4,7 +4,7 @@
 	  	<el-tab-pane label="气罐列表" name="first">
 	  		<el-input v-model="keyword" placeholder="请输入nfcId" class="search-btn"></el-input>
 		  	<el-button type="primary" @click="search()">搜索</el-button>
-		  	<el-table :data="tankList" style="width: 100%" @row-click="go">
+		  	<el-table :data="tankList" :row-style="{'cursor': 'pointer'}" @row-click="go">
 		  		<el-table-column
 					prop="signId"
 					label="signId"

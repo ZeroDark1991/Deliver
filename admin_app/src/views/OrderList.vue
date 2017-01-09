@@ -4,7 +4,7 @@
 	  	<el-tab-pane label="订单列表" name="first">
 	  		<el-input v-model="keyword" placeholder="请输入用户ID" class="search-btn"></el-input>
 		  	<el-button type="primary" @click="search()">搜索</el-button>
-		  	<el-table :data="orderList" style="width: 100%" @row-click="go">
+		  	<el-table :data="orderList" :row-style="{'cursor': 'pointer'}" @row-click="go">
 		  		<el-table-column
 					prop="userName"
 					label="收货人"

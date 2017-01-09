@@ -29,7 +29,7 @@
 				</el-collapse>
 	  	</el-tab-pane>
 	  	<el-tab-pane label="历史订单" name="second">
-			<el-table :data="historyOrderList" style="width: 100%" @row-click="tableGo">
+			<el-table :data="historyOrderList" :row-style="{'cursor': 'pointer'}" @row-click="tableGo">
 		  		<el-table-column
 					prop="userName"
 					label="收货人"
