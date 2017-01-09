@@ -28,7 +28,7 @@ export default {
 
 const config = {
   _get: {
-    credentials: 'same-origin'
+    credentials: 'include'
   },
   _post (body) {
     if (!body) {

@@ -20,11 +20,11 @@ app.use(logger())
 
 // session
 const CONFIG = {
-  key: 'deliver', /** (string) cookie key (default is koa:sess) */
-  maxAge: 2*365*24*3600*1000, /** (number) maxAge in ms (default is 1 days) */
+  key: 'deliver:sess', /** (string) cookie key (default is koa:sess) */
+  maxAge: 1*365*24*3600*1000, /** (number) maxAge in ms (default is 1 days) */
   overwrite: true, /** (boolean) can overwrite or not (default true) */
   httpOnly: true, /** (boolean) httpOnly or not (default true) */
-  signed: false /** (boolean) signed or not (default true) */
+  signed: true /** (boolean) signed or not (default true) */
 }
 
 app.use(session(CONFIG, app))
@@ -36,13 +36,13 @@ app.use(serve(path.join(__dirname, '/static')))
 require('./cloud');
 // 加载云引擎中间件
 app.use(AV.koa())
-app.use(AV.Cloud.CookieSession({
-	framework: 'koa',
-	secret: 'user secret',
-  name: 'user',
-	maxAge: 2*365*24*3600*1000,
-	fetchUser: false
-}))
+// app.use(AV.Cloud.CookieSession({
+// 	framework: 'koa',
+// 	secret: 'user secret',
+//   name: 'user',
+// 	maxAge: 2*365*24*3600*1000,
+// 	fetchUser: false
+// }))
 
 // error handle middleware
 app.use(function*(next) {
