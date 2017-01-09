@@ -46,6 +46,7 @@ export default{
 	created(){
 		this.objectId = this.$route.params.objectId
 		this.fetchTankDetail(this.objectId)
+		console.log('hehe' + this.objectId)
 	},
 	methods: {
 		handleChange(){

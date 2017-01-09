@@ -9,6 +9,7 @@ const APIError = require('../../config/apiError')
 
 const finish = function*() {
   let data = this.request.body
+  console.log(data)
   // 校验
   if(!data.id) {
   	throw new APIError('Incompelete Information', '请传入订单ID')
@@ -23,10 +24,12 @@ const finish = function*() {
     } else if(data.tankSignId) {
       // 用户与气罐关联
       let userId = check.get('user').id
+      console.log(userId)
       let user = AV.Object.createWithoutData('_User', userId)
 
       let tankQuery = new AV.Query('Tank')
-      tankQuery.equalTo('signId', data.tankSignId)
+      let tankSignId = data.tankSignId.replace(' ', '')
+      tankQuery.equalTo('signId', tankSignId)
       let tank = yield tankQuery.first()
       if(tank){
         if(data.longitude && data.latitude) {

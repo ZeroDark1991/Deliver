@@ -28,7 +28,7 @@ export default{
 		return {
 			newTank: {
 				signId: '',
-				standard: '',
+				standard: '15kg',
 				producedAt: ''
 			}
 		}

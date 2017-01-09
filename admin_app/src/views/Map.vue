@@ -12,8 +12,9 @@
 	</div>
 </template>
 <script>
-import { AMapManager } from 'vue-amap';
-let amapManager = new AMapManager();
+import agent from '../util/agent'
+import { AMapManager } from 'vue-amap'
+let amapManager = new AMapManager()
 export default {
 	data() {
 		return {
@@ -34,14 +35,31 @@ export default {
       },
       plugin: ['ToolBar'],
       amapManager: amapManager,
-      markers: [
-				[120.2419049560, 29.28946517],
-				[120.2419049560, 29.30],
-				[120.2419049560, 29.31],
-				[120.2419049560, 29.32]
-      ]	
+      markers: []	
 		}
 	},
+  created(){
+    agent
+    .get('/api/t/list')
+    .then(data => {
+      console.log(data)
+      let markers = []
+      if(data.list){
+        data.list.forEach(tank => {
+          if(tank.longitude && tank.latitude) {
+            markers.push([tank.longitude, tank.latitude])
+          }
+        })
+      }
+      this.markers = markers
+    })
+    .catch(e => {
+      this.$message({
+        type: 'error',
+        message: e.message
+      })
+    })
+  },
 	methods: {
     getMap: function() {
       // 高德map对象实例

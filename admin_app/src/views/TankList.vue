@@ -66,7 +66,7 @@ export default{
 			keyword:'',
 			newTank: {
 				signId: '',
-				// standard: '',
+				standard: '15kg',
 				producedAt: ''
 			}
 		}
@@ -90,7 +90,7 @@ export default{
 			agent
 				.post('/api/t/create',{
 					signId: this.newTank.signId,
-					// standard: this.newTank.standard,
+					standard: this.newTank.standard,
 					producedAt: Moment(this.newTank.producedAt).format("YYYY-MM-DD HH:mm:ss")
 				})
 				.then(data => {
