@@ -8,10 +8,11 @@
 			<div v-if="type=='ol'">
 				<mt-cell title="收货人" :value="currentAddress.userName" is-link @click.native="go('/myAddress', '1')"></mt-cell>
 				<mt-cell title="配送地址" :value="currentAddress.address"></mt-cell>
-				<mt-field label="手机号" :placeholder="telPlaceholder" disableClear :disabled="telDisabled" 
-				type="tel" v-model="tel" class="link-tel"></mt-field>
+				<mt-cell title="联系电话" :value="currentAddress.phoneNumber"></mt-cell>
+				<!-- <mt-field label="手机号" :placeholder="telPlaceholder" disableClear :disabled="telDisabled" 
+				type="tel" v-model="tel" class="link-tel"></mt-field> -->
 				<mt-cell title="预约时间" :is-link="!isLater" @click.native="openPicker()" :value="timeSlot"></mt-cell>
-				<button class="bottom-btn bk-cyan text-extra" style="bottom: 3rem;" @click="changeTel()">{{telChangeText}}</button>
+				<!-- <button class="bottom-btn bk-cyan text-extra" style="bottom: 3rem;" @click="changeTel()">{{telChangeText}}</button> -->
 				<button class="bottom-btn text-extra" :disabled="isLater" @click="submitOrder()"
 				v-bind:class="{ 'bk-grey': isLater }">确认下单</button>
 				<div class="v-modal" style="z-index:2006" @click="timeSlotPicker=false" v-show="timeSlotPicker"></div>
@@ -43,9 +44,9 @@ export default {
 			type:null,
 			timeSlot:null,
 			timeSlotPicker: false,
-			tel:'',
-			telChangeText:'更换号码',
-			telDisabled:true,
+			// tel:'',
+			// telChangeText:'更换号码',
+			// telDisabled:true,
 			slots: [
 				{
 					flex: 1,
@@ -87,16 +88,17 @@ export default {
 		userInfo () {
 			return store.state.userInfo
 		},
-		telPlaceholder(){
-			return store.state.telPlaceholder
-		},
+		// telPlaceholder(){
+		// 	return store.state.telPlaceholder
+		// },
 		currentAddress () {
 			let currentAddress = {
 				address: null,
 				areaCode: null,
-				userName: null
+				userName: null,
+				phoneNumber: null
 			}
-			if (!store.state.addressList) {
+			if (store.state.addressList) {
 				store.state.addressList.forEach( function(item, index) {
 					console.log(item)
 					if (item.current) {
@@ -162,27 +164,27 @@ export default {
 				self.loadOk = true
 			})
 		},
-		changeTel() {
-			if (this.telChangeText=='更换号码') {
-				store.commit('SAVETELPLACEHOLDER', '请输入手机号码')
-				this.telChangeText=  '取消'
-				this.telDisabled = false
-			}else {
-				this.telDisabled = true
-				store.commit('SAVETELPLACEHOLDER', store.state.userInfo.mobilePhoneNumber)
-				// this.telPlaceholder = '请输入手机号'
-				this.telChangeText=  '更换号码'
-			}
+		// changeTel() {
+		// 	if (this.telChangeText=='更换号码') {
+		// 		store.commit('SAVETELPLACEHOLDER', '请输入手机号码')
+		// 		this.telChangeText=  '取消'
+		// 		this.telDisabled = false
+		// 	}else {
+		// 		this.telDisabled = true
+		// 		store.commit('SAVETELPLACEHOLDER', store.state.userInfo.mobilePhoneNumber)
+		// 		// this.telPlaceholder = '请输入手机号'
+		// 		this.telChangeText=  '更换号码'
+		// 	}
 			
-		},
+		// },
 		submitOrder() {
 			let self = this 
 			let s = {
 				address:self.currentAddress.address,
 				areaCode:self.currentAddress.areaCode,
 				userName:self.currentAddress.userName,
-				timeSlot:self.timeSlot,
-				userPhone:self.tel
+				userPhone:self.currentAddress.phoneNumber,
+				timeSlot:self.timeSlot
 			}
 			console.log(s)
 			agent.post('/api/order/create', s )
@@ -203,8 +205,8 @@ export default {
 		this.isLater = false
 		this.timeSlot = null
 		this.loadOk = false
-		this.telDisabled = false
-		this.tel = ''
+		// this.telDisabled = false
+		// this.tel = ''
 		store.commit('SAVETELPLACEHOLDER', store.state.userInfo.mobilePhoneNumber)
 		next()
 	}

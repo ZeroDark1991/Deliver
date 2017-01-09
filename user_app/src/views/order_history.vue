@@ -11,7 +11,13 @@
 				<mt-cell title="我的订单" v-for="(item,index) in filteredList" v-bind:key="item.objectId" @click.native="go('/order_detail',item.objectId+1)">
 					<div slot="title" class="">
 						<div style="height: 1.5rem;" class="flex-middle">
-							<span class="item-title">地址:</span>{{item.address}}
+							<span class="item-title">收货人:</span>{{item.userName}}
+						</div>
+						<div style="height: 1.5rem;" class="flex-middle">
+							<span class="item-title">联系电话:</span>{{item.userPhone}}
+						</div>
+						<div style="height: 1.5rem;" class="flex-middle">
+							<span class="item-title">收货地址:</span>{{item.address}}
 						</div>
 						<div style="height: 1.5rem;" class="flex-middle">
 							<span class="item-title">预约时间:</span>{{item.timeSlot}}
@@ -119,6 +125,8 @@ export default {
 						return {
 							address: item.address,
 							// status: self.stringStatus(item.status),
+							userPhone:item.userPhone,
+							userName:item.userName,
 							statusCode:item.status,
 							timeSlot: item.timeSlot,
 							createAt: self.$Moment(res.list[0].createdAt).format("YYYY-MM-DD HH:mm:ss"),
