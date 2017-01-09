@@ -180,7 +180,7 @@ export default {
 					}
 				})
 				if (self.type1 == 1) {
-					self.back(self.backPath)
+					self.back('/commit_order/ol')
 				}
 			})
 		},
