@@ -4,7 +4,7 @@
 			<mt-button icon="back" slot="left" @click="back(backPath)"></mt-button>
 		</mt-header>
 		<div class="container-top">
-			<mt-cell class="address-list" v-for="item in addressList">
+			<mt-cell class="address-list" v-for="item in addressList" @click.native="chooseOrderAddress(item.id)">
 				<div slot="title" class="address-wrap">
 					<div class="flex-middle" style="margin-top: .5rem;">
 						<div class="unit one-line">{{item.userName}}</div>
@@ -13,7 +13,7 @@
 					<div class="flex-middle" style="margin-top: .5rem;">
 						<div class="one-line">{{item.address}}</div>
 					</div>
-					<div class="flex-middle" style="margin-top: 1rem;">
+					<div class="flex-middle" style="margin-top: 1rem;" v-show="type1 != 1">
 						<div class="unit-1-2 flex-middle" @click="changeCurrentAddress(item.id)">
 							<span class="checked iconfont" :class="{'is-checked': item.current, 'not-checked': !item.current}">&#xe627;</span>默认地址
 						</div>
@@ -38,6 +38,8 @@
 			<div class="container-top">
 				<mt-field label="收货人" placeholder="收货人姓名" v-model="editAddressData.userName"></mt-field>
 				<mt-field label="联系电话" placeholder="联系电话" type="tel" v-model="editAddressData.phoneNumber"></mt-field>
+				<mt-field label="地区" v-model="place" disabled></mt-field>
+				<!-- <mt-cell title="地区" :value="place"></mt-cell> -->
 				<mt-cell class="invoice-cell" title="街道" is-link @click.native="addressPicker = true" :value="editAddressData.street"></mt-cell>
 				<mt-field label="详细地址" placeholder="详细地址" type="textarea" rows="2" v-model="editAddressData.detail_address"></mt-field>
 			</div>
@@ -58,6 +60,7 @@ import store from '../vuex/store'
 export default {
 	data () {
 		return {
+			place: '东阳市',
 			backPath: null,
 			store,
 			popupTitle:'',
@@ -161,6 +164,31 @@ export default {
 				}
 			});
 		},
+		chooseOrderAddress(addressId){
+			// console.log(addressId)
+			let self = this
+			if (self.type1 == 1) {
+				console.log(store.state.addressList.length)
+				store.state.addressList.every( function(item, index) {
+					console.log(item.id)
+					if (item.id == addressId ) {
+						console.log(addressId)
+						let orderAddress = {
+							address: item.address,
+							areaCode: item.areaCode,
+							current: addressId==item.id ? true: false,
+							id: item.id,
+							userName: item.userName,
+							phoneNumber: item.phoneNumber
+						}
+						store.commit('saveOrderAddress', orderAddress)
+						self.back('/commit_order/ol')
+						return false
+					}
+					return true
+				})
+			}
+		},
 		changeCurrentAddress(addressId) {
 			let self = this
 			self.$Indicator.open()
@@ -179,9 +207,6 @@ export default {
 						phoneNumber: item.phoneNumber
 					}
 				})
-				if (self.type1 == 1) {
-					self.back('/commit_order/ol')
-				}
 			})
 		},
 		saveAddress() {
@@ -196,7 +221,7 @@ export default {
 			}
 			if (self.type == 'new') {
 				let s = {
-					'address': self.editAddressData.street+self.editAddressData.detail_address,
+					'address': self.place + self.editAddressData.street + self.editAddressData.detail_address,
 					'areaCode': self.editAddressData.areaCode+'',
 					'userName': self.editAddressData.userName,
 					'phoneNumber': self.editAddressData.phoneNumber
@@ -213,7 +238,7 @@ export default {
 				})
 			}else if (self.type == 'edit') {
 				let s = {
-					'address': self.editAddressData.street+self.editAddressData.detail_address,
+					'address': self.place + self.editAddressData.street+self.editAddressData.detail_address,
 					'areaCode': self.editAddressData.areaCode+'',
 					'id': self.editAddressData.id,
 					'userName': self.editAddressData.userName,
@@ -276,7 +301,7 @@ export default {
 			let self = vm
 			self.type1 = to.params.type
 			self.backPath = to.params.type==1
-							? '/home'
+							? '/commit_order/ol'
 							:'/home'
 		})
 	},
