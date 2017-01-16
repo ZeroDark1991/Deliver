@@ -19,7 +19,7 @@
 				<button class="bottom-btn text-extra" :disabled="isLater" @click="submitOrder()"
 				v-bind:class="{ 'bk-grey': isLater }">确认下单</button>
 				<!-- <button class="bottom-btn text-extra"  @click="submitOrder()">确认下单</button> -->
-				<div class="v-modal" style="z-index:2006" @click="timeSlotPicker=false" v-show="timeSlotPicker"></div>
+				<div class="v-modal" style="z-index:2006" @click="closePicker()" v-show="timeSlotPicker || tankAmountPicker"></div>
 				<mt-picker class="timeSlot-picker" :show-toolbar="true" :slots="slots" @change="onValuesChange" v-show="timeSlotPicker" >
 					<div class="picker-title flex-middle flex-center">
 						预约时间段<a class="ok-picker" @click="timeSlotPicker=false">完成</a>
@@ -110,6 +110,7 @@ export default {
 		let self = this
 		let date = self.$Moment(new Date()).format("HH")
 		let arr = []
+		// self.timeSlot = self.slots[0].values[0] + ':' + self.slots[2].values[0] + ' - ' + self.slots[4].values[0] + ':' + self.slots[6].values[1]
 		self.slots[0].values.forEach( function(item, index) {
 			if (item > date) {
 				arr.push(item)
@@ -190,6 +191,10 @@ export default {
 		},
 		back (link, param) {
 			this.$transfer.back(self, link)
+		},
+		closePicker(){
+			this.timeSlotPicker = false
+			this.tankAmountPicker = false
 		},
 		onAmountChange(picker, values) {
 			this.amount = values[0]
@@ -299,7 +304,7 @@ export default {
 		})
 	},
 	beforeRouteLeave (to, from, next) {
-		// this.isLater = false
+		this.isLater = false
 		this.timeSlot = null
 		this.loadOk = false
 		next()
