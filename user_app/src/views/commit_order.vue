@@ -110,20 +110,19 @@ export default {
 		let self = this
 		let date = self.$Moment(new Date()).format("HH")
 		let arr = []
-		self.timeSlot = self.slots[0].values[0] + ':' + self.slots[2].values[0] + ' - ' + self.slots[4].values[0] + ':' + self.slots[6].values[1]
-		// self.slots[0].values.forEach( function(item, index) {
-		// 	// console.log(item)
-		// 	if (item > date) {
-		// 		arr.push(item)
-		// 	}
-		// })
-		// if (arr.length != 0) {
-		// 	self.isLater = true
-		// 	self.timeSlot = '超过预约时间'
-		// }else{
-		// 	self.slots[0].values = arr
-		// 	self.slots[4].values = arr
-		// }
+		self.slots[0].values.forEach( function(item, index) {
+			if (item > date) {
+				arr.push(item)
+			}
+		})
+		if (arr.length == 0) {
+			self.isLater = true
+			self.timeSlot = '超过预约时间'
+		}else{
+			self.slots[0].values = arr
+			self.slots[4].values = arr
+			self.timeSlot = self.slots[0].values[0] + ':' + self.slots[2].values[0] + ' - ' + self.slots[4].values[0] + ':' + self.slots[6].values[1]
+		}
 		
 		// if (store.state.timeSlots) {
 		// 	console.log(store.state.timeSlots)
@@ -226,9 +225,10 @@ export default {
 					this.timeSlotPicker = true
 				}
 			}else {
-				this.tankAmountPicker = true
+				if (!this.isLater) {
+					this.tankAmountPicker = true
+				}
 			}
-			
 		},
 		// getTimeSlot() {
 		// 	let self = this 
