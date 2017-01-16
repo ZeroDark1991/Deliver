@@ -62,6 +62,9 @@
 								<div style="height: 1.5rem;" class="flex-middle" v-if="orderData.price">
 									<span class="item-title">金额:</span>{{orderData.price}}
 								</div>
+								<div style="height: 1.5rem;" class="flex-middle" v-if="orderData.amount">
+									<span class="item-title">气罐数量:</span>{{orderData.amount}}
+								</div>
 								<div style="height: 1.5rem;" class="flex-middle">
 									<span class="item-title">收货地址:</span>{{orderData.address}}
 								</div>
@@ -109,6 +112,7 @@ export default {
 				objectId:null,
 				address:null,
 				status:null,
+				amount:null,
 				timeSlot:null,
 				name:null,
 				userPhone:null,
@@ -153,6 +157,7 @@ export default {
 							self.orderData.objectId = item.objectId
 							self.orderData.address = item.address
 							self.orderData.status = item.status
+							self.orderData.amount = item.amount
 							self.orderData.timeSlot = item.timeSlot
 							self.orderData.deliver = item.deliver
 							self.orderData.userPhone = item.userPhone

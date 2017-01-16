@@ -24,7 +24,8 @@ const store = new Vuex.Store({
 		district:null,
 		areaNameList:null,
 		areaCodeList:null,
-		tank:null
+		tank:null,
+		orderAddress:null
 	},
 	mutations: {
 		nextPage (state) {
@@ -89,7 +90,11 @@ const store = new Vuex.Store({
 		//保存煤气罐信息
 		SAVETANK(state, json) {
 			state.tank = json 
-		}
+		},
+		saveOrderAddress(state, json) {
+			console.log(json)
+			state.orderAddress = json 
+		},
 	},
 	actions: {
 		saveTimeSlot({commit}, array) {
@@ -135,7 +140,7 @@ const store = new Vuex.Store({
 							objectId: res.user.objectId
 						}
 						commit('loginSuccess')
-						commit('SAVETELPLACEHOLDER',res.user.mobilePhoneNumber)
+						// commit('SAVETELPLACEHOLDER',res.user.mobilePhoneNumber)
 						console.log('getUserInfo')
 						commit('saveUserInfo', userInfo)
 						commit('SAVEADDRESSLIST', res.user.addressList)

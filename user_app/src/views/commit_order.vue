@@ -11,10 +11,14 @@
 				<mt-cell title="联系电话" :value="currentAddress.phoneNumber"></mt-cell>
 				<!-- <mt-field label="手机号" :placeholder="telPlaceholder" disableClear :disabled="telDisabled" 
 				type="tel" v-model="tel" class="link-tel"></mt-field> -->
-				<mt-cell title="预约时间" :is-link="!isLater" @click.native="openPicker()" :value="timeSlot"></mt-cell>
+				<!-- <mt-cell title="预约时间" @click.native="open('timeSlot1')" :value="timeSlot1"></mt-cell>
+				<mt-cell title="预约时间" @click.native="open('timeSlot2')" :value="timeSlot2"></mt-cell> -->
+				<mt-field label="气罐数量" placeholder="请输入气罐数量" class="tank-amount" :value="amount"></mt-field>
+				<mt-cell title="预约时间" @click.native="openPicker()" :value="timeSlot"></mt-cell>
 				<!-- <button class="bottom-btn bk-cyan text-extra" style="bottom: 3rem;" @click="changeTel()">{{telChangeText}}</button> -->
 				<button class="bottom-btn text-extra" :disabled="isLater" @click="submitOrder()"
 				v-bind:class="{ 'bk-grey': isLater }">确认下单</button>
+				<!-- <button class="bottom-btn text-extra"  @click="submitOrder()">确认下单</button> -->
 				<div class="v-modal" style="z-index:2006" @click="timeSlotPicker=false" v-show="timeSlotPicker"></div>
 				<mt-picker class="timeSlot-picker" :show-toolbar="true" :slots="slots" @change="onValuesChange" v-show="timeSlotPicker" >
 					<div class="picker-title flex-middle flex-center">
@@ -40,9 +44,11 @@ import store from '../vuex/store'
 export default {
 	data () {
 		return {
-			title:null,
-			type:null,
-			timeSlot:null,
+			currentTimePicker: null,
+			title: null,
+			type: null,
+			timeSlot: null,
+			amount: 1,
 			timeSlotPicker: false,
 			// tel:'',
 			// telChangeText:'更换号码',
@@ -50,47 +56,90 @@ export default {
 			slots: [
 				{
 					flex: 1,
-					values: [],
-					textAlign: 'center'
-				}
+					values: [8, 9, 10, 11, 12, 13, 14, 15, 16, 17],
+					textAlign: 'right'
+				},
+				{
+					divider: true,
+					content: ':',
+				},
+				{
+					flex: 1,
+					values: ['00', '10', '20', '30', '40', '50'],
+					textAlign: 'left'
+				},
+				{
+					divider: true,
+					content: '-',
+				},
+				{
+					flex: 1,
+					values: [8, 9, 10, 11, 12, 13, 14, 15, 16, 17],
+					textAlign: 'right'
+				},
+				{
+					divider: true,
+					content: ':',
+				},
+				{
+					flex: 1,
+					values: ['00', '10', '20', '30', '40', '50'],
+					textAlign: 'left'
+				},
+				
 			],
-			isLater:false,
-			loadOk:false
+			isLater: false,
+			loadOk: false
 		}
 	},
 	created() {
 		store.commit('saveLogSuccessCallback', null)
 		let self = this
-		if (store.state.timeSlots) {
-			let date = self.$Moment(new Date()).format("HH")
-			let arr = []
-			self.timeSlots.forEach( function(item, index) {
-				let timeSlot = item.split(' - ')[1].split(':')[0]
-				if (timeSlot > date) {
-					arr.push(item)
-				}
-			})
-			self.slots[0].values = arr
-			if (arr.length==0) {
-				self.isLater = true
-				self.timeSlot = '超过预约时间'
-			}else {
-				self.timeSlot = self.slots[0].values[0]
-			}
-			self.loadOk = true
-		}else {
-			this.getTimeSlot()
-		}
+		let date = self.$Moment(new Date()).format("HH")
+		let arr = []
+		// self.slots[0].values.forEach( function(item, index) {
+		// 	// console.log(item)
+		// 	if (item > date) {
+		// 		arr.push(item)
+		// 	}
+		// })
+		// if (arr.length != 0) {
+		// 	self.isLater = true
+		// 	self.timeSlot = '超过预约时间'
+		// }else{
+		// 	self.slots[0].values = arr
+		// 	self.slots[4].values = arr
+		// }
+		
+		// if (store.state.timeSlots) {
+		// 	console.log(store.state.timeSlots)
+		// 	let date = self.$Moment(new Date()).format("HH")
+		// 	let arr = []
+		// 	store.state.timeSlots.forEach( function(item, index) {
+		// 		let timeSlot = item.split(' - ')[1].split(':')[0]
+		// 		if (timeSlot > date) {
+		// 			arr.push(item)
+		// 		}
+		// 	})
+		// 	self.slots[0].values = arr
+		// 	if (arr.length==0) {
+		// 		self.isLater = true
+		// 		self.timeSlot = '超过预约时间'
+		// 	}else {
+		// 		self.timeSlot = self.slots[0].values[0]
+		// 	}
+		// 	self.loadOk = true
+		// }else {
+		// 	this.getTimeSlot()
+		// }
 		store.dispatch('getUserInfo')
+		self.loadOk = true
 		
 	},
 	computed: {
 		userInfo () {
 			return store.state.userInfo
 		},
-		// telPlaceholder(){
-		// 	return store.state.telPlaceholder
-		// },
 		currentAddress () {
 			let currentAddress = {
 				address: null,
@@ -98,25 +147,29 @@ export default {
 				userName: null,
 				phoneNumber: null
 			}
-			if (store.state.addressList) {
-				store.state.addressList.forEach( function(item, index) {
-					console.log(item)
-					if (item.current) {
-						currentAddress = item
-					}
-				})
+			if (!store.state.orderAddress) {
+				if (store.state.addressList) {
+					store.state.addressList.forEach( function(item, index) {
+						console.log(item)
+						if (item.current) {
+							currentAddress = item
+						}
+					})
+				}else{
+					this.loadOk = false
+					this.$MessageBox.alert('请先设置地址').then(action => {
+						this.go('/myAddress', '1')
+					})
+				}
 			}else{
-				this.loadOk = false
-				this.$MessageBox.alert('请先设置地址').then(action => {
-					this.go('/myAddress', '1')
-				})
+				currentAddress = store.state.orderAddress
 			}
 			return currentAddress
 			
 		},
-		timeSlots () {
-			return store.state.timeSlots
-		}
+		// timeSlots () {
+		// 	return store.state.timeSlots
+		// }
 	},
   	methods:{
 		go (link, param) {
@@ -126,44 +179,63 @@ export default {
 			this.$transfer.back(self, link)
 		},
 		onValuesChange(picker, values) {
-			console.log(values[0])
-			this.timeSlot = values[0]
+			let self = this
+			let arr = [], arr1 = []
+			self.slots[0].values.forEach( function(item, index) {
+				if (item >= values[0]) {
+					arr.push(item)
+				}
+			})
+
+			if (values[0] == values[2]) {
+				self.slots[2].values.forEach( function(item1, index1) {
+					if (Number(item1) > Number(values[1])) {
+						arr1.push(item1)
+					}
+				})
+				self.slots[6].values = arr1
+			}
+
+			
+			self.slots[4].values = arr
+				
+			self.timeSlot = values[0] + ':' + values[1] + ' - ' + values[2] + ':' +values[3]
 		},
 		openPicker() {
 			if (!this.isLater) {
 				this.timeSlotPicker = true
 			}
 		},
-		getTimeSlot() {
-			let self = this 
-			self.$Indicator.open()
-			agent.get('/api/app/timeSlots', '')
-			.then(res => {
-				self.$Indicator.close();
-				console.log(res)
-				if (res == false) return
-				let date = self.$Moment(new Date()).format("HH")
-				if (res.timeSlots) {
-					let arr = []
-					res.timeSlots.forEach( function(item, index) {
-						let timeSlot = item.split(' - ')[1].split(':')[0]
-						if (timeSlot > date) {
-							arr.push(item)
-						}
-					})
-
-					self.slots[0].values = arr
-					store.dispatch('saveTimeSlot', res.timeSlots)
-					if (arr.length==0) {
-						self.isLater = true
-						self.timeSlot = '超过预约时间'
-					}else {
-						self.timeSlot = self.slots[0].values[0]
-					}
-				}
-				self.loadOk = true
-			})
-		},
+		// getTimeSlot() {
+		// 	let self = this 
+		// 	self.$Indicator.open()
+		// 	agent.get('/api/app/timeSlots', '')
+		// 	.then(res => {
+		// 		self.$Indicator.close();
+		// 		console.log(res)
+		// 		if (res == false) return
+		// 		let date = self.$Moment(new Date()).format("HH")
+		// 		if (res.timeSlots) {
+		// 			let arr = []
+		// 			res.timeSlots.forEach( function(item, index) {
+		// 				console.log(item)
+		// 				// let timeSlot = item.split(' - ')[1].split(':')[0]
+		// 				// if (timeSlot > date) {
+		// 					arr.push(item)
+		// 				// }
+		// 			})
+		// 			// self.slots[0].values = arr
+		// 			store.dispatch('saveTimeSlot', res.timeSlots)
+		// 			// if (arr.length==0) {
+		// 			// 	self.isLater = true
+		// 			// 	self.timeSlot = '超过预约时间'
+		// 			// }else {
+		// 			// 	self.timeSlot = self.slots[0].values[0]
+		// 			// }
+		// 		}
+		// 		self.loadOk = true
+		// 	})
+		// },
 		// changeTel() {
 		// 	if (this.telChangeText=='更换号码') {
 		// 		store.commit('SAVETELPLACEHOLDER', '请输入手机号码')
@@ -184,6 +256,7 @@ export default {
 				areaCode:self.currentAddress.areaCode,
 				userName:self.currentAddress.userName,
 				userPhone:self.currentAddress.phoneNumber,
+				amount:self.amount+'',
 				timeSlot:self.timeSlot
 			}
 			console.log(s)
@@ -202,12 +275,9 @@ export default {
 		})
 	},
 	beforeRouteLeave (to, from, next) {
-		this.isLater = false
+		// this.isLater = false
 		this.timeSlot = null
 		this.loadOk = false
-		// this.telDisabled = false
-		// this.tel = ''
-		store.commit('SAVETELPLACEHOLDER', store.state.userInfo.mobilePhoneNumber)
 		next()
 	}
 	
