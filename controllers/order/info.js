@@ -46,6 +46,7 @@ const info = function*() {
   	info: {
   		address: result.get('address'),
       userName: result.get('userName'),
+      amount: result.get('amount'),
   		status: result.get('status'),
   		timeSlot: result.get('timeSlot'),
       payment: result.get('payment'),

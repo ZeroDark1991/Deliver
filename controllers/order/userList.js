@@ -71,6 +71,7 @@ const userList = function*() {
         timeSlot: order.get('timeSlot'),
         address: order.get('address'),
         areaCode: order.get('areaCode'),
+        amount: order.get('amount'),
         status: order.get('status'),
         userPhone: order.get('userPhone'),
         userName: order.get('userName'),

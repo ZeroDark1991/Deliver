@@ -45,6 +45,7 @@ const list = function*() {
         objectId: order.id,
         timeSlot: order.get('timeSlot'),
         address: order.get('address'),
+        amount: order.get('amount'),
         areaCode: order.get('areaCode'),
         status: order.get('status'),
         userPhone: order.get('userPhone'),

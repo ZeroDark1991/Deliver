@@ -39,6 +39,8 @@ const create = function*() {
   order.set('userName', data.userName)
   order.set('timeSlot', data.timeSlot)
   order.set('areaCode', data.areaCode)
+  let amount = data.amount || 1
+  order.set('amount', amount)
   order.set('status', 0)
   order.set('price', '90.00')
   

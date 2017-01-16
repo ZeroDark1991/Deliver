@@ -19,12 +19,19 @@ const receiveTank = function*() {
   try {
     let check = yield query.get(data.id)
     if( !check || check.get('status') != 1 ) {
-    	throw new APIError('', '此订单状态不支持当前操作')
-    } else {
+    	throw new APIError('Invalid', '此订单状态不支持当前操作')
+      return
+    }
+    if(({}).toString.call(data.tank) === '[object Array]') {
       // 解除用户与气罐的关联
+      let tankArr = data.tank
       let userId = check.get('user').id
       let user = AV.Object.createWithoutData('_User', userId)
-      user.set('tank', null)
+      
+      tankArr.forEach(tank => {
+        let tarTank = AV.Object.createWithoutData('Tank', tank)
+        user.remove('tank', tarTank)
+      })
       
       try {
         yield user.save()
