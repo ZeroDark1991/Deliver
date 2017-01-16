@@ -5,7 +5,7 @@
 			<mt-button icon="back" slot="left" @click="back('/home')"></mt-button>
 		</mt-header>
 		<div class="container-top" v-if="loadOk">
-			<div v-if="type=='ol'">
+			<div v-if="type=='ol'" class="card">
 				<mt-cell title="收货人" :value="currentAddress.userName" is-link @click.native="go('/myAddress', '1')"></mt-cell>
 				<mt-cell title="配送地址" :value="currentAddress.address"></mt-cell>
 				<mt-cell title="联系电话" :value="currentAddress.phoneNumber"></mt-cell>
@@ -13,16 +13,21 @@
 				type="tel" v-model="tel" class="link-tel"></mt-field> -->
 				<!-- <mt-cell title="预约时间" @click.native="open('timeSlot1')" :value="timeSlot1"></mt-cell>
 				<mt-cell title="预约时间" @click.native="open('timeSlot2')" :value="timeSlot2"></mt-cell> -->
-				<mt-field label="气罐数量" placeholder="请输入气罐数量" class="tank-amount" :value="amount"></mt-field>
-				<mt-cell title="预约时间" @click.native="openPicker()" :value="timeSlot"></mt-cell>
+				<mt-cell title="气罐数量" @click.native="openPicker('tankAmountPicker')" :value="amount"></mt-cell>
+				<mt-cell title="预约时间" @click.native="openPicker('timeSlotPicker')" :value="timeSlot"></mt-cell>
 				<!-- <button class="bottom-btn bk-cyan text-extra" style="bottom: 3rem;" @click="changeTel()">{{telChangeText}}</button> -->
 				<button class="bottom-btn text-extra" :disabled="isLater" @click="submitOrder()"
 				v-bind:class="{ 'bk-grey': isLater }">确认下单</button>
 				<!-- <button class="bottom-btn text-extra"  @click="submitOrder()">确认下单</button> -->
-				<div class="v-modal" style="z-index:2006" @click="timeSlotPicker=false" v-show="timeSlotPicker"></div>
+				<div class="v-modal" style="z-index:2006" @click="closePicker()" v-show="timeSlotPicker || tankAmountPicker"></div>
 				<mt-picker class="timeSlot-picker" :show-toolbar="true" :slots="slots" @change="onValuesChange" v-show="timeSlotPicker" >
 					<div class="picker-title flex-middle flex-center">
 						预约时间段<a class="ok-picker" @click="timeSlotPicker=false">完成</a>
+					</div>
+				</mt-picker>
+				<mt-picker class="timeSlot-picker" :show-toolbar="true" :slots="amountSlots" @change="onAmountChange" v-show="tankAmountPicker" >
+					<div class="picker-title flex-middle flex-center">
+						气罐数量<a class="ok-picker" @click="tankAmountPicker=false">完成</a>
 					</div>
 				</mt-picker>
 			</div>
@@ -50,6 +55,7 @@ export default {
 			timeSlot: null,
 			amount: 1,
 			timeSlotPicker: false,
+			tankAmountPicker: false,
 			// tel:'',
 			// telChangeText:'更换号码',
 			// telDisabled:true,
@@ -88,6 +94,13 @@ export default {
 				},
 				
 			],
+			amountSlots:[
+				{
+					flex: 1,
+					values: ['1', '2', '3', '4', '5', '6','7', '8', '9', '10', '11', '12','13', '14', '15', '16', '17', '18', '19', '20'],
+					textAlign: 'center'
+				},
+			],
 			isLater: false,
 			loadOk: false
 		}
@@ -97,19 +110,20 @@ export default {
 		let self = this
 		let date = self.$Moment(new Date()).format("HH")
 		let arr = []
-		// self.slots[0].values.forEach( function(item, index) {
-		// 	// console.log(item)
-		// 	if (item > date) {
-		// 		arr.push(item)
-		// 	}
-		// })
-		// if (arr.length != 0) {
-		// 	self.isLater = true
-		// 	self.timeSlot = '超过预约时间'
-		// }else{
-		// 	self.slots[0].values = arr
-		// 	self.slots[4].values = arr
-		// }
+		// self.timeSlot = self.slots[0].values[0] + ':' + self.slots[2].values[0] + ' - ' + self.slots[4].values[0] + ':' + self.slots[6].values[1]
+		self.slots[0].values.forEach( function(item, index) {
+			if (item > date) {
+				arr.push(item)
+			}
+		})
+		if (arr.length == 0) {
+			self.isLater = true
+			self.timeSlot = '超过预约时间'
+		}else{
+			self.slots[0].values = arr
+			self.slots[4].values = arr
+			self.timeSlot = self.slots[0].values[0] + ':' + self.slots[2].values[0] + ' - ' + self.slots[4].values[0] + ':' + self.slots[6].values[1]
+		}
 		
 		// if (store.state.timeSlots) {
 		// 	console.log(store.state.timeSlots)
@@ -178,6 +192,13 @@ export default {
 		back (link, param) {
 			this.$transfer.back(self, link)
 		},
+		closePicker(){
+			this.timeSlotPicker = false
+			this.tankAmountPicker = false
+		},
+		onAmountChange(picker, values) {
+			this.amount = values[0]
+		},
 		onValuesChange(picker, values) {
 			let self = this
 			let arr = [], arr1 = []
@@ -194,6 +215,8 @@ export default {
 					}
 				})
 				self.slots[6].values = arr1
+			}else{
+				self.slots[6].values = self.slots[2].values
 			}
 
 			
@@ -201,9 +224,15 @@ export default {
 				
 			self.timeSlot = values[0] + ':' + values[1] + ' - ' + values[2] + ':' +values[3]
 		},
-		openPicker() {
-			if (!this.isLater) {
-				this.timeSlotPicker = true
+		openPicker(type) {
+			if (type == 'timeSlotPicker') {
+				if (!this.isLater) {
+					this.timeSlotPicker = true
+				}
+			}else {
+				if (!this.isLater) {
+					this.tankAmountPicker = true
+				}
 			}
 		},
 		// getTimeSlot() {
@@ -275,7 +304,7 @@ export default {
 		})
 	},
 	beforeRouteLeave (to, from, next) {
-		// this.isLater = false
+		this.isLater = false
 		this.timeSlot = null
 		this.loadOk = false
 		next()
@@ -304,6 +333,9 @@ export default {
 }
 input.mint-field-core{
 	text-align: right;
+}
+.card{
+	box-shadow: 0 1px 3px 1px #e9e9e9;
 }
 // .tel-btn{
 // 	height: 2.5rem;
