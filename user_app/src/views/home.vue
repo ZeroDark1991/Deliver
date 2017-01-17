@@ -16,7 +16,7 @@
 			</div>
 		</div>
 		<div class="flex-center">
-			<div class="unit-1-2 text-center text-white item-block" @click="go('/myAddress','0')"
+			<div class="unit-1-2 text-center text-white item-block" @click="go('/myAddress')"
 				style="background-color: #FF6655;">
 				<i class="iconfont" style="font-size: 1.3rem;">&#xe60b;</i>
 				<div class="text-extra">我的信息</div>

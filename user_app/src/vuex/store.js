@@ -92,7 +92,6 @@ const store = new Vuex.Store({
 			state.tank = json 
 		},
 		saveOrderAddress(state, json) {
-			console.log(json)
 			state.orderAddress = json 
 		},
 	},
