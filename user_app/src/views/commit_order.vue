@@ -6,19 +6,34 @@
 		</mt-header>
 		<div class="container-top" v-if="loadOk">
 			<div v-if="type=='ol'" class="card">
-				<mt-cell title="收货人" :value="currentAddress.userName" is-link @click.native="go('/myAddress', '1')"></mt-cell>
+				<div class="address-card card" >
+					<mt-cell is-link @click.native="go('/chooseAddress')">
+						<div slot="title" class="address-wrap">
+							<div class="flex-middle" style=" height: 1.5rem;line-height: 1.5rem;">
+								<div class="unit one-line">收货人：{{currentAddress.userName}}</div>
+								<div class="unit text-right">{{currentAddress.phoneNumber}}</div>
+							</div>
+							<div class="flex-middle" style="margin: .5rem 0 .25rem 0;">
+								<div class="two-line"style="line-height: 1rem;">收货地址：{{currentAddress.address}}</div>
+							</div>
+						</div>
+					</mt-cell>
+				</div>
+				<!-- <mt-cell title="收货人" :value="currentAddress.userName" is-link @click.native="go('/myAddress', '1')"></mt-cell>
 				<mt-cell title="配送地址" :value="currentAddress.address"></mt-cell>
-				<mt-cell title="联系电话" :value="currentAddress.phoneNumber"></mt-cell>
+				<mt-cell title="联系电话" :value="currentAddress.phoneNumber"></mt-cell> -->
 				<!-- <mt-field label="手机号" :placeholder="telPlaceholder" disableClear :disabled="telDisabled" 
 				type="tel" v-model="tel" class="link-tel"></mt-field> -->
 				<!-- <mt-cell title="预约时间" @click.native="open('timeSlot1')" :value="timeSlot1"></mt-cell>
 				<mt-cell title="预约时间" @click.native="open('timeSlot2')" :value="timeSlot2"></mt-cell> -->
-				<mt-cell title="气罐数量" @click.native="openPicker('tankAmountPicker')" :value="amount"></mt-cell>
-				<mt-cell title="预约时间" @click.native="openPicker('timeSlotPicker')" :value="timeSlot"></mt-cell>
-				<!-- <button class="bottom-btn bk-cyan text-extra" style="bottom: 3rem;" @click="changeTel()">{{telChangeText}}</button> -->
+				<div class="card">
+					<mt-cell title="气罐数量" @click.native="openPicker('tankAmountPicker')" :value="amount"></mt-cell>
+					<mt-cell title="预约时间" @click.native="openPicker('timeSlotPicker')" :value="timeSlot"></mt-cell>
+				
+				</div>
 				<button class="bottom-btn text-extra" :disabled="isLater" @click="submitOrder()"
 				v-bind:class="{ 'bk-grey': isLater }">确认下单</button>
-				<!-- <button class="bottom-btn text-extra"  @click="submitOrder()">确认下单</button> -->
+				
 				<div class="v-modal" style="z-index:2006" @click="closePicker()" v-show="timeSlotPicker || tankAmountPicker"></div>
 				<mt-picker class="timeSlot-picker" :show-toolbar="true" :slots="slots" @change="onValuesChange" v-show="timeSlotPicker" >
 					<div class="picker-title flex-middle flex-center">
@@ -56,9 +71,6 @@ export default {
 			amount: 1,
 			timeSlotPicker: false,
 			tankAmountPicker: false,
-			// tel:'',
-			// telChangeText:'更换号码',
-			// telDisabled:true,
 			slots: [
 				{
 					flex: 1,
@@ -146,6 +158,7 @@ export default {
 		// }else {
 		// 	this.getTimeSlot()
 		// }
+		console.log('1234')
 		store.dispatch('getUserInfo')
 		self.loadOk = true
 		
@@ -163,17 +176,22 @@ export default {
 			}
 			if (!store.state.orderAddress) {
 				if (store.state.addressList) {
+					let count = 0
 					store.state.addressList.forEach( function(item, index) {
 						console.log(item)
 						if (item.current) {
 							currentAddress = item
+							count++
 						}
 					})
+					if (count===0) {
+						this.loadOk = false
+						this.$MessageBox.alert('请先设置地址').then(action => {
+							this.go('/myAddress', '1')
+						})
+					}
 				}else{
-					this.loadOk = false
-					this.$MessageBox.alert('请先设置地址').then(action => {
-						this.go('/myAddress', '1')
-					})
+					this.go('/home')
 				}
 			}else{
 				currentAddress = store.state.orderAddress
@@ -307,6 +325,7 @@ export default {
 		this.isLater = false
 		this.timeSlot = null
 		this.loadOk = false
+		store.commit('saveOrderAddress', null)
 		next()
 	}
 	
@@ -333,6 +352,9 @@ export default {
 }
 input.mint-field-core{
 	text-align: right;
+}
+.address-card{
+	margin-bottom: .5rem;
 }
 .card{
 	box-shadow: 0 1px 3px 1px #e9e9e9;

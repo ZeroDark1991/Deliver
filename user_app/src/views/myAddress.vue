@@ -4,16 +4,16 @@
 			<mt-button icon="back" slot="left" @click="back(backPath)"></mt-button>
 		</mt-header>
 		<div class="container-top">
-			<mt-cell class="address-list" v-for="item in addressList" @click.native="chooseOrderAddress(item.id)">
+			<mt-cell class="address-list" v-for="item in addressList">
 				<div slot="title" class="address-wrap">
 					<div class="flex-middle" style="margin-top: .5rem;">
 						<div class="unit one-line">{{item.userName}}</div>
 						<div class="unit">{{item.phoneNumber}}</div>
 					</div>
-					<div class="flex-middle" style="margin-top: .5rem;">
-						<div class="one-line">{{item.address}}</div>
+					<div class="flex-middle" style="margin: .5rem 0;">
+						<div class="two-line">{{item.address}}</div>
 					</div>
-					<div class="flex-middle" style="margin-top: 1rem;" v-show="type1 != 1">
+					<div class="flex-middle" style="margin-top: 1rem;">
 						<div class="unit-1-2 flex-middle" @click="changeCurrentAddress(item.id)">
 							<span class="checked iconfont" :class="{'is-checked': item.current, 'not-checked': !item.current}">&#xe627;</span>默认地址
 						</div>
@@ -103,7 +103,7 @@ export default {
 	},
   	methods:{
 		go(link, param)  {
-			this.$transfer.go(self, link)
+			this.$transfer.go(self, link, param)
 		},
 		back(link, param)  {
 			this.$transfer.back(self, link)
@@ -163,31 +163,6 @@ export default {
 					})
 				}
 			});
-		},
-		chooseOrderAddress(addressId){
-			// console.log(addressId)
-			let self = this
-			if (self.type1 == 1) {
-				console.log(store.state.addressList.length)
-				store.state.addressList.every( function(item, index) {
-					console.log(item.id)
-					if (item.id == addressId ) {
-						console.log(addressId)
-						let orderAddress = {
-							address: item.address,
-							areaCode: item.areaCode,
-							current: addressId==item.id ? true: false,
-							id: item.id,
-							userName: item.userName,
-							phoneNumber: item.phoneNumber
-						}
-						store.commit('saveOrderAddress', orderAddress)
-						self.back('/commit_order/ol')
-						return false
-					}
-					return true
-				})
-			}
 		},
 		changeCurrentAddress(addressId) {
 			let self = this
@@ -253,8 +228,21 @@ export default {
 					self.addressList = res.addressList
 					store.commit('SAVEADDRESSLIST',res.addressList)
 					self.popupVisible = false
+					// if (store.state.orderAddress) {
+					// 	if (self.editAddressData.id == store.state.orderAddress.id) {
+					// 		let orderAddressData = {
+					// 			address: self.place
+					// 					+ self.editAddressData.street
+					// 					+ self.editAddressData.detail_address,
+					// 			areaCode: self.editAddressData.areaCode,
+					// 			id: self.editAddressData.id,
+					// 			userName: self.editAddressData.userName,
+					// 			phoneNumber: self.editAddressData.phoneNumber
+					// 		}
+					// 		store.commit('saveOrderAddress', orderAddressData)
+					// 	}
+					// }
 					self.$Toast('修改成功')
-
 				})
 			}
 			
@@ -300,9 +288,7 @@ export default {
 		next(vm => {
 			let self = vm
 			self.type1 = to.params.type
-			self.backPath = to.params.type==1
-							? '/commit_order/ol'
-							:'/home'
+			self.backPath = from.path
 		})
 	},
 }
