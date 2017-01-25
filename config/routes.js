@@ -11,6 +11,9 @@ const User = require('../controllers/user/')
 const Tank = require('../controllers/tank/')
 const Order = require('../controllers/order/')
 const Deliver = require('../controllers/deliver/')
+const Filler = require('../controllers/filler/')
+const Checker = require('../controllers/checker/')
+const Record = require('../controllers/record/')
 
 // global
 router.get('/app/areaCodes', App.areaCodes)
@@ -59,6 +62,15 @@ router.get('/t/list', Tank.list)
 router.get('/t/info', Tank.info)
 
 router.post('/t/create', Tank.create)
+
+// filler
+router.post('/f/create', Filler.create)
+
+// checker
+router.post('/c/create', Checker.create)
+
+// record
+router.post('/r/create', Record.create)
 
 // 404 not found
 router.all('*', function*() {

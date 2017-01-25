@@ -9,7 +9,6 @@ const APIError = require('../../config/apiError')
 
 const finish = function*() {
   let data = this.request.body
-  console.log(data)
   // 校验
   if(!data.id) {
     throw new APIError('Incompelete Information', '请传入订单ID')

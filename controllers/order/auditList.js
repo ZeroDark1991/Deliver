@@ -25,7 +25,6 @@ const aduitList = function*() {
   try{
     list = result.map(order => {
       let d = order.get('deliver')
-      console.log(d)
       let deliver = null
       if(d) {
         deliver =  {
