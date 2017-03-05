@@ -6,7 +6,7 @@
 			</transition>
 			<div class="home-mask" v-show="mask"></div>
 		</keep-alive>
-		<mt-popup v-model="openLoginPop" popup-transition="popup-fade">
+		<mt-popup v-model="open" popup-transition="popup-fade">
 			<div class="page">
 				<div class="container">
 					<div class="flex-center">
@@ -36,11 +36,10 @@
 
 <script>
 import agent from './util/agent'
-import store from './vuex/store'
+import { mapState, mapActions, mapMutations} from 'vuex'
 import logo from './assets/logo1.png'
 export default {
   name: 'app',
-  store,
   data () {
 	return {
 		mask:false,
@@ -52,28 +51,20 @@ export default {
 		timer: null,
 		canGet: false,
 		logo,
+		sssss: true
 	}
   },
   created() {
   	console.log(123)
 	let self = this
-	store.dispatch('getUserInfo', self)
+	// this.getUserInfo(self)
   },
-  computed: {	
-	transitionName () {
-		return store.state.transitionName
-	},
-	userInfo () {
-  		return store.state.userInfo
-  	},
-	isNotLogin () {
-		return store.state.isNotLogin
-	},
-	openLoginPop () {
-		return store.state.open
-	}
+  computed: {
+  	...mapState(['transitionName', 'userInfo', 'isNotLogin', 'open']),
   },
   methods:{
+  	...mapActions(['getUserInfo', 'getData']),
+  	...mapMutations(['loginSuccess', 'closePopup']),
 	login () {
 		let self = this
 		let reg = /^(0|86|17951)?(13[0-9]|15[012356789]|17[01678]|18[0-9]|14[57])[0-9]{8}$/
@@ -91,17 +82,19 @@ export default {
 		self.$Indicator.open();
 		agent.post('/api/u/logIn', {
 			phoneNumber: this.PhoneNumber,
-			verifyCode: this.VerifyCode+''
+			verifyCode: this.VerifyCode.toString()
 		})
 		.then(res => {
 			self.$Indicator.close();
 			console.log(res)
 			if (res == false) return false
-			store.commit('loginSuccess')
+
+			this.loginSuccess()
+			//清空输入框
 			self.PhoneNumber = ''
 			self.VerifyCode = ''
 			self.hint = '获取短信验证码'
-			store.dispatch('closePopup')
+			self.closePopup()
 			if (self.$route.path == '/') {
 				$router.replace('/home')
 			}
@@ -109,7 +102,7 @@ export default {
 			return true
 		}).then(res => {
 			if (res) {
-				store.dispatch('getData', self)
+				self.getData(self)
 			}
 			
 		})

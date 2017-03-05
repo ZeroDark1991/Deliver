@@ -85,9 +85,11 @@ const router = new VueRouter({
   ]
 })
 
+import store from './store'
 /* eslint-disable no-new */
 const app = new Vue({
-  router: router,
+  store,
+  router,
   render: h => h(App)
 }).$mount('#app')
 window.$router = router

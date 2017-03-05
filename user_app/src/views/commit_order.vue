@@ -27,7 +27,7 @@
 				<!-- <mt-cell title="预约时间" @click.native="open('timeSlot1')" :value="timeSlot1"></mt-cell>
 				<mt-cell title="预约时间" @click.native="open('timeSlot2')" :value="timeSlot2"></mt-cell> -->
 				<div class="card">
-					<mt-cell title="气罐数量" @click.native="openPicker('tankAmountPicker')" :value="amount"></mt-cell>
+					<mt-cell title="气瓶数量" @click.native="openPicker('tankAmountPicker')" :value="amount"></mt-cell>
 					<mt-cell title="预约时间" @click.native="openPicker('timeSlotPicker')" :value="timeSlot"></mt-cell>
 				
 				</div>
@@ -42,7 +42,7 @@
 				</mt-picker>
 				<mt-picker class="timeSlot-picker" :show-toolbar="true" :slots="amountSlots" @change="onAmountChange" v-show="tankAmountPicker" >
 					<div class="picker-title flex-middle flex-center">
-						气罐数量<a class="ok-picker" @click="tankAmountPicker=false">完成</a>
+						气瓶数量<a class="ok-picker" @click="tankAmountPicker=false">完成</a>
 					</div>
 				</mt-picker>
 			</div>
@@ -60,7 +60,8 @@
 
 <script type="text/javascript">
 import agent from '../util/agent'
-import store from '../vuex/store'
+import { mapState, mapActions, mapMutations} from 'vuex'
+
 export default {
 	data () {
 		return {
@@ -118,7 +119,7 @@ export default {
 		}
 	},
 	created() {
-		store.commit('saveLogSuccessCallback', null)
+		this.saveLogSuccessCallback(null)
 		let self = this
 		let date = self.$Moment(new Date()).format("HH")
 		let arr = []
@@ -159,14 +160,14 @@ export default {
 		// 	this.getTimeSlot()
 		// }
 		console.log('1234')
-		store.dispatch('getUserInfo')
+		this.getUserInfo()
 		self.loadOk = true
 		
 	},
 	computed: {
-		userInfo () {
-			return store.state.userInfo
-		},
+		...mapState(['userInfo']),
+		...mapState(['orderAddress']),
+		...mapState(['addressList']),
 		currentAddress () {
 			let currentAddress = {
 				address: null,
@@ -174,27 +175,26 @@ export default {
 				userName: null,
 				phoneNumber: null
 			}
-			if (!store.state.orderAddress) {
-				if (store.state.addressList) {
-					let count = 0
-					store.state.addressList.forEach( function(item, index) {
+			if (!this.orderAddress) {
+				let count = 0
+				if (this.addressList) {
+					this.addressList.forEach( function(item, index) {
 						console.log(item)
 						if (item.current) {
 							currentAddress = item
 							count++
 						}
 					})
+				}else{
 					if (count===0) {
 						this.loadOk = false
 						this.$MessageBox.alert('请先设置地址').then(action => {
-							this.go('/myAddress', '1')
+							this.go('/myAddress')
 						})
 					}
-				}else{
-					this.go('/home')
 				}
 			}else{
-				currentAddress = store.state.orderAddress
+				currentAddress = this.orderAddress
 			}
 			return currentAddress
 			
@@ -204,6 +204,8 @@ export default {
 		// }
 	},
   	methods:{
+  		...mapActions(['getUserInfo']),
+  		...mapMutations(['saveLogSuccessCallback', 'saveOrderAddress']),
 		go (link, param) {
 			this.$transfer.go(self, link, param)
 		},
@@ -225,7 +227,6 @@ export default {
 					arr.push(item)
 				}
 			})
-
 			if (values[0] == values[2]) {
 				self.slots[2].values.forEach( function(item1, index1) {
 					if (Number(item1) > Number(values[1])) {
@@ -236,10 +237,7 @@ export default {
 			}else{
 				self.slots[6].values = self.slots[2].values
 			}
-
-			
 			self.slots[4].values = arr
-				
 			self.timeSlot = values[0] + ':' + values[1] + ' - ' + values[2] + ':' +values[3]
 		},
 		openPicker(type) {
@@ -253,49 +251,6 @@ export default {
 				}
 			}
 		},
-		// getTimeSlot() {
-		// 	let self = this 
-		// 	self.$Indicator.open()
-		// 	agent.get('/api/app/timeSlots', '')
-		// 	.then(res => {
-		// 		self.$Indicator.close();
-		// 		console.log(res)
-		// 		if (res == false) return
-		// 		let date = self.$Moment(new Date()).format("HH")
-		// 		if (res.timeSlots) {
-		// 			let arr = []
-		// 			res.timeSlots.forEach( function(item, index) {
-		// 				console.log(item)
-		// 				// let timeSlot = item.split(' - ')[1].split(':')[0]
-		// 				// if (timeSlot > date) {
-		// 					arr.push(item)
-		// 				// }
-		// 			})
-		// 			// self.slots[0].values = arr
-		// 			store.dispatch('saveTimeSlot', res.timeSlots)
-		// 			// if (arr.length==0) {
-		// 			// 	self.isLater = true
-		// 			// 	self.timeSlot = '超过预约时间'
-		// 			// }else {
-		// 			// 	self.timeSlot = self.slots[0].values[0]
-		// 			// }
-		// 		}
-		// 		self.loadOk = true
-		// 	})
-		// },
-		// changeTel() {
-		// 	if (this.telChangeText=='更换号码') {
-		// 		store.commit('SAVETELPLACEHOLDER', '请输入手机号码')
-		// 		this.telChangeText=  '取消'
-		// 		this.telDisabled = false
-		// 	}else {
-		// 		this.telDisabled = true
-		// 		store.commit('SAVETELPLACEHOLDER', store.state.userInfo.mobilePhoneNumber)
-		// 		// this.telPlaceholder = '请输入手机号'
-		// 		this.telChangeText=  '更换号码'
-		// 	}
-			
-		// },
 		submitOrder() {
 			let self = this 
 			let s = {
@@ -325,7 +280,7 @@ export default {
 		this.isLater = false
 		this.timeSlot = null
 		this.loadOk = false
-		store.commit('saveOrderAddress', null)
+		this.saveOrderAddress(null)
 		next()
 	}
 	
@@ -333,38 +288,30 @@ export default {
 </script>
 
 <style scoped lang="less">
-.timeSlot-picker{
-	position: fixed;
-	bottom: 0;
-	left: 0;
-	z-index: 2007;
-	width: 100%;
-	background-color: #fff;
-	.picker-title{
-		background-color: #FAFAFA;
-		position: relative;
-		height: 2rem;
-		.ok-picker{
-			position: absolute;
-			right: .5rem;
+	.timeSlot-picker{
+		position: fixed;
+		bottom: 0;
+		left: 0;
+		z-index: 2007;
+		width: 100%;
+		background-color: #fff;
+		.picker-title{
+			background-color: #FAFAFA;
+			position: relative;
+			height: 2rem;
+			.ok-picker{
+				position: absolute;
+				right: .5rem;
+			}
 		}
 	}
-}
-input.mint-field-core{
-	text-align: right;
-}
-.address-card{
-	margin-bottom: .5rem;
-}
-.card{
-	box-shadow: 0 1px 3px 1px #e9e9e9;
-}
-// .tel-btn{
-// 	height: 2.5rem;
-// 	background-color: #009BF7;
-// 	color: #fff;
-// 	width: 100%;
-// 	border-radius: 0;
-// 	border: none;
-// }
+	input.mint-field-core{
+		text-align: right;
+	}
+	.address-card{
+		margin-bottom: .5rem;
+	}
+	.card{
+		box-shadow: 0 1px 3px 1px #e9e9e9;
+	}
 </style>

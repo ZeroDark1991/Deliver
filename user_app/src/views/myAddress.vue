@@ -56,16 +56,15 @@
 
 <script type="text/javascript">
 import agent from '../util/agent'
-import store from '../vuex/store'
+import { mapState, mapActions, mapMutations} from 'vuex'
 export default {
 	data () {
 		return {
 			place: '东阳市',
 			backPath: null,
-			store,
 			popupTitle:'',
 			type:null,
-			type1:null,
+			// type1:null,
 			areaCodeList:null,
 			popupVisible:false,
 			addressPicker:false,
@@ -89,19 +88,18 @@ export default {
 		}
 	},
 	created() {
-		store.commit('saveLogSuccessCallback', null)
-		store.dispatch('getUserInfo')
+		this.saveLogSuccessCallback(null)
+		console.log(111111)
+		this.getUserInfo()
 		this.getAreaCodes()
 	},
 	computed: {
-		addressList () {
-			return store.state.addressList
-		},
-		district(){
-			return store.state.district
-		},
+		...mapState(['addressList']),
+		...mapState(['district']),
 	},
   	methods:{
+  		...mapActions(['getUserInfo']),
+  		...mapMutations(['saveLogSuccessCallback','saveAddressList', 'saveDistrict']),
 		go(link, param)  {
 			this.$transfer.go(self, link, param)
 		},
@@ -125,7 +123,7 @@ export default {
 			self.getAreaCodes()
 			self.popupVisible = true
 			self.editAddressData.id = addressId
-			store.state.addressList.forEach( function(item, index) {
+			this.addressList.forEach( function(item, index) {
 				if (item.id == addressId) {
 					self.editAddressData.phoneNumber = item.phoneNumber ? item.phoneNumber : ''
 					self.editAddressData.areaCode = item.areaCode ? item.areaCode : ''
@@ -153,12 +151,12 @@ export default {
 						console.log(res)
 						if (res == false) return
 						let arr = []
-						store.state.addressList.forEach( function(item, index) {
+						this.addressList.forEach( function(item, index) {
 							if (item.id != addressId) {
 								arr.push(item)
 							}
 						})
-						store.commit('SAVEADDRESSLIST',arr)
+						this.saveAddressList(arr)
 						self.$Toast('删除成功')
 					})
 				}
@@ -172,16 +170,19 @@ export default {
 				self.$Indicator.close()
 				console.log(res)
 				if (res == false) return
-				store.state.addressList = self.addressList.map( item => {
-					return {
-						address: item.address,
-						areaCode: item.areaCode,
-						current: addressId==item.id ? true: false,
-						id: item.id,
-						userName: item.userName,
-						phoneNumber: item.phoneNumber
-					}
-				})
+				self.saveAddressList(
+					self.addressList.map( item => {
+						return {
+							address: item.address,
+							areaCode: item.areaCode,
+							current: addressId==item.id ? true: false,
+							id: item.id,
+							userName: item.userName,
+							phoneNumber: item.phoneNumber
+						}
+					})
+				)
+				
 			})
 		},
 		saveAddress() {
@@ -207,8 +208,7 @@ export default {
 					self.$Indicator.close()
 					console.log(res)
 					if (res == false) return
-					self.addressList = res.addressList
-					store.commit('SAVEADDRESSLIST',res.addressList)
+					self.saveAddressList(res.addressList)
 					self.popupVisible = false
 				})
 			}else if (self.type == 'edit') {
@@ -225,23 +225,8 @@ export default {
 					self.$Indicator.close()
 					console.log(res)
 					if (res == false) return
-					self.addressList = res.addressList
-					store.commit('SAVEADDRESSLIST',res.addressList)
+					self.saveAddressList(res.addressList)
 					self.popupVisible = false
-					// if (store.state.orderAddress) {
-					// 	if (self.editAddressData.id == store.state.orderAddress.id) {
-					// 		let orderAddressData = {
-					// 			address: self.place
-					// 					+ self.editAddressData.street
-					// 					+ self.editAddressData.detail_address,
-					// 			areaCode: self.editAddressData.areaCode,
-					// 			id: self.editAddressData.id,
-					// 			userName: self.editAddressData.userName,
-					// 			phoneNumber: self.editAddressData.phoneNumber
-					// 		}
-					// 		store.commit('saveOrderAddress', orderAddressData)
-					// 	}
-					// }
 					self.$Toast('修改成功')
 				})
 			}
@@ -264,16 +249,19 @@ export default {
 			});
 			this.areaCodeList = areaCodeList
 			this.slots[0].values = areaNameList
+			console.log('slots[0]:'+this.slots[0].values)
 		},
 		getAreaCodes() {
 			let self = this 
-			if (!store.state.district) {
+			console.log(3333333)
+			console.log(self.district)
+			if (!self.district) {
 				agent.get('/api/app/areaCodes', '')
 				.then(res => {
 					console.log(res)
 					if (res == false) return
 					if (res.district) {
-						store.dispatch('saveDistrict', res.district)
+						self.saveDistrict(res.district)
 						self.getAreaList(res.district)
 					}
 				})
@@ -287,8 +275,8 @@ export default {
 	beforeRouteEnter (to, from, next) {
 		next(vm => {
 			let self = vm
-			self.type1 = to.params.type
-			self.backPath = from.path
+			// self.type1 = to.params.type
+			self.backPath = '/home'
 		})
 	},
 }

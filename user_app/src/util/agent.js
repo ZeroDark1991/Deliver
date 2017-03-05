@@ -2,7 +2,7 @@
 
 import Promise from 'promise-polyfill'
 import setAsap from 'setasap'
-import store from '../vuex/store'
+import store from '../store'
 import { Toast } from 'mint-ui'
 Promise._immediateFn = setAsap
 
@@ -28,7 +28,7 @@ export default {
 
 const config = {
   _get: {
-    credentials: 'same-origin'
+    credentials: 'include'
   },
   _post (body) {
     if (!body) {

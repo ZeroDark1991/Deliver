@@ -1,6 +1,6 @@
 <template>
 	<div class="page">
-		<mt-header fixed title="订单列表">
+		<mt-header fixed title="当前订单">
 			<mt-button icon="back" slot="left" @click="back('/home')"></mt-button>
 		</mt-header>
 		<div class="container-top">
@@ -35,9 +35,8 @@
 
 <script type="text/javascript">
 import agent from '../util/agent'
-import store from '../vuex/store'
+import { mapMutations} from 'vuex'
 export default {
-	store,
 	data () {
 		return {
 			orderList:[],
@@ -46,15 +45,11 @@ export default {
 		}
 	},
 	created() {
-		store.commit('saveLogSuccessCallback',this.getCurrentOrderList)
-		// if (store.state.currentOrderList) {
-		// 	this.orderList = store.state.currentOrderList
-		// 	this.loadOk = true
-		// }else{
-			this.getCurrentOrderList()
-		// }
+		this.saveLogSuccessCallback(this.getCurrentOrderList)
+		this.getCurrentOrderList()
 	},
   	methods:{
+  		...mapMutations(['saveLogSuccessCallback', 'saveCurrentOrderList']),
 		go(link, param)  {
 			this.$transfer.go(self, link, param)
 		},
@@ -74,10 +69,10 @@ export default {
 					state = '送气工赶往你家路上'
 					break;
 				case 2:
-					state = '新气罐装配中'
+					state = '新气瓶装配中'
 					break;
 				case 10:
-					state = '气罐已送达 订单完成'
+					state = '气瓶已送达 订单完成'
 					break;
 				default:
 					// statements_def
@@ -132,7 +127,7 @@ export default {
 					})
 					self.orderList = orderList.slice(0,1)
 					// self.orderList = orderList
-					store.commit('saveCurrentOrderList', self.orderList)
+					self.saveCurrentOrderList(self.orderList)
 					self.loadOk = true
 					// self.currentOrder.address = data.list[0].address,
 					// // self.currentOrder.status = self.stringStatus(data.list[0].status)
