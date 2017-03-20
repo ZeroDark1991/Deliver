@@ -21,6 +21,7 @@ const create = function*() {
   	}
   } catch(e) {
     throw new APIError('DB Error', e.message)
+    return
   }
 
   tank.set('signId', data.signId)

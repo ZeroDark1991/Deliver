@@ -7,6 +7,7 @@ exports.fetch = function*(){
 	let result
 	try {	
 		let query = new AV.Query('Version')
+		query.descending('createdAt')
 		result = yield query.first()
 	}
 	catch(e) {

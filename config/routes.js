@@ -62,6 +62,7 @@ router.get('/t/list', Tank.list)
 router.get('/t/info', Tank.info)
 
 router.post('/t/create', Tank.create)
+router.post('/t/locate', Tank.locate)
 
 // filler
 router.post('/f/create', Filler.create)

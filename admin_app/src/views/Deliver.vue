@@ -94,7 +94,6 @@ export default {
 			this.editDeliver.phoneNumber = row.phoneNumber
 		},
 		editDeliverInfo(){
-			console.log('edit')
 			agent
 				.post('/api/d/edit', {
 					id:	this.editDeliver.id,

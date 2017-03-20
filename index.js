@@ -45,7 +45,7 @@ app.use(AV.koa())
 // }))
 
 // error handle middleware
-app.use(function*(next) {
+app.use(function* (next) {
   if (this.path === '/favicon.ico') return
 
   try {

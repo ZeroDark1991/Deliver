@@ -7,3 +7,4 @@ static
 # VIM
 *~
 *.swp
+.DS_Store
