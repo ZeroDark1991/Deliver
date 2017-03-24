@@ -117,7 +117,7 @@ const store = new Vuex.Store({
 				state.logSuccessCallback()
 			}else{
 				console.log(pointer)
-				dispatch('getUserInfo',pointer)
+				dispatch('getUserInfo', pointer)
 			}
 		},
 		openPopup ({state}) {

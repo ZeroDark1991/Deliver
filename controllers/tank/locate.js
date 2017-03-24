@@ -17,7 +17,7 @@ const locate = function*() {
 	}
 
 	let query = new AV.Query('Tank')
-
+	query.equalTo('signId', data.id)
   try {
 		let tarTank = yield query.first()
 		tarTank.set('longitude', data.longitude)
