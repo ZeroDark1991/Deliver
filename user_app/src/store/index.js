@@ -37,6 +37,12 @@ const store = new Vuex.Store({
 		noTransfer (state) {
 			state.transitionName = ''
 		},
+		openPopup ({state}) {
+			state.open = true
+		},
+		closePopup ({state}) {
+			state.open = false
+		},
 		//发现未登录，更改状态
 		notLogin (state) {
 			state.isNotLogin = true
@@ -70,15 +76,15 @@ const store = new Vuex.Store({
 		// 	state.telPlaceholder = string
 		// },
 		//保存地址列表
-		SAVEADDRESSLIST(state, array) {
+		saveAddressList(state, array) {
 			state.addressList = array 
 		},
 		//保存预约时间列表
-		SAVETIMESLOT(state, array) {
+		saveTimeSlot(state, array) {
 			state.timeSlots = array 
 		},
 		//保存地区列表
-		SAVEDISTRICT(state, array) {
+		saveDistrict(state, array) {
 			state.district = array 
 		},
 			// SAVEAREANAMELIST(state, array) {
@@ -87,30 +93,16 @@ const store = new Vuex.Store({
 			// SAVEAREACODELIST(state, array) {
 			// 	state.areaCodeList = array 
 			// },
-		//保存煤气罐信息
-		SAVETANK(state, json) {
+		//保存煤气瓶信息
+		saveTank(state, json) {
 			state.tank = json 
 		},
 		saveOrderAddress(state, json) {
 			state.orderAddress = json 
 		},
+
 	},
 	actions: {
-		saveTimeSlot({commit}, array) {
-			commit('SAVETIMESLOT',array)
-		},
-		saveDistrict({commit}, array) {
-			commit('SAVEDISTRICT',array)
-		},
-		// saveAreaNameList({commit}, array) {
-		// 	commit('SAVEAREANAMELIST',array)
-		// },
-		// saveAreaCodeList({commit}, array) {
-		// 	commit('SAVEAREACODELIST',array)
-		// },
-		saveTank({commit}, json) {
-			commit('SAVETANK',json)
-		},
 		getData ({dispatch, state}, pointer) {
 			console.log('登录成功回调')
 			if (state.logSuccessCallback) {
@@ -119,12 +111,6 @@ const store = new Vuex.Store({
 				console.log(pointer)
 				dispatch('getUserInfo', pointer)
 			}
-		},
-		openPopup ({state}) {
-			state.open = true
-		},
-		closePopup ({state}) {
-			state.open = false
 		},
 		getUserInfo ({ state, dispatch, commit }, pointer) {
 			if (!state.userInfo.objectId) {
@@ -139,11 +125,10 @@ const store = new Vuex.Store({
 							objectId: res.user.objectId
 						}
 						commit('loginSuccess')
-						// commit('SAVETELPLACEHOLDER',res.user.mobilePhoneNumber)
-						console.log('getUserInfo')
+						console.log('getUserInfo-store')
 						commit('saveUserInfo', userInfo)
-						commit('SAVEADDRESSLIST', res.user.addressList)
-						dispatch('closePopup')
+						commit('saveAddressList', res.user.addressList)
+						commit('closePopup')
 						if (pointer) {
 							if (pointer.$route.path == '/') {
 								$router.replace('/home')

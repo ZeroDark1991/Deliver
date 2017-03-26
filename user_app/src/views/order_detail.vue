@@ -1,6 +1,6 @@
 <template>
 	<div class="page">
-		<mt-header fixed title="订单列表">
+		<mt-header fixed title="订单详情">
 			<mt-button icon="back" slot="left" @click="back(backPath)"></mt-button>
 		</mt-header>
 		<div class="container-top">
@@ -33,11 +33,11 @@
 						</div>
 						<div class="tree-item" v-if="orderData.status>=2">
 							<div class="flex-middle">
-								<span class="text-extra unit-0">气罐已被取走</span>
+								<span class="text-extra unit-0">气瓶已被取走</span>
 								<span class="flex-right unit statusTime text-grey">{{orderData.receivedAt2}}</span>
 							</div>
 							<div class="text-extra"></div>
-							<div class="text-grey text-large">新气罐装配中</div>
+							<div class="text-grey text-large">新气瓶装配中</div>
 						</div>
 						<div class="tree-item tree-item-ok" v-if="orderData.status>=10">
 							<div class="flex-middle">
@@ -46,7 +46,7 @@
 							</div>
 							<!-- <i class="iconfont tree-icon">&#xe6cd;</i> -->
 							<div class="text-extra"></div>
-							<div class="text-grey text-large">气罐已送达</div>
+							<div class="text-grey text-large">气瓶已送达</div>
 						</div>
 					</div>
 					</mt-tab-container-item>
@@ -63,7 +63,7 @@
 									<span class="item-title">金额:</span>{{orderData.price}}
 								</div>
 								<div style="height: 1.5rem;" class="flex-middle" v-if="orderData.amount">
-									<span class="item-title">气罐数量:</span>{{orderData.amount}}
+									<span class="item-title">气瓶数量:</span>{{orderData.amount}}
 								</div>
 								<div style="height: 1.5rem;" class="flex-middle">
 									<span class="item-title">收货地址:</span>{{orderData.address}}
@@ -101,9 +101,8 @@
 
 <script type="text/javascript">
 import agent from '../util/agent'
-import store from '../vuex/store'
+import { mapState, mapActions, mapMutations} from 'vuex'
 export default {
-	store,
 	data () {
 		return {
 			id:null,
@@ -124,11 +123,15 @@ export default {
 			tip: false
 		}
 	},
+	computed: {
+		...mapState(['currentOrder']),
+	},
 	created() {
 		console.log(1111111)
-		store.commit('saveLogSuccessCallback',this.getOrder)
+		this.saveLogSuccessCallback(this.getOrder)
 	},
   	methods:{
+  		...mapMutations(['saveLogSuccessCallback', 'saveCurrentOrder']),
 		go(link, param)  {
 			this.$transfer.go(self, link)
 		},
@@ -138,7 +141,7 @@ export default {
 		getOrder (type) {
 			console.log('type'+ type)
 			let self = this
-			if (!store.state.currentOrder || store.state.currentOrder.objectId!=self.id) {
+			if (!self.currentOrder || self.currentOrder.objectId!=self.id) {
 				self.$Indicator.open();
 			}
 			agent.get('/api/order/userList', {
@@ -152,6 +155,7 @@ export default {
 				if (data.list && data.list.length!=0) {
 					data.list.every( function(item, index) {
 						if (item.objectId == self.id) {
+							console.log(1212)
 							self.orderData.userName = item.userName
 							self.orderData.price = item.price
 							self.orderData.objectId = item.objectId
@@ -185,10 +189,10 @@ export default {
 														:''
 							self.orderData.finishedAt2 = item.finishedAt
 														? self.$Moment(item.finishedAt).format("MM/DD HH:mm:ss")
-														:''						
-							store.commit('saveCurrentOrder', self.orderData)
+														:''		
 							self.loadOk = true
-							self.tip = false
+							self.tip = false	
+							self.saveCurrentOrder(self.orderData)
 							return false
 						}else {
 							self.tip = true
@@ -207,9 +211,10 @@ export default {
 			let self = vm
 			self.backPath = type==1 ? '/order_history' : '/order_current'
 			self.id = to.params.id.substring(0,to.params.id.length-1)
-			if (store.state.currentOrder) {
-				if (store.state.currentOrder.objectId==self.id) {
-					self.orderData = store.state.currentOrder
+			console.log(self.id)
+			if (self.currentOrder) {
+				if (self.currentOrder.objectId==self.id) {
+					self.orderData = self.currentOrder
 					self.loadOk = true
 				}else{
 					self.getOrder(type)

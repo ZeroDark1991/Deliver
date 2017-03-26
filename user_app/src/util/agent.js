@@ -2,7 +2,7 @@
 
 import Promise from 'promise-polyfill'
 import setAsap from 'setasap'
-import store from '../vuex/store'
+import store from '../store'
 import { Toast } from 'mint-ui'
 Promise._immediateFn = setAsap
 

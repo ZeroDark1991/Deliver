@@ -11,7 +11,7 @@
 			</div>
 			<mt-cell is-link title="我的订单" class="text-large" @click.native="go('/order_history')"></mt-cell>
 			<mt-cell is-link title="收货地址" class="text-large" @click.native="go('/myAddress')"></mt-cell>
-			<mt-cell is-link title="我的气罐" class="text-large" @click.native="go('/myTank')"></mt-cell>
+			<mt-cell is-link title="我的气瓶" class="text-large" @click.native="go('/myTank')"></mt-cell>
 		</div>
 		<mt-tabbar v-model="selected">
 			<mt-tab-item id="home" @click.native="tabChange('/home')">
@@ -27,11 +27,11 @@
 </template>
 
 <script type="text/javascript">
-import store from '../vuex/store'
+
 import agent from '../util/agent'
+import { mapState, mapActions, mapMutations} from 'vuex'
 import headSrc from '../assets/head.jpg'
 export default {
-	store,
 	data () {
 		return {
 			selected: 'center',
@@ -39,15 +39,15 @@ export default {
 		}
 	},
 	created() {
-		store.commit('saveLogSuccessCallback', null)
-		store.dispatch('getUserInfo')
+		this.saveLogSuccessCallback(null)
+		this.getUserInfo()
 	},
 	computed: {
-		userInfo () {
-			return store.state.userInfo
-		}
+		...mapState(['userInfo']),
 	},
   	methods:{
+  		...mapMutations(['saveLogSuccessCallback']),
+  		...mapActions(['getUserInfo']),
   		tabChange(link){
   			this.$transfer.noTransfer(self, link)
   		},

@@ -24,7 +24,7 @@
 			<div class="unit-1-2 text-center text-white item-block" @click="go('/myTank')" 
 				style="background-color: #FBD44E;">
 				<i class="iconfont" style="font-size: 1.3rem;">&#xe604;</i>
-				<div class="text-extra">我的气罐</div>
+				<div class="text-extra">我的气瓶</div>
 			</div>
 		</div>
 		<div class="flex-left">
@@ -82,18 +82,18 @@
 </template>
 <script type="text/javascript">
 import agent from '../util/agent'
-import store from '../vuex/store'
+import {mapMutations} from 'vuex'
 export default {
-	store,
 	data () {
 		return {
 			selected: 'home',
 		}
 	},
 	created() {
-		store.commit('saveLogSuccessCallback', null)
+		this.saveLogSuccessCallback(null)
 	},
   	methods:{
+  		...mapMutations(['saveLogSuccessCallback']),
   		tabChange(link){
   			this.$transfer.noTransfer(self, link)
   		},

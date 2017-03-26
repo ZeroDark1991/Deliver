@@ -1,6 +1,6 @@
 <template>
 	<div class="page">
-		<mt-header fixed title="当前煤气罐">
+		<mt-header fixed title="当前煤气瓶">
 			<mt-button icon="back" slot="left" @click="back('/home')"></mt-button>
 		</mt-header>
 		<div class="container-top">
@@ -11,25 +11,22 @@
 
 <script type="text/javascript">
 import agent from '../util/agent'
-import store from '../vuex/store'
+import { mapState, mapMutations} from 'vuex'
 export default {
-	store,
 	data () {
 		return {
 			tank:null,
 		}
 	},
 	computed: {
-		userInfo () {
-			console.log('tank')
-			return store.state.tank
-		}
+		...mapState(['tank'])
 	},
 	created() {
-		store.commit('saveLogSuccessCallback',this.getData)
+		this.saveLogSuccessCallback(this.getData)
 		this.getData()
 	},
   	methods:{
+  		...mapMutations(['saveLogSuccessCallback', 'saveTank']),
 		go(link, param)  {
 			this.$transfer.go(self, link, param)
 		},
@@ -38,14 +35,14 @@ export default {
 		},
 		getData() {
 			let self = this
-			if (!store.state.tank) {
+			if (!self.tank) {
 				agent.get('/api/u/currentTank', '')
 				.then(res => {
 					console.log(res)
 					if (res == false) return
 					if (res.tank) {
 						self.tank = res.tank
-						store.dispatch('saveTank',res.tank)
+						this.saveTank(res.tank)
 					}
 				})
 			}

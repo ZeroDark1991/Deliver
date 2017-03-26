@@ -29,24 +29,24 @@
 
 <script type="text/javascript">
 import agent from '../util/agent'
-import store from '../vuex/store'
+import { mapState, mapActions, mapMutations} from 'vuex'
+
 export default {
-	store,
 	data () {
 		return {
 
 		}
 	},
 	created() {
-		store.commit('saveLogSuccessCallback', null)
-		store.dispatch('getUserInfo')
+		this.saveLogSuccessCallback(null)
+		this.getUserInfo()
 	},
 	computed: {
-		addressList () {
-			return store.state.addressList
-		},
+		...mapState(['addressList']),
 	},
   	methods:{
+  		...mapMutations(['saveLogSuccessCallback', 'saveOrderAddress']),
+  		...mapActions(['getUserInfo']),
 		go(link, param)  {
 			this.$transfer.go(self, link, param)
 		},
@@ -55,7 +55,7 @@ export default {
 		},
 		chooseOrderAddress(addressId){
 			let self = this
-			store.state.addressList.every( function(item, index) {
+			self.addressList.every( function(item, index) {
 				console.log(item.id)
 				if (item.id == addressId ) {
 					let orderAddress = {
@@ -66,7 +66,7 @@ export default {
 						userName: item.userName,
 						phoneNumber: item.phoneNumber
 					}
-					store.commit('saveOrderAddress', orderAddress)
+					self.saveOrderAddress(orderAddress)
 					self.back('/commit_order/ol')
 					return false
 				}

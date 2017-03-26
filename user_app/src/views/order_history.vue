@@ -37,9 +37,8 @@
 </template>
 <script type="text/javascript">
 import agent from '../util/agent'
-import store from '../vuex/store'
+import { mapState, mapActions, mapMutations} from 'vuex'
 export default {
-	store,
 	data () {
 		return {
 			loadOk: false,
@@ -51,13 +50,13 @@ export default {
 			noMore: false
 		}
 	},
-	mounted() {
-
+	computed: {
+		...mapState(['orderList']),
 	},
 	created() {
-		store.commit('saveLogSuccessCallback',this.getOrderList)
-		if (store.state.orderList) {
-			this.lists = store.state.orderList
+		this.saveLogSuccessCallback(this.getOrderList)
+		if (this.orderList) {
+			this.lists = this.orderList
 			this.filteredList = this.lists.slice(0, this.limit)
 			this.loadOk = true
 		}else{
@@ -65,6 +64,7 @@ export default {
 		}
 	},
   	methods:{
+  		...mapMutations(['saveLogSuccessCallback', 'saveOrderList']),
 		go(link, param)  {
 			this.$transfer.go(self, link, param)
 		},
@@ -97,10 +97,10 @@ export default {
 		// 			state = '送气工赶往你家路上'
 		// 			break;
 		// 		case 2:
-		// 			state = '新气罐装配中'
+		// 			state = '新气瓶装配中'
 		// 			break;
 		// 		case 10:
-		// 			state = '气罐已送达 订单完成'
+		// 			state = '气瓶已送达 订单完成'
 		// 			break;
 		// 		default:
 		// 			// statements_def
@@ -110,7 +110,7 @@ export default {
 		// },
 		getOrderList() {
 			let self = this
-			if (!store.state.orderList) {
+			if (!this.orderList) {
 				self.$Indicator.open();
 			}
 			agent.get('/api/order/userList', {
@@ -134,7 +134,7 @@ export default {
 						}
 					})
 					self.filteredList = self.lists.slice(0, this.limit)
-					store.commit('saveOrderList',self.lists)
+					self.saveOrderList(self.lists)
 				}
 				self.loadOk = true
 			})
