@@ -18,9 +18,13 @@ const create = function*() {
 
   // 验证是否存在未完成订单
   let user = AV.Object.createWithoutData('_User', this.session.userId)
-  let query = new AV.Query('Order')
-  query.equalTo('user', user)
-  query.lessThan('status', 10)
+  let endQuery = new AV.Query('Order')
+  endQuery.equalTo('user', user)
+  endQuery.lessThan('status', 10)
+  let startQuery = new AV.Query('Order')
+  startQuery.greaterThan('status', -1)
+  let query = AV.Query.and(startQuery, endQuery)
+  // 查找状态大于-1小于10的订单
   let check
   try {
     check = yield query.find()

@@ -25,8 +25,8 @@ export default {
 		this.saveLogSuccessCallback(this.getData)
 		this.getData()
 	},
-  	methods:{
-  		...mapMutations(['saveLogSuccessCallback', 'saveTank']),
+  methods:{
+  	...mapMutations(['saveLogSuccessCallback', 'saveTank']),
 		go(link, param)  {
 			this.$transfer.go(self, link, param)
 		},

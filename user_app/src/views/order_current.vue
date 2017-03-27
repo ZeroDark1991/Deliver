@@ -27,6 +27,8 @@
 						</div>
 					</div>
 				</mt-cell>
+				<mt-button @click="finishOrder()" class="action-button" size="large" type="primary">确认完成</mt-button>
+				<mt-button @click="cancelOrder()" class="action-button" size="large" type="danger">取消订单</mt-button>
 			</div>
 			<div class="tip" v-if="tip">当前无订单</div>
 		</div>
@@ -35,12 +37,12 @@
 
 <script type="text/javascript">
 import agent from '../util/agent'
-import { mapMutations} from 'vuex'
+import { mapMutations } from 'vuex'
 export default {
 	data () {
 		return {
 			orderList:[],
-			loadOk: false,
+			loadOk: true,
 			tip: false
 		}
 	},
@@ -48,8 +50,8 @@ export default {
 		this.saveLogSuccessCallback(this.getCurrentOrderList)
 		this.getCurrentOrderList()
 	},
-  	methods:{
-  		...mapMutations(['saveLogSuccessCallback', 'saveCurrentOrderList']),
+  methods: {
+  	...mapMutations(['saveLogSuccessCallback', 'saveCurrentOrderList']),
 		go(link, param)  {
 			this.$transfer.go(self, link, param)
 		},
@@ -144,6 +146,35 @@ export default {
 				}
 			})
 		},
+		finishOrder() {
+			this.$MessageBox.confirm('确认完成订单')
+				.then(action => {
+					this.$MessageBox.confirm('确认完成订单')
+						.then(action => {
+							this.$Indicator.open()
+							agent.post('/api/order/userFinish', {
+								id: this.orderList[0].objectId
+							})
+							.then(res => {
+								this.$Indicator.close()
+								this.$Toast('操作成功')
+							})
+						})
+				})
+		},
+		cancelOrder() {
+			this.$MessageBox.confirm('确认取消订单')
+				.then(action => {
+					this.$Indicator.open()
+					agent.post('/api/order/userCancel', {
+						id: this.orderList[0].objectId
+					})
+					.then(res => {
+						this.$Indicator.close()
+						this.$Toast('成功取消')
+					})
+				})
+		}
 	}
 }
 </script>
@@ -157,5 +188,7 @@ export default {
 .item-title{
 	width: 85px;
 }
-
+.action-button {
+	margin-top: 1rem
+}
 </style>

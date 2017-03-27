@@ -17,12 +17,16 @@ const locate = function*() {
 	}
 
 	let query = new AV.Query('Tank')
-	query.equalTo('signId', data.id)
+	query.equalTo('signId', data.id.replace(' ', ''))
   try {
 		let tarTank = yield query.first()
-		tarTank.set('longitude', data.longitude)
-		tarTank.set('latitude', data.latitude)
-		yield tarTank.save()
+		if(tarTank) {
+			tarTank.set('longitude', data.longitude)
+			tarTank.set('latitude', data.latitude)
+			yield tarTank.save()
+		} else {
+			throw new APIError('DB Error', '未找到对应的气罐')
+		}
   } catch(e) {
     throw new APIError('DB Error', e.message)
     return

@@ -98,7 +98,7 @@ const deliverList = function*() {
       let options = areaCodes.map(item => {
         let query = new AV.Query('Order')
         query.equalTo('areaCode', item)
-        query.lessThanOrEqualTo('status', 0)
+        query.equalTo('status', 0) //** 届时改为>-2 and <=0
         query.ascending('timeSlot') // 按预约时间升序
         query.include('user')
 
@@ -116,7 +116,7 @@ const deliverList = function*() {
     } else {
       // 默认全选
       let query = new AV.Query('Order')
-      query.lessThanOrEqualTo('status', 0)
+      query.equalTo('status', 0) //** 届时改为>-2 and <=0
       query.ascending('timeSlot') // 按预约时间升序
       query.include('user')
       // query.select(['address', 'status', 'timeSlot', 'user'])

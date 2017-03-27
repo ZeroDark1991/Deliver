@@ -38,10 +38,10 @@ export default {
 		}
 	},
 	computed: {
-		...mapState(['tankList']),
+		...mapState(['tankMap']),
 		markers(){	//[longitude,latitude]
 			let arr = []
-			this.tankList.forEach(function(item, index) {
+			this.tankMap.forEach(function(item, index) {
 				if (item.longitude && item.latitude) {
 					arr.push([item.longitude, item.latitude])
 				}
@@ -50,7 +50,7 @@ export default {
 		}
 	},
 	created(){
-		this.fetchTankList()
+		this.fetchTankMap()
 	},
 	methods: {
     getMap: function() {
@@ -67,7 +67,7 @@ export default {
     changeCenter() {
       this.center = [this.center[0] + 0.1, this.center[1] + 0.1];
     },
-    ...mapActions(['fetchTankList'])
+    ...mapActions(['fetchTankMap'])
 	}
 }
 </script>

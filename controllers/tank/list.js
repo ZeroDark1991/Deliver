@@ -11,6 +11,10 @@ const list = function*() {
     query.startsWith('signId', params.signId)
   }
 
+  if(params.map) {
+    query.startsWith('longitude', '1')
+  }
+
   let result 
   try {
   	result = yield query.find()

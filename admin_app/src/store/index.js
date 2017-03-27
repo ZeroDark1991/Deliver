@@ -11,6 +11,7 @@ const store = new Vuex.Store({
     delivers: [],
     aduitList: [],
     tankList: [],
+    tankMap: [],
     tankDetail: {
 			objectId: null,
 			signId: null,
@@ -63,6 +64,9 @@ const store = new Vuex.Store({
     },
     updateTankList(state, tankList) {
       state.tankList = tankList
+    },
+    updateTankMap(state, tankMap) {
+      state.tankMap = tankMap
     },
     updateTankDetail(state, tankDetail) {
       state.tankDetail = tankDetail
@@ -156,6 +160,35 @@ const store = new Vuex.Store({
 					}
 				})
 				ctx.commit('updateTankList', tankList)
+			})
+			.catch(e => {
+				console.log(e.message)
+			})
+		},
+		// 气瓶地图
+		fetchTankMap(ctx, signId) {
+			agent
+			.get('/api/t/list', { map: true })
+			.then(data => {
+				console.log(data)
+				if (data.list.length==0) {
+					Message({
+						message: '无相关数据',
+						type: 'warning'
+					});
+					return
+				}
+				let tankMap = data.list.map(item => {
+					return {
+						objectId: item.objectId,
+						signId: item.signId,
+						latitude: item.latitude,
+						longitude: item.longitude,
+						standard: item.standard,
+						producedAt: Moment(item.producedAt).format("YYYY-MM-DD HH:mm:ss"),
+					}
+				})
+				ctx.commit('updateTankMap', tankMap)
 			})
 			.catch(e => {
 				console.log(e.message)
