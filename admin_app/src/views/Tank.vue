@@ -6,7 +6,7 @@
 		  </el-form-item>
 		  <el-form-item label="生产日期">
 		     <el-date-picker type="date" placeholder="选择日期" 
-		     v-model="newTank.producedAt" style="width: 100%;"></el-date-picker>
+		     v-model="newTank.manufactureDate" style="width: 100%;"></el-date-picker>
 		  </el-form-item>
 			<el-form-item label="规格">
 				<el-select v-model="newTank.standard" placeholder="请选择活动区域" style="width: 100%;">
@@ -29,7 +29,7 @@ export default{
 			newTank: {
 				signId: '',
 				standard: '15kg',
-				producedAt: ''
+				manufactureDate: ''
 			}
 		}
 	},
@@ -39,7 +39,7 @@ export default{
 				.post('/api/tank/create',{
 					signId: this.newTank.signId,
 					standard: this.newTank.standard,
-					producedAt: this.newTank.producedAt
+					manufactureDate: this.newTank.manufactureDate
 				})
 				.then(data => {
 					console.log(data)

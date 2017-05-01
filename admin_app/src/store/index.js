@@ -17,7 +17,7 @@ const store = new Vuex.Store({
 			signId: null,
 			latitude: null,
 			longitude: null,
-			producedAt: null,
+			manufactureDate: null,
 			ownerObjectId: null
 		},
 		userList: [],
@@ -156,7 +156,7 @@ const store = new Vuex.Store({
 						latitude: item.latitude,
 						longitude: item.longitude,
 						standard: item.standard,
-						producedAt: Moment(item.producedAt).format("YYYY-MM-DD HH:mm:ss"),
+						manufactureDate: Moment(item.manufactureDate).format("YYYY-MM-DD HH:mm:ss"),
 					}
 				})
 				ctx.commit('updateTankList', tankList)
@@ -185,7 +185,7 @@ const store = new Vuex.Store({
 						latitude: item.latitude,
 						longitude: item.longitude,
 						standard: item.standard,
-						producedAt: Moment(item.producedAt).format("YYYY-MM-DD HH:mm:ss"),
+						manufactureDate: Moment(item.manufactureDate).format("YYYY-MM-DD HH:mm:ss"),
 					}
 				})
 				ctx.commit('updateTankMap', tankMap)
@@ -205,7 +205,7 @@ const store = new Vuex.Store({
 					signId: data.info.signId || '暂无',
 					latitude: data.info.latitude || '暂无',
 					longitude: data.info.longitude || '暂无',
-					producedAt: data.info.producedAt || '暂无',
+					manufactureDate: data.info.manufactureDate || '暂无',
 					ownerObjectId: data.owner ? data.owner.objectId : ''
 				}
 				ctx.commit('updateTankDetail', tankDetail)

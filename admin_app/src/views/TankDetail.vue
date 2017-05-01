@@ -11,8 +11,8 @@
 					<el-collapse-item title="气罐编号" name="2">
 						<div v-text="tankDetail.signId"></div>
 					</el-collapse-item>
-					<el-collapse-item title="上次年检时间" name="3">
-						<div v-text="tankDetail.producedAt"></div>
+					<el-collapse-item title="生产日期" name="3">
+						<div v-text="tankDetail.manufactureDate"></div>
 					</el-collapse-item>
 					<el-collapse-item title="地图坐标" name="4">
 						<div v-text="'经度：'+ tankDetail.latitude"></div>

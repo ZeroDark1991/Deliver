@@ -63,6 +63,6 @@ app
   .use(router.routes())
   .use(router.allowedMethods())
 
-interval()
+// interval()
 
 module.exports = app

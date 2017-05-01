@@ -31,6 +31,7 @@ const receiveTank = function*() {
       tankArr.forEach(tank => {
         let tarTank = AV.Object.createWithoutData('Tank', tank)
         user.remove('tank', tarTank)
+        tarTank.set('user', null)
       })
       
       try {

@@ -2,6 +2,7 @@
 
 const AV = require('leanengine')
 const APIError = require('../../config/apiError')
+const ScanRecord = AV.Object.extend('ScanRecord')
 
 const locate = function*() {
 
@@ -11,22 +12,56 @@ const locate = function*() {
 		return
 	}
 
-	if(!data.id){
-		throw new APIError('Incompelete Information', '传入气罐ID')
+	if(!data.deliver) {
+		throw new APIError('Incompelete Information', '传入员工id')
+		return
+	}
+
+	if(!data.id) {
+		throw new APIError('Incompelete Information', '传入气瓶id')
 		return
 	}
 
 	let query = new AV.Query('Tank')
-	query.equalTo('signId', data.id.replace(' ', ''))
+	let tarTank
   try {
-		let tarTank = yield query.first()
-		if(tarTank) {
-			tarTank.set('longitude', data.longitude)
-			tarTank.set('latitude', data.latitude)
-			yield tarTank.save()
-		} else {
-			throw new APIError('DB Error', '未找到对应的气罐')
+  	if(data.id) {
+			query.equalTo('signId', data.id)
+			tarTank = yield query.first()
+			if(tarTank) {
+				tarTank.set('longitude', data.longitude)
+				tarTank.set('latitude', data.latitude)
+				if(data.userIdCard) {
+					tarTank.set('idnumber', data.userIdCard.idnumber)
+					tarTank.set('realname', data.userIdCard.realname)
+				}
+				let tarDeliver = yield AV.createWithoutData('Deliver', data.deliver).fetch()
+				tarTank.set('deliverName', tarDeliver.get('name'))
+				tarTank.set('deliverPhone', tarDeliver.get('phoneNumber'))
+				tarTank.set('deliveredAt', new Date())
+				yield tarTank.save()
+			}
+  	}
+
+		let scanRecord = new ScanRecord()
+		let deliver = AV.Object.createWithoutData('Deliver', data.deliver)
+		scanRecord.set('deliver', deliver)
+		if(tarTank) scanRecord.set('tank', tarTank)
+		scanRecord.set('longitude', data.longitude)
+		scanRecord.set('latitude', data.latitude)
+		// 身份证号
+		if(data.userIdCard) {
+			console.log(data.userIdCard)
+			scanRecord.set('idnumber', data.userIdCard.idnumber)
+			scanRecord.set('realname', data.userIdCard.realname)
 		}
+		// 气瓶备注
+		if(data.description) scanRecord.set('description', data.description)
+		// 报障
+		if(data.report) scanRecord.set('report', data.report)
+
+		yield scanRecord.save()
+
   } catch(e) {
     throw new APIError('DB Error', e.message)
     return

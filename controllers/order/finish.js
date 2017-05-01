@@ -20,6 +20,13 @@ const finish = function*() {
     let check = yield query.get(data.id)
     if( !check || check.get('status') != 2 ) {
       throw new APIError('', '此订单状态不支持当前操作')
+    } else if(data.userIdCard) {
+      let userIdCard = data.userIdCard
+      let user = AV.Object.createWithoutData('_User', check.get('user').id)
+      Object.keys(userIdCard).forEach(item => {
+        user.set(item, userIdCard[item])
+      })
+      yield user.save()
     } else if(data.tank) {
       // 用户与气罐关联
       if(({}).toString.call(data.tank) === '[object Array]' && data.tank.length > 0) {
@@ -35,6 +42,7 @@ const finish = function*() {
           let tarTank = yield tankQuery.first()
           if(tarTank){
             user.addUnique('tank', tarTank)
+            tarTank.set('user', user)
             if(tankArr[i].longitude && tankArr[i].latitude) {
               tarTank.set('longitude', tankArr[i].longitude)
               tarTank.set('latitude', tankArr[i].latitude)

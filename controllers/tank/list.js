@@ -14,6 +14,7 @@ const list = function*() {
   if(params.map) {
     query.startsWith('longitude', '1')
   }
+  query.limit(1000)
 
   let result 
   try {

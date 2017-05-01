@@ -1,7 +1,5 @@
 <template>
 	<div>
-		hello i am home {{hello}}
-		<button @click='increment()'>++</button>
 	</div>
 </template>
 <style lang="stylus">
@@ -17,7 +15,6 @@ export default {
 		}
 	},
 	computed: {
-    ...mapState(['hello'])
 	},
 	created(){
 		// console.log(this.$store.state)

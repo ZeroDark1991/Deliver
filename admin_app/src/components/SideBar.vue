@@ -2,12 +2,12 @@
 <aside>
 	<el-menu theme="light" :default-active='active' :router="true">
     <el-menu-item index="/home"><i class="el-icon-message"></i>快捷面板</el-menu-item>
-    <el-menu-item index="/user"><i class="el-icon-edit"></i>用户管理</el-menu-item>
-    <el-menu-item index="/deliver"><i class="el-icon-menu"></i>员工管理</el-menu-item>
-    <el-menu-item index="/orderList"><i class="el-icon-edit"></i>订单列表</el-menu-item>
-    <el-menu-item index="/aduit"><i class="el-icon-document"></i>订单审核</el-menu-item>
-    <el-menu-item index="/tankList"><i class="el-icon-star-on"></i>气罐列表</el-menu-item>
-    <el-menu-item index="/map"><i class="el-icon-upload"></i>气罐分布</el-menu-item>
+    <el-menu-item v-if="level.user" index="/user"><i class="el-icon-edit"></i>用户管理</el-menu-item>
+    <el-menu-item v-if="level.deliver" index="/deliver"><i class="el-icon-menu"></i>员工管理</el-menu-item>
+    <el-menu-item v-if="level.orderList" index="/orderList"><i class="el-icon-edit"></i>订单列表</el-menu-item>
+    <el-menu-item v-if="level.aduit" index="/aduit"><i class="el-icon-document"></i>订单审核</el-menu-item>
+    <el-menu-item v-if="level.tankList" index="/tankList"><i class="el-icon-star-on"></i>气罐列表</el-menu-item>
+    <el-menu-item v-if="level.map" index="/map"><i class="el-icon-upload"></i>气罐分布</el-menu-item>
     <!-- <el-menu-item index="/tank"><i class="el-icon-edit"></i>录入气罐</el-menu-item> -->
   </el-menu>		
 </aside>	
@@ -17,7 +17,7 @@
 		data() {
 			return {}
 		},
-		props: ['active']
+		props: ['active', 'level']
 	}
 </script>
 <style lang="stylus" scoped>

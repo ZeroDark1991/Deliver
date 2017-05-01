@@ -19,7 +19,10 @@ const Record = require('../controllers/record/')
 router.get('/app/areaCodes', App.areaCodes)
 router.get('/app/timeSlots', App.timeSlots)
 router.get('/app/version', App.version.fetch)
+router.get('/app/adminLevel', App.adminLevel)
 router.post('/app/version', App.version.update)
+router.post('/app/adminLogIn', App.adminLogIn)
+router.post('/app/adminLogOut', App.adminLogOut)
 
 // order
 router.get('/order/info', Order.info)
@@ -65,6 +68,8 @@ router.get('/t/info', Tank.info)
 
 router.post('/t/create', Tank.create)
 router.post('/t/locate', Tank.locate)
+router.post('/t/fill', Tank.fill)
+router.post('/t/importTank', Tank.importTank)
 
 // filler
 router.post('/f/create', Filler.create)
@@ -73,6 +78,8 @@ router.post('/f/create', Filler.create)
 router.post('/c/create', Checker.create)
 
 // record
+router.get('/r/list', Record.list)
+
 router.post('/r/create', Record.create)
 
 // 404 not found

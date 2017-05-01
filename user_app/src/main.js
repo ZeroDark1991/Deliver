@@ -46,7 +46,11 @@ const router = new VueRouter({
   mode: 'hash',
   base: __dirname,
   routes: [
- 	{
+    {
+      path: '/',
+      component: require('./views/home.vue')
+    },  
+ 	  {
       path: '/home',
       component: require('./views/home.vue')
     },

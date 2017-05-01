@@ -180,12 +180,12 @@ export default {
 </script>
 
 <style scoped lang="less">
-.tip{
+.tip {
 	height: 2rem;
 	line-height: 2rem;
 	text-align: center;
 }
-.item-title{
+.item-title {
 	width: 85px;
 }
 .action-button {

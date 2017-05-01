@@ -28,8 +28,6 @@
 			</div>
 		</mt-popup>
 		<!-- <mt-popup v-model="" popup-transition="popup-fade">
-			
-
 		</mt-popup> -->
 	</div>
 </template>
