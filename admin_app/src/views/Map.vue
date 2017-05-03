@@ -75,14 +75,15 @@ export default {
           let tankMap = []
           data.list.forEach((item, index) => {
             if (item.longitude && item.latitude) {
-              let manufactureDate = Moment(item.manufactureDate).format("YYYY-MM-DD HH:mm:ss")
+              let manufactureDate = Moment(item.manufactureDate).format("YYYY-MM-DD HH:mm")
+              let deliveredAt = Moment(item.deliveredAt).format("YYYY-MM-DD HH:mm")
               let content = `
                 气罐编号：${item.signId}
                 气罐规格：${item.type}
                 出厂日期：${manufactureDate}
                 配送员工：${item.deliverName}
                 联系电话：${item.deliverPhone}
-                配送时间：${item.deliveredAt}
+                配送时间：${deliveredAt}
                 用户姓名：${item.realname}
                 身份证号：${item.idnumber}
               `
@@ -99,11 +100,11 @@ export default {
                 open: true,  
                 markerEvents: {
                   click: () => {
-                            this.$notify({
-                              title: '信息',
-                              message: content,
-                              duration: 0
-                            });
+                    this.$notify({
+                      title: '信息',
+                      message: content,
+                      duration: 0
+                    });
                   }
                 }
               })

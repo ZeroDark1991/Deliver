@@ -1,13 +1,13 @@
 <template>
-  <div id="app">
-	  <div class="wrapper">
-	  	<nav-bar></nav-bar>
-	  	<side-bar :level="level" :active="activedPath"></side-bar>
-	  	<div class="content">
-	   		<router-view></router-view>
-	  	</div>
+<div id="app">
+  <div class="wrapper">
+  	<nav-bar></nav-bar>
+  	<side-bar :level="level" :active="activedPath"></side-bar>
+  	<div class="content">
+   		<router-view></router-view>
   	</div>
-  </div>
+	</div>
+</div>
 </template>
 
 <script>
@@ -17,7 +17,7 @@ import agent from './util/agent'
 
 export default {
   name: 'app',
-  data(){
+  data() {
   	return {
   		activedPath: '/home',
       level: {
@@ -35,7 +35,7 @@ export default {
   	NavBar,
   	SideBar
   },
-  created(){
+  created() {
   	this.activedPath = this.$route.path == '/'
       ? '/home'
       : this.$route.path

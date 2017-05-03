@@ -7,7 +7,7 @@ const Moment = require('moment')
 const list = function*() {
 
   let params = this.query
-  if(!params.date){
+  if(!params.startDate || !params.endDate){
     throw new APIError('Incompelete Information', '输入查找的月份')
     return
   }
@@ -30,15 +30,14 @@ const list = function*() {
   }
 
   let startDateQuery = new AV.Query('ScanRecord')
-  startDateQuery.greaterThanOrEqualTo('createdAt', new Date(Number(params.date)))
+  startDateQuery.greaterThanOrEqualTo('createdAt', new Date(Number(params.startDate)))
 
   let endDateQuery = new AV.Query('ScanRecord')
-  endDateQuery.lessThan('createdAt', new Date(Moment(Number(params.date)).endOf('month')))
+  endDateQuery.lessThan('createdAt', new Date(Moment(Number(params.endDate) + 24*3600*1000)))
 
   let detailQuery = new AV.Query('ScanRecord')
   let deliverPointer = AV.Object.createWithoutData('Deliver', deliverResult.id);  
   detailQuery.equalTo('deliver', deliverPointer)
-  detailQuery.include('deliver')
   detailQuery.include('tank')
   let query = AV.Query.and(startDateQuery, endDateQuery, detailQuery)
   query.limit('1000')

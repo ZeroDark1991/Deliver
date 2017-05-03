@@ -22,6 +22,8 @@ const locate = function*() {
 		return
 	}
 
+	let userIdCard = data.userIdCard ? JSON.parse(data.userIdCard) : null
+
 	let query = new AV.Query('Tank')
 	let tarTank
   try {
@@ -31,15 +33,20 @@ const locate = function*() {
 			if(tarTank) {
 				tarTank.set('longitude', data.longitude)
 				tarTank.set('latitude', data.latitude)
-				if(data.userIdCard) {
-					tarTank.set('idnumber', data.userIdCard.idnumber)
-					tarTank.set('realname', data.userIdCard.realname)
+				if(userIdCard) {
+					tarTank.set('idnumber', userIdCard.idnumber)
+					tarTank.set('realname', userIdCard.realname)
 				}
-				let tarDeliver = yield AV.createWithoutData('Deliver', data.deliver).fetch()
+				let queryD = new AV.Query("Deliver")
+				let tarDeliver = yield queryD.get(data.deliver)
 				tarTank.set('deliverName', tarDeliver.get('name'))
 				tarTank.set('deliverPhone', tarDeliver.get('phoneNumber'))
 				tarTank.set('deliveredAt', new Date())
 				yield tarTank.save()
+			}
+			else {
+				throw new APIError('Tank not Found', '未找到气瓶')
+				return
 			}
   	}
 
@@ -50,10 +57,10 @@ const locate = function*() {
 		scanRecord.set('longitude', data.longitude)
 		scanRecord.set('latitude', data.latitude)
 		// 身份证号
-		if(data.userIdCard) {
-			console.log(data.userIdCard)
-			scanRecord.set('idnumber', data.userIdCard.idnumber)
-			scanRecord.set('realname', data.userIdCard.realname)
+		if(userIdCard) {
+			console.log(userIdCard.idnumber)
+			scanRecord.set('idnumber', userIdCard.idnumber)
+			scanRecord.set('realname', userIdCard.realname)
 		}
 		// 气瓶备注
 		if(data.description) scanRecord.set('description', data.description)

@@ -9,7 +9,7 @@ const adminLogIn = function*() {
 		throw new APIError('Incompelete Information', '完整填写信息')
 		return
 	}
-	if(data.account === 'super' && data.passWord === '#ad=2016deliver'){
+	if(data.account === 'super' && data.passWord === '#ad=2016deliver') {
 		this.session.admin = 'Super'
 		this.body = {
 			success: true,

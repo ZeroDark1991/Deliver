@@ -57,22 +57,34 @@
 				<el-button type='primary' @click='addDeliver()'>提交</el-button>   	
 	    </el-tab-pane>
 
-	    <el-tab-pane label="统计报表" name="third" class="delivetData" v-loading="deliverSeatching">
+	    <el-tab-pane label="统计报表" name="third" class="delivetData" v-loading="deliverSearching">
 	    	<div class="deliverData__item">
-	    		<el-input v-model="seachDeliverPhone" placeholder="输入员工电话"></el-input>
+	    		<el-input v-model="searchDeliverPhone" placeholder="输入员工电话"></el-input>
 	    	</div>
 	    	<div class="deliverData__item">
 			 	  <el-date-picker
-				    v-model="month"
-				    type="month"
-				    placeholder="选择月">
+				    v-model="startDate"
+				    type="date"
+				    placeholder="开始时间">
 				  </el-date-picker>
 	    	</div>
 	    	<div class="deliverData__item">
+			 	  <el-date-picker
+				    v-model="endDate"
+				    type="date"
+				    placeholder="结束时间">
+				  </el-date-picker>
+				</div>
+	    	<div class="deliverData__item">
 	    		<el-button type="primary" @click="serachDeliverData()">确认查找</el-button>
 	    	</div>
+	    	<div class="filterBoard">
+	    		<div :class="{ active: this.deliverDataFilter === 0 }" @click="switchFilter(0)">全部</div>
+	    		<div :class="{ active: this.deliverDataFilter === 1 }" @click="switchFilter(1)">智能</div>
+	    		<div :class="{ active: this.deliverDataFilter === 2 }" @click="switchFilter(2)">非智能</div>
+	    	</div>
 	    	<el-table
-		      :data="deliverData"
+		      :data="computedDeliverData"
 		      style="width: 100%; margin-top: 20px">
 		      <el-table-column
 		        prop="name"
@@ -109,13 +121,15 @@ export default {
 		return {
 			activeTab: 'first',
 			deliverDetail: true,
-			seachDeliverPhone:'',
-			deliverSeatching: false,
+			searchDeliverPhone: '',
+			deliverSearching: false,
+			deliverDataFilter: 0,
 			deliverData: [],
-			month: '',
+			startDate: '',
+			endDate: '',
 			editDeliver: {
-				id:'',
-				name:'',
+				id: '',
+				name: '',
 				phoneNumber: '',
 				passWord: ''
 			},
@@ -127,7 +141,21 @@ export default {
 		}
 	},
 	computed: {
-		...mapState(['delivers'])
+		...mapState(['delivers']),
+		computedDeliverData() {
+			switch(this.deliverDataFilter) {
+				case 0:
+					return this.deliverData
+				case 1:
+					return this.deliverData.map(item => {
+						if(item.tankId) return item
+					})
+				case 2:
+					return this.deliverData.map(item => {
+						if(!item.tankId) return item
+					})
+			}
+		}
 	},
 	created(){
 		this.fetchDelivers()
@@ -140,19 +168,22 @@ export default {
 			this.editDeliver.phoneNumber = row.phoneNumber
 		},
 		serachDeliverData() {
-			if(!this.seachDeliverPhone ) {
+			if(!this.searchDeliverPhone ) {
 				this.$message.error('请完整填写号码')
 				return
 			}
-			if(!this.month) {
+			if(!this.startDate) {
 				this.$message.error('先选择月份')
 				return
 			}
+			this.deliverSearching = true
 			agent.get('/api/r/list', {
-				phone: this.seachDeliverPhone,
-				date: (new Date(this.month)).getTime()
+				phone: this.searchDeliverPhone,
+				startDate: (new Date(this.startDate)).getTime(),
+				endDate: (new Date(this.endDate)).getTime()
 			})
 			.then(res => {
+				this.deliverSearching = false
 				if(res.list.length && res.list.length > 0) {
 					let deliverData = res.list.map(item => {
 						return {
@@ -163,14 +194,25 @@ export default {
 							tankId: item.tank ? item.tank.objectId : ''
 						}
 					})
+					this.deliverDataFilter = 0
 					this.deliverData = deliverData
 				} else {
+					this.deliverDataFilter = 0
+					this.deliverData = []
 					this.$message({
-						message: '该员工该月无记录',
+						message: '无记录',
 						type: 'warning'
 					})
 				}
 			})
+			.catch(e => {
+				this.deliverDataFilter = 0
+				this.deliverData = []
+				this.deliverSearching = false
+			})
+		},
+		switchFilter(status) {
+			this.deliverDataFilter = status
 		},
 		editDeliverInfo(){
 			agent
@@ -181,7 +223,6 @@ export default {
 					phoneNumber: this.editDeliver.phoneNumber
 				})
 				.then(data => {
-					console.log(data)
 					this.fetchDelivers()
 					this.deliverDetail = true
 					this.editDeliver.id = ''
@@ -242,4 +283,17 @@ export default {
 .deliverData__item
 	display inline-block
 	width 210px
+.filterBoard
+	display flex
+	& > div
+		flex 0 0 auto
+		padding 10px 30px
+		background-color #eee
+		border-radius 5px
+		margin-right 10px
+		margin-top 20px
+		cursor pointer
+	& .active
+		background-color #20a0ff
+		color #fff
 </style>
