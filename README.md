@@ -13,6 +13,12 @@
 npm install
 ```
 
+登录LeanCloud：
+
+```
+lean login
+```
+
 启动项目：
 
 ```
