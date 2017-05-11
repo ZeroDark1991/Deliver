@@ -72,7 +72,7 @@ const checkSuccess = function (parsed) {
   	console.log(parsed.code)
     if(parsed.code == 'Unlogged'){
       store.commit('notLogin')
-      store.dispatch('openPopup')
+      store.commit('openPopup')
     }
     let error = new Error(parsed.code)
     error.message = parsed.message

@@ -39,18 +39,18 @@ import logo from './assets/logo1.png'
 export default {
   name: 'app',
   data () {
-	return {
-		mask:false,
-		show:false,
-		PhoneNumber: '',//13588277370
-		VerifyCode: '',//219320
-		isGetCheck:false,
-		hint: '获取短信验证码',
-		timer: null,
-		canGet: false,
-		logo,
-		sssss: true
-	}
+		return {
+			mask:false,
+			show:false,
+			PhoneNumber: '',//13588277370
+			VerifyCode: '',//219320
+			isGetCheck:false,
+			hint: '获取短信验证码',
+			timer: null,
+			canGet: false,
+			logo,
+			sssss: true
+		}
   },
   created() {
   	console.log(123)

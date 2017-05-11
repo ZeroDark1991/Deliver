@@ -37,10 +37,10 @@ const store = new Vuex.Store({
 		noTransfer (state) {
 			state.transitionName = ''
 		},
-		openPopup ({state}) {
+		openPopup (state) {
 			state.open = true
 		},
-		closePopup ({state}) {
+		closePopup (state) {
 			state.open = false
 		},
 		//发现未登录，更改状态

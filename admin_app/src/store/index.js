@@ -156,7 +156,7 @@ const store = new Vuex.Store({
 						latitude: item.latitude,
 						longitude: item.longitude,
 						standard: item.standard,
-						manufactureDate: Moment(item.manufactureDate).format("YYYY-MM-DD HH:mm:ss"),
+						manufactureDate: Moment(item.manufactureDate).format("YYYY-MM-DD"),
 					}
 				})
 				ctx.commit('updateTankList', tankList)
@@ -332,8 +332,6 @@ const store = new Vuex.Store({
 
 			})
 		}
-
-
 	}
 })
 

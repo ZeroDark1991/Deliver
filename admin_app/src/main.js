@@ -7,7 +7,6 @@ import Vuex from 'vuex'
 import Element from 'element-ui'
 import AMap from 'vue-amap'
 
-
 import 'normalize.css'
 import 'element-ui/lib/theme-default/index.css'
 
