@@ -75,7 +75,7 @@ export default {
           let tankMap = []
           data.list.forEach((item, index) => {
             if (item.longitude && item.latitude) {
-              let manufactureDate = Moment(item.manufactureDate).format("YYYY-MM-DD HH:mm")
+              let manufactureDate = item.manufactureDate ? Moment(item.manufactureDate).format("YYYY-MM-DD") : '暂无'
               let deliveredAt = item.deliveredAt ? Moment(item.deliveredAt).format("YYYY-MM-DD HH:mm") : '暂无'
               let content = `
                 气罐编号：${item.signId}
